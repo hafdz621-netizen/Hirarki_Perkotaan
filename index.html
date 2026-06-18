@@ -533,7 +533,7 @@
 
   <header class="masthead">
     <div class="masthead-left">
-      <span class="eyebrow">Instrumen Analisis &middot; Skala Sosial</span>
+      <span class="eyebrow">Hierarki Perkotaan &middot; Urban Analysist</span>
       <h1>Skalogram Guttman</h1>
       <div class="subtitle">Import data dari Excel, urutkan otomatis, dan baca hirarki, matriks ideal/observasi, error, serta Coefficient of Reproducibility.</div>
     </div>
@@ -555,7 +555,7 @@
         <div class="dropzone" id="dropzone">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="dz-title">Tarik file Excel ke sini, atau klik untuk pilih</div>
-          <div class="dz-sub">.xlsx / .xls &middot; kolom = sarana/fasilitas, baris = wilayah, isi jumlah unit (boleh 0)</div>
+          <div class="dz-sub">.xlsx / .xls &middot; kolom = sarana/fasilitas, baris = wilayah, isi jumlah unit</div>
           <input type="file" id="fileInput" accept=".xlsx,.xls">
         </div>
         <div class="opts">
@@ -565,22 +565,22 @@
               <select id="sheetSelect" disabled><option>— belum ada file —</option></select>
             </div>
             <div class="opt-row">
-              <label>Baris ke berapa headernya?</label>
+              <label>Baris header</label>
               <input type="number" id="headerRowInput" min="0" step="1" value="1" disabled>
-              <span style="font-size:11px; color:var(--ink-soft);">isi 0 jika tidak ada baris header</span>
+              <span style="font-size:11px; color:var(--ink-soft);">isi 0 jika tidak ada header</span>
             </div>
           </div>
           <div class="opt-row">
-            <label>Kolom identitas wilayah (opsional)</label>
+            <label>Kolom identitas wilayah</label>
             <select id="idColSelect" disabled><option>— pilih file dulu —</option></select>
           </div>
           <div class="pickers" style="margin-top:0;">
             <div class="opt-row">
-              <label>Kolom Kabupaten/Kota (utk peta)</label>
+              <label>Kolom Kabupaten/Kota (opsional)</label>
               <select id="adminCol1Select" disabled><option>— tidak ada —</option></select>
             </div>
             <div class="opt-row">
-              <label>Kolom Kecamatan (jika wilayah = desa)</label>
+              <label>Kolom Kecamatan (jika desa)</label>
               <select id="adminCol2Select" disabled><option>— tidak ada —</option></select>
             </div>
           </div>
@@ -605,7 +605,7 @@
       <button class="primary" id="downloadExcelBtn">
         <span style="display:inline-flex; align-items:center; gap:7px;">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M12 16l-4-4M12 16l4-4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Download Hasil (Excel)
+          Download Hasil Excel
         </span>
       </button>
     </div>
@@ -788,7 +788,7 @@
       <div class="tab active" data-marshalltab="weight">Bobot per Sarana</div>
       <div class="tab" data-marshalltab="weighted">Sarana Terbobot per Wilayah</div>
       <div class="tab" data-marshalltab="rank">Peringkat Indeks Sentralitas</div>
-      <div class="tab" data-marshalltab="class">Hirarki (Sturges)</div>
+      <div class="tab" data-marshalltab="class">Hirarki Marshall</div>
     </div>
 
     <div class="tabpanel active" id="marshallPanelWeight">
@@ -856,8 +856,8 @@
         <label>Level Administrasi Wilayah</label>
         <select id="mapAdminLevelSelect">
           <option value="" selected disabled>-pilih skala-</option>
-          <option value="desa">Desa/Kelurahan (pakai SHP titik desa)</option>
-          <option value="kecamatan">Kecamatan/Kabupaten (pakai Nominatim)</option>
+          <option value="desa">Desa/Kelurahan</option>
+          <option value="kecamatan">Kecamatan/Kabupaten-Kota</option>
         </select>
       </div>
       <div class="opt-row">
@@ -880,7 +880,7 @@
         </div>
         <div class="opts" style="flex:1 1 280px;">
           <div class="opt-row">
-            <label>Atau muat dari URL (misal GitHub raw)</label>
+            <label>Atau muat dari URL</label>
             <input type="text" id="shpUrlInput" placeholder="https://raw.githubusercontent.com/.../data.zip" value="https://raw.githubusercontent.com/hafdz621-netizen/DataDesa/main/data%20desa.zip">
           </div>
           <button class="ghost" id="shpUrlLoadBtn" style="align-self:flex-start;">Muat dari URL</button>
