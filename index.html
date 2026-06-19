@@ -675,14 +675,14 @@
   <section id="sec-hier" class="hidden-section">
     <div class="section-label">
       <div class="section-num">3</div>
-      <div class="section-title">Hirarki Skalogram</div>
+      <div class="section-title">Skalogram Biner</div>
       <div class="section-line"></div>
     </div>
     <div class="tabs">
-      <div class="tab active" data-hiertab="item">Hirarki Item / Fungsi</div>
-      <div class="tab" data-hiertab="resp">Hirarki Wilayah</div>
-      <div class="tab" data-hiertab="class">Klasifikasi (Sturges)</div>
-      <div class="tab" data-hiertab="obs">Matriks Observasi (Error Disorot)</div>
+      <div class="tab active" data-hiertab="item">Peringkat Unit</div>
+      <div class="tab" data-hiertab="resp">Peringkat Wilayah</div>
+      <div class="tab" data-hiertab="class">Hierarki Wilayah</div>
+      <div class="tab" data-hiertab="obs">Matriks Observasi</div>
       <div class="tab" data-hiertab="ideal">Matriks Ideal</div>
     </div>
 
@@ -752,7 +752,7 @@
   <section id="sec-ordo" class="hidden-section">
     <div class="section-label">
       <div class="section-num">4</div>
-      <div class="section-title">Ordo Hirarki Perkotaan — Jumlah Fasilitas</div>
+      <div class="section-title">Hirarki Perkotaan — Jumlah Fasilitas</div>
       <div class="section-line"></div>
     </div>
     <div class="card" style="margin-bottom:20px;">
@@ -775,7 +775,8 @@
     <div class="tabs">
       <div class="tab active" data-ordotab="itemrank">Peringkat Item</div>
       <div class="tab" data-ordotab="rank">Peringkat Wilayah</div>
-      <div class="tab" data-ordotab="class">Klasifikasi Ordo</div>
+      <div class="tab" data-ordotab="class">Hierarki Wilayah</div>
+      <div class="tab" data-ordotab="rawskalo">Tabel Skalogram</div>
     </div>
 
     <div class="tabpanel active" id="ordoPanelItemRank">
@@ -816,6 +817,13 @@
       </div>
       <div class="sturges-formula" id="ordoFormulaDetail"></div>
       <div id="ordoClassContainer"></div>
+    </div>
+
+    <div class="tabpanel" id="ordoPanelRawSkalo">
+      <div class="formula-note" style="margin-top:0; margin-bottom:14px;">
+        Tabel data mentah sesuai urutan baris pada file Excel yang diunggah — <strong>tidak diurutkan ulang</strong>. Nilai adalah jumlah unit fasilitas/sarana per wilayah. Kolom <em>Jml Fasilitas</em> = total unit seluruh sarana per wilayah; kolom <em>Jenis Ada</em> = jumlah jenis sarana yang tersedia (&gt; 0). Baris <em>TOTAL</em> di bagian bawah = jumlah keseluruhan per kolom sarana.
+      </div>
+      <div class="matrix-wrap"><div id="ordoRawSkaloTable"></div></div>
     </div>
   </section>
 
@@ -1311,7 +1319,7 @@
     };
 
     renderResults(result, invalidCellCount);
-    renderOrdoHirarki(ordoResult);
+    renderOrdoHirarki(ordoResult, {itemNames, respNames, rawMatrix});
     renderMarshall(marshallResult);
 
     document.getElementById('sec-summary').classList.remove('hidden-section');
@@ -1803,7 +1811,7 @@
   }
 
   // ---------- Render: Ordo Hirarki (jumlah fasilitas mentah) ----------
-  function renderOrdoHirarki(ordo){
+  function renderOrdoHirarki(ordo, rawState){
     // item ranking list (jenis sarana berdasarkan total unit di seluruh wilayah)
     const itemListEl = document.getElementById('ordoItemRankList');
     itemListEl.innerHTML = '';
@@ -1841,6 +1849,64 @@
       {stN:'ordoStN', stK:'ordoStK', stRange:'ordoStRange', stSpan:'ordoStSpan', stInterval:'ordoStInterval'},
       'wilayah', 'jumlah fasilitas', false
     );
+
+    // tabel data mentah (urutan sesuai file asli)
+    renderRawSkalogram(rawState);
+  }
+
+  // ---------- Render: Tabel Data Mentah (urutan file asli + totals) ----------
+  function renderRawSkalogram(state){
+    const { itemNames, respNames, rawMatrix } = state;
+    const N = respNames.length;
+    const n = itemNames.length;
+
+    // per-row totals
+    const rowTotals = rawMatrix.map(row => row.reduce((s,v)=>s+v,0));
+    const rowJenis  = rawMatrix.map(row => row.reduce((s,v)=>s+(v>0?1:0),0));
+
+    // per-column totals
+    const colTotals = itemNames.map((_, j) => rawMatrix.reduce((s, row) => s + row[j], 0));
+    const grandTotal = rowTotals.reduce((s,v)=>s+v,0);
+    const grandJenis = colTotals.reduce((s,v)=>s+(v>0?1:0),0);
+
+    let html = '<table class="matrix" style="font-size:12px;">';
+
+    // ── header ──────────────────────────────────────────────────
+    html += '<thead><tr><th class="corner" style="min-width:90px;">Wilayah</th>';
+    itemNames.forEach(name => {
+      html += `<th title="${escapeHtml(name)}">${escapeHtml(truncate(name, 12))}</th>`;
+    });
+    html += '<th style="background:#1a4a2e;white-space:nowrap;">Jml Fasilitas</th>';
+    html += '<th style="background:#1a4a2e;white-space:nowrap;">Jenis Ada</th>';
+    html += '</tr></thead>';
+
+    // ── body rows (original order) ───────────────────────────────
+    html += '<tbody>';
+    for (let i = 0; i < N; i++){
+      html += `<tr><th title="${escapeHtml(respNames[i])}">${escapeHtml(truncate(respNames[i], 18))}</th>`;
+      for (let j = 0; j < n; j++){
+        const v = rawMatrix[i][j];
+        const cls = v > 0 ? 'one' : 'zero';
+        html += `<td class="${cls}">${v}</td>`;
+      }
+      html += `<td class="score" style="font-weight:700;">${rowTotals[i]}</td>`;
+      html += `<td class="score">${rowJenis[i]}</td>`;
+      html += '</tr>';
+    }
+    html += '</tbody>';
+
+    // ── footer / total row ───────────────────────────────────────
+    html += '<tfoot><tr>';
+    html += `<th style="background:var(--ink);color:#fff;text-align:left;padding:7px 8px;font-family:\'JetBrains Mono\',monospace;font-size:11px;">TOTAL</th>`;
+    colTotals.forEach(ct => {
+      html += `<td style="background:var(--paper-deep);font-family:\'JetBrains Mono\',monospace;font-weight:700;text-align:center;border:1px solid #000;">${ct}</td>`;
+    });
+    html += `<td style="background:var(--navy);color:#fff;font-family:\'JetBrains Mono\',monospace;font-weight:700;text-align:center;border:1px solid #000;">${grandTotal}</td>`;
+    html += `<td style="background:var(--navy);color:#fff;font-family:\'JetBrains Mono\',monospace;font-weight:700;text-align:center;border:1px solid #000;">${grandJenis}</td>`;
+    html += '</tr></tfoot>';
+
+    html += '</table>';
+    document.getElementById('ordoRawSkaloTable').innerHTML = html;
   }
 
   // ---------- Render: Indeks Sentralitas Marshall ----------
@@ -1907,7 +1973,7 @@
     tab.addEventListener('click', () => {
       document.querySelectorAll('[data-ordotab]').forEach(t=>t.classList.remove('active'));
       tab.classList.add('active');
-      const ordoPanelMap = {itemrank:'ordoPanelItemRank', rank:'ordoPanelRank', class:'ordoPanelClass'};
+      const ordoPanelMap = {itemrank:'ordoPanelItemRank', rank:'ordoPanelRank', class:'ordoPanelClass', rawskalo:'ordoPanelRawSkalo'};
       Object.values(ordoPanelMap).forEach(id => document.getElementById(id).classList.remove('active'));
       document.getElementById(ordoPanelMap[tab.dataset.ordotab]).classList.add('active');
     });
