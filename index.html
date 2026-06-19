@@ -759,7 +759,7 @@
         Metode langsung: ordo wilayah ditentukan dari <strong>total jumlah unit fasilitas/sarana</strong> yang dimiliki. Semakin banyak dan lengkap fasilitasnya, semakin tinggi ordo perkotaannya.
       </div>
       <details class="excel-formula">
-        <summary>\u0192x Lihat rumus Excel</summary>
+        <summary>\fx rumus Excel</summary>
         <div class="ef-body">
           <div class="ef-row"><span class="ef-desc">Total fasilitas per wilayah (jumlah baris):</span></div>
           <code>=SUM(B2:Z2)</code>
@@ -830,7 +830,7 @@
         Bobot tiap sarana = 100 \u00F7 (jumlah wilayah yang memiliki sarana tersebut) — sarana yang langka/eksklusif mendapat bobot lebih tinggi. Nilai sentralitas tiap sel = jumlah unit sarana \u00D7 bobot sarana. Indeks Sentralitas wilayah = total nilai sentralitas seluruh sarana pada wilayah tersebut.
       </div>
       <details class="excel-formula">
-        <summary>\u0192x Lihat rumus Excel</summary>
+        <summary>fx Lihat rumus Excel</summary>
         <div class="ef-body">
           <div class="ef-row"><span class="ef-desc">Bobot sarana (di baris bantu, per kolom sarana):</span></div>
           <code>=100/COUNTIF(B2:B100,"&gt;0")</code>
@@ -852,7 +852,7 @@
     <div class="tabpanel active" id="marshallPanelWeight">
       <div class="formula-note" style="margin-top:0; margin-bottom:14px;">Bobot tiap sarana = 100 \u00F7 jumlah wilayah yang memiliki sarana tersebut (kolom "Jml Wilayah Memiliki"). Sarana yang langka/eksklusif otomatis mendapat bobot lebih tinggi.
         <details class="excel-formula">
-          <summary>\u0192x Lihat rumus Excel</summary>
+          <summary>fx Lihat rumus Excel</summary>
           <div class="ef-body">
             <div class="ef-row"><span class="ef-desc">Bobot sarana (per kolom sarana):</span></div>
             <code>=100/COUNTIF(B2:B100,"&gt;0")</code>
@@ -865,7 +865,7 @@
     <div class="tabpanel" id="marshallPanelWeighted">
       <div class="formula-note" style="margin-top:0; margin-bottom:14px;">Nilai setiap sel = jumlah unit sarana di wilayah tersebut &times; bobot sarana (lihat tab "Bobot per Sarana"). Kolom paling kanan adalah Indeks Sentralitas (total per wilayah).
         <details class="excel-formula">
-          <summary>\u0192x Lihat rumus Excel</summary>
+          <summary>fx Lihat rumus Excel</summary>
           <div class="ef-body">
             <div class="ef-row"><span class="ef-desc">Sel terbobot:</span></div>
             <code>=UnitSarana*BobotSarana</code>
@@ -1491,7 +1491,7 @@
     }
     document.getElementById('formulaNote').innerHTML = escapeHtml(note) + `
       <details class="excel-formula">
-        <summary>\u0192x Lihat rumus Excel</summary>
+        <summary>fx Lihat rumus Excel</summary>
         <div class="ef-body">
           <div class="ef-row"><span class="ef-desc">CR (bandingkan matriks observasi vs matriks ideal):</span></div>
           <code>=1-(SUMPRODUCT(--(ObsRange&lt;&gt;IdealRange))/(JumlahItem*JumlahResponden))</code>
@@ -1680,7 +1680,7 @@
         `Interval kelas = rentang / k = ${fmtVal(cr.span)} / ${cr.k} = ${(cr.span/cr.k).toFixed(3)} \u2192 dibulatkan ke atas menjadi ${fmtVal(cr.interval)}.`);
       if (showExcelFormula){
         html += `<details class="excel-formula">
-          <summary>\u0192x Lihat rumus Excel</summary>
+          <summary>fx Lihat rumus Excel</summary>
           <div class="ef-body">
             <div class="ef-row"><span class="ef-desc">Jumlah kelas (k):</span></div>
             <code>=ROUNDUP(1+3.322*LOG10(JumlahWilayah),0)</code>
