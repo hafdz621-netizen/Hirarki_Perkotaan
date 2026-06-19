@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Skalogram Guttman — Analisis Hirarki</title>
+<title>Skalogram Perkotaan — Analisis Hirarki</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
@@ -349,6 +349,7 @@
   }
 
   .item-hier .hier-bar-fill{background:linear-gradient(90deg, var(--gold), var(--brick-soft));}
+  .item-hier-bar{background:linear-gradient(90deg, var(--gold), var(--brick-soft))!important;}
 
   footer{
     margin-top:60px;
@@ -570,7 +571,7 @@
   <header class="masthead">
     <div class="masthead-left">
       <span class="eyebrow">Hierarki Perkotaan &middot; Urban Analysist</span>
-      <h1>Skalogram Guttman</h1>
+      <h1>Skalogram Perkotaan</h1>
       <div class="subtitle">Import data dari Excel, urutkan otomatis, dan baca hirarki, matriks ideal/observasi, error, serta Coefficient of Reproducibility.</div>
     </div>
     <div class="masthead-right">
@@ -1813,7 +1814,7 @@
       row.innerHTML = `
         <div class="hier-rank" style="background:${rankColor(idx, ordo.sortedItemNames.length)}">${idx+1}</div>
         <div class="hier-name" title="${escapeHtml(name)}">${escapeHtml(truncate(name, 22))}</div>
-        <div class="hier-bar-track"><div class="hier-bar-fill" style="width:${(ordo.sortedItemTotals[idx]/maxItemTotal*100).toFixed(1)}%"></div></div>
+        <div class="hier-bar-track"><div class="hier-bar-fill item-hier-bar" style="width:${(ordo.sortedItemTotals[idx]/maxItemTotal*100).toFixed(1)}%"></div></div>
         <div class="hier-score">${ordo.sortedItemTotals[idx]} unit</div>
       `;
       itemListEl.appendChild(row);
@@ -1829,7 +1830,7 @@
       row.innerHTML = `
         <div class="hier-rank" style="background:${rankColor(idx, ordo.sortedNames.length)}">${idx+1}</div>
         <div class="hier-name" title="${escapeHtml(name)}">${escapeHtml(truncate(name, 22))}</div>
-        <div class="hier-bar-track"><div class="hier-bar-fill class-fill" style="width:${(ordo.sortedTotals[idx]/maxTotal*100).toFixed(1)}%"></div></div>
+        <div class="hier-bar-track"><div class="hier-bar-fill" style="width:${(ordo.sortedTotals[idx]/maxTotal*100).toFixed(1)}%"></div></div>
         <div class="hier-score">${ordo.sortedTotals[idx]} unit \u00B7 ${ordo.sortedJenis[idx]} jenis</div>
       `;
       listEl.appendChild(row);
@@ -1878,7 +1879,7 @@
       row.innerHTML = `
         <div class="hier-rank" style="background:${rankColor(idx, m.sortedNames.length)}">${idx+1}</div>
         <div class="hier-name" title="${escapeHtml(name)}">${escapeHtml(truncate(name, 22))}</div>
-        <div class="hier-bar-track"><div class="hier-bar-fill class-fill" style="width:${(m.sortedIndex[idx]/maxIdx*100).toFixed(1)}%"></div></div>
+        <div class="hier-bar-track"><div class="hier-bar-fill" style="width:${(m.sortedIndex[idx]/maxIdx*100).toFixed(1)}%"></div></div>
         <div class="hier-score">${m.sortedIndex[idx].toFixed(2)}</div>
       `;
       listEl.appendChild(row);
