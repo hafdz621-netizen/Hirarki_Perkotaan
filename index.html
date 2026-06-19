@@ -1500,6 +1500,10 @@
           <code>=SUM(BarisModal)/(JumlahItem*JumlahResponden)</code>
           <div class="ef-row"><span class="ef-desc">CS:</span></div>
           <code>=(CR-MMR)/(1-MMR)</code>
+           <div class="ef-row"><span class="ef-desc">pembuatan matriks observasi:</span></div>
+          <code>=if(table>0;1;0) | jika sarana di wilayah a = ada, maka 1 dan jika sebaliknya, 0</code>
+          <div class="ef-row"><span class="ef-desc">pembuatan matriks ideal:</span></div>
+          <code>RUMUS: =IF(COLUMN(B2)-COLUMN($B$2+1 <= $B2, 1, 0)  |  Jika posisi kolom ≤ total fasilitas kecamatan → 1, selainnya → 0</code>
         </div>
       </details>
     `;
