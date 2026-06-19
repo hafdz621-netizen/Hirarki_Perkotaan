@@ -289,11 +289,11 @@
     text-align:left;
     position:sticky; left:0;
   }
-  table.matrix td.one{color:var(--navy); font-weight:700;}
-  table.matrix td.zero{color:#8b8f91;}
+  table.matrix td.one{background:#B2DFDB; color:#000000; font-weight:700;}
+  table.matrix td.zero{background:#DEC66C; color:#000000;}
   table.matrix td.mismatch{
-    background:var(--bad-bg);
-    color:var(--brick);
+    background:#C00000;
+    color:#D9D9D9;
     font-weight:700;
     position:relative;
   }
@@ -734,9 +734,9 @@
     <div class="tabpanel" id="hierPanelObs">
       <div class="matrix-wrap"><div id="obsMatrix"></div></div>
       <div class="legend">
-        <span><span class="swatch" style="background:var(--navy);"></span> Jawaban "1" (sesuai pola)</span>
-        <span><span class="swatch" style="background:#cfcecd;"></span> Jawaban "0"</span>
-        <span><span class="swatch" style="background:var(--bad-bg); border:1px solid var(--brick);"></span> Error (menyimpang dari pola ideal)</span>
+        <span><span class="swatch" style="background:#B2DFDB; border:1px solid #000;"></span> Jawaban "1" (sesuai pola)</span>
+        <span><span class="swatch" style="background:#DEC66C; border:1px solid #000;"></span> Jawaban "0"</span>
+        <span><span class="swatch" style="background:#C00000; border:1px solid #000;"></span> Error (menyimpang dari pola ideal)</span>
       </div>
     </div>
 
