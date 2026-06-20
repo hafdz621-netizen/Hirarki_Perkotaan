@@ -2047,7 +2047,7 @@
   function renderMarshall(m){
     // weight table per facility
     const wrap = document.getElementById('marshallWeightTable');
-    let html = '<table class="matrix"><thead><tr><th class="corner">Sarana</th><th>Wilayah Memiliki</th><th>Total Unit (c)</th><th>Bobot (100/c)</th></tr></thead><tbody>';
+    let html = '<table class="matrix"><thead><tr><th class="corner">Sarana</th><th>Jml Wilayah Memiliki</th><th>Total Unit (c)</th><th>Bobot (100/c)</th></tr></thead><tbody>';
     m.sortedItemNames.forEach((name, idx) => {
       html += `<tr><th style="text-align:left;">${escapeHtml(name)}</th><td class="score">${m.sortedPresence[idx]}</td><td class="score">${m.sortedTotalUnits[idx]}</td><td class="score">${m.sortedWeights[idx].toFixed(3)}</td></tr>`;
     });
@@ -2424,6 +2424,22 @@
     const ws7 = XLSX.utils.aoa_to_sheet(s7);
     styleSheetColumns(ws7, [12, 24, 16, 16, 14, 14, 60]);
     XLSX.utils.book_append_sheet(wb, ws7, '7. Hirarki Langsung');
+
+    // ============ SHEET 8: Referensi Tingkat Hierarki Sarana (tiebreaker) ============
+    const s8 = [];
+    s8.push(['REFERENSI TINGKAT HIERARKI SARANA  (tiebreaker urutan skalogram)']);
+    s8.push(['Tingkat 1 = hierarki tertinggi/paling eksklusif. Tingkat lebih besar = lebih dasar/umum.']);
+    s8.push([]);
+    s8.push(['Jenis Sarana / Item', 'Tingkat Hierarki', 'Label']);
+    const exportHierLevels = readHierLevels(itemNames.length);
+    itemNames.forEach((name, j) => {
+      const lvl = exportHierLevels[j];
+      const label = HIER_LEVEL_LABELS[lvl] || ('Tingkat ' + lvl);
+      s8.push([name, lvl, label]);
+    });
+    const ws8 = XLSX.utils.aoa_to_sheet(s8);
+    styleSheetColumns(ws8, [30, 16, 36]);
+    XLSX.utils.book_append_sheet(wb, ws8, '8. Referensi Hierarki Sarana');
 
     // ============ Trigger download ============
     const ts = new Date();
