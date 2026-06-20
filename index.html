@@ -623,11 +623,11 @@
     <div class="masthead-left">
       <span class="eyebrow">Hierarki Perkotaan &middot; Urban Analysist</span>
       <h1>Skalogram Perkotaan</h1>
-      <div class="subtitle">Import data dari Excel, urutkan otomatis, dan baca hirarki, matriks ideal/observasi, error, serta Coefficient of Reproducibility.</div>
+      <div class="subtitle">Olah data Skalogram otomatis, analisis hirarki perkotaan, indeks sentralitas marskall, analisis kelayakan skalogram, dan display peta skalogram</div>
     </div>
     <div class="masthead-right">
-      METODE: CUTTING POINT<br>
-      KRITERIA: CR ≥ 0.90 &middot; CS ≥ 0.60
+      METODE: SKALOGRAM GUTTMAN<br>
+      INDEKS SENTRALITAS MARSHALL &middot; DENSITAS BINER
     </div>
   </header>
 
@@ -1332,11 +1332,36 @@
     const adminCol2 = parseInt(adminCol2Select.value, 10);
     const excludedCols = new Set([idCol, adminCol1, adminCol2].filter(c => c >= 0));
     const nCols = rows[0].length;
-    const itemCols = [];
+    const rawItemCols = [];
     for (let c=0; c<nCols; c++){
       if (excludedCols.has(c)) continue;
-      itemCols.push(c);
+      rawItemCols.push(c);
     }
+
+    // Filter: hanya kolom yang SEMUA nilai non-kosongnya berupa angka (number, string parseable,
+    // atau boolean yang dikenali seperti ya/tidak). Kolom teks non-numerik otomatis dilewati.
+    const BOOL_VALS = new Set(['ya','yes','y','true','setuju','ada','tidak','no','n','false','tidak setuju','tidak ada']);
+    const skippedStringCols = []; // nama kolom yang dilewati karena mengandung string non-numerik
+    const itemCols = rawItemCols.filter(c => {
+      const hasNonNumeric = rows.some(r => {
+        const v = r[c];
+        if (v === null || v === undefined || v === '') return false; // kosong → OK, dianggap 0
+        if (typeof v === 'number') return false;                     // angka murni → OK
+        if (typeof v === 'string') {
+          const t = v.trim().toLowerCase();
+          if (BOOL_VALS.has(t)) return false;                        // boolean dikenali → OK
+          if (!isNaN(parseFloat(t.replace(',', '.')))) return false; // string angka → OK
+          return true; // ← string non-numerik ditemukan
+        }
+        return false;
+      });
+      if (hasNonNumeric) {
+        const colLabel = (headerRow && headerRow[c] !== null && headerRow[c] !== undefined && headerRow[c] !== '')
+          ? String(headerRow[c]) : ('Kolom ' + (c + 1));
+        skippedStringCols.push(colLabel);
+      }
+      return !hasNonNumeric;
+    });
 
     // build item names
     const itemNames = itemCols.map(c => {
@@ -1407,10 +1432,10 @@
 
     lastAnalysis = {
       itemNames, respNames, rawMatrix, matrix, geocodeQueries, adminComponents,
-      result, ordoResult, marshallResult, invalidCellCount
+      result, ordoResult, marshallResult, invalidCellCount, skippedStringCols
     };
 
-    renderResults(result, invalidCellCount);
+    renderResults(result, invalidCellCount, skippedStringCols);
     renderOrdoHirarki(ordoResult, {itemNames, respNames, rawMatrix});
     renderMarshall(marshallResult);
 
@@ -1612,7 +1637,7 @@
     return x.toFixed(d===undefined?4:d);
   }
 
-  function renderResults(res, invalidCellCount){
+  function renderResults(res, invalidCellCount, skippedStringCols){
     // --- Summary stats
     document.getElementById('statCR').textContent = fmtNum(res.CR,4);
     document.getElementById('statCS').textContent = fmtNum(res.CS,4);
@@ -1631,6 +1656,9 @@
     let note = 'CR = 1 \u2212 (Total Error / (item \u00D7 responden)). CS = (CR \u2212 MMR) / (1 \u2212 MMR), dengan MMR (Minimal Marginal Reproducibility) = ' + fmtNum(res.MMR,4) + '. Kriteria umum: skala baik bila CR \u2265 0.90 dan CS \u2265 0.60.';
     if (invalidCellCount > 0){
       note += ' Catatan: ' + invalidCellCount + ' sel berisi nilai non-numerik dan diperlakukan sebagai 0.';
+    }
+    if (skippedStringCols && skippedStringCols.length > 0){
+      note += ' Kolom berikut dilewati dari analisis karena mengandung data teks non-numerik: \u201C' + skippedStringCols.join('\u201D, \u201C') + '\u201D.';
     }
     document.getElementById('formulaNote').innerHTML = escapeHtml(note) + `
       <details class="excel-formula">
