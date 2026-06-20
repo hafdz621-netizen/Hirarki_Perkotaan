@@ -919,13 +919,13 @@
     </div>
     <div class="card" style="margin-bottom:20px;">
       <div class="subtitle" style="font-size:13px; max-width:none;">
-        Bobot tiap sarana = 100 \u00F7 (jumlah wilayah yang memiliki sarana tersebut) — sarana yang langka/eksklusif mendapat bobot lebih tinggi. Nilai sentralitas tiap sel = jumlah unit sarana \u00D7 bobot sarana. Indeks Sentralitas wilayah = total nilai sentralitas seluruh sarana pada wilayah tersebut.
+        Bobot tiap sarana = 100 \u00F7 (jumlah total unit sarana tersebut di seluruh wilayah studi) — sarana yang jumlah unitnya langka/sedikit mendapat bobot lebih tinggi. Nilai sentralitas tiap sel = jumlah unit sarana \u00D7 bobot sarana. Indeks Sentralitas wilayah = total nilai sentralitas seluruh sarana pada wilayah tersebut.
       </div>
       <details class="excel-formula">
         <summary>fx Lihat rumus Excel</summary>
         <div class="ef-body">
           <div class="ef-row"><span class="ef-desc">Bobot sarana (di baris bantu, per kolom sarana):</span></div>
-          <code>=100/COUNTIF(B2:B100,"&gt;0")</code>
+          <code>=100/SUM(B2:B100)</code>
           <div class="ef-row"><span class="ef-desc">Nilai sentralitas tiap sel (unit &times; bobot sarana, bobot di baris 101):</span></div>
           <code>=B2*B$101</code>
           <div class="ef-row"><span class="ef-desc">Indeks Sentralitas wilayah (jumlah satu baris sel terbobot):</span></div>
@@ -942,12 +942,12 @@
     </div>
 
     <div class="tabpanel active" id="marshallPanelWeight">
-      <div class="formula-note" style="margin-top:0; margin-bottom:14px;">Bobot tiap sarana = 100 \u00F7 jumlah wilayah yang memiliki sarana tersebut (kolom "Jml Wilayah Memiliki"). Sarana yang langka/eksklusif otomatis mendapat bobot lebih tinggi.
+      <div class="formula-note" style="margin-top:0; margin-bottom:14px;">Bobot tiap sarana = 100 \u00F7 jumlah total unit sarana tersebut di seluruh wilayah studi (kolom "Total Unit (c)"). Sarana yang jumlah unitnya langka/sedikit otomatis mendapat bobot lebih tinggi.
         <details class="excel-formula">
           <summary>fx Lihat rumus Excel</summary>
           <div class="ef-body">
             <div class="ef-row"><span class="ef-desc">Bobot sarana (per kolom sarana):</span></div>
-            <code>=100/COUNTIF(B2:B100,"&gt;0")</code>
+            <code>=100/SUM(B2:B100)</code>
           </div>
         </details>
       </div>
@@ -2047,7 +2047,7 @@
   function renderMarshall(m){
     // weight table per facility
     const wrap = document.getElementById('marshallWeightTable');
-    let html = '<table class="matrix"><thead><tr><th class="corner">Sarana</th><th>Jml Wilayah Memiliki</th><th>Total Unit (c)</th><th>Bobot (100/c)</th></tr></thead><tbody>';
+    let html = '<table class="matrix"><thead><tr><th class="corner">Sarana</th><th>Wilayah Memiliki</th><th>Total Unit (c)</th><th>Bobot (100/c)</th></tr></thead><tbody>';
     m.sortedItemNames.forEach((name, idx) => {
       html += `<tr><th style="text-align:left;">${escapeHtml(name)}</th><td class="score">${m.sortedPresence[idx]}</td><td class="score">${m.sortedTotalUnits[idx]}</td><td class="score">${m.sortedWeights[idx].toFixed(3)}</td></tr>`;
     });
