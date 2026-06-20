@@ -736,10 +736,10 @@
       <div class="hierref-head">
         <div>
           <div class="hierref-title">Referensi Tingkat Hierarki Sarana <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--navy-soft); font-style:normal; font-weight:400; margin-left:8px;">— tiebreaker urutan skalogram</span></div>
-          <div class="hierref-desc">Tetapkan tingkat hierarki tiap jenis sarana. <strong>Tingkat 1 = hierarki tertinggi</strong> (paling eksklusif, misal Rumah Sakit, Universitas). Tingkat lebih besar = lebih dasar/umum. Digunakan sebagai <em>tiebreaker</em> ketika dua item atau dua wilayah memiliki jumlah yang sama persis — item lebih dasar tampil lebih kiri; wilayah dengan sarana lebih tinggi hierarkinya tampil lebih atas.</div>
+          <div class="hierref-desc">Tetapkan tingkat hierarki tiap jenis sarana. <strong>Tingkat 1 = hierarki tertinggi</strong> (paling eksklusif, misal Rumah Sakit, Universitas). Tingkat lebih besar = lebih dasar/umum. Digunakan sebagai <em>tiebreaker</em> ketika dua item atau dua wilayah memiliki jumlah yang sama persis — item lebih dasar tampil lebih kiri; wilayah dengan sarana lebih tinggi hierarkinya tampil lebih atas. Nilai di bawah sudah <strong>diisi otomatis</strong> berdasarkan jumlah wilayah pemilik tiap sarana (lebih sedikit wilayah = tingkat lebih tinggi) dengan rata-rata unit per wilayah sebagai tiebreaker — tetap bisa diedit manual sesuai penilaian Anda.</div>
         </div>
         <div class="hierref-actions">
-          <button class="ghost" id="hierRefResetBtn" style="font-size:12px; padding:7px 13px;">Reset (semua = 1)</button>
+          <button class="ghost" id="hierRefResetBtn" style="font-size:12px; padding:7px 13px;">Reset ke Otomatis</button>
           <button class="primary" id="applyHierRefBtn">Terapkan &amp; Hitung Ulang</button>
         </div>
       </div>
@@ -1101,6 +1101,7 @@
   let currentFileName = "";
   let lastAnalysis = null; // holds everything needed for Excel export
   let hierLevels = null;   // array[j] = hierarchy tier for item j (1=highest, bigger=lower)
+  let autoHierLevels = null; // array[j] = auto-suggested tier (presence count + avg unit tiebreaker), used by Reset
 
   const fileInput = document.getElementById('fileInput');
   const dropzone = document.getElementById('dropzone');
@@ -1398,7 +1399,7 @@
     }
 
     hierLevels = null; // reset on new analysis (new item set)
-    buildHierRefPanel(itemNames);
+    buildHierRefPanel(itemNames, rawMatrix);
 
     const result = computeGuttman(matrix, itemNames, respNames, hierLevels);
     const ordoResult = computeOrdoHirarki(rawMatrix, itemNames, respNames, hierLevels);
@@ -2102,16 +2103,50 @@
     'Tingkat X — Paling dasar/umum',
   ];
 
-  function buildHierRefPanel(itemNames){
+  // Saran otomatis tingkat hierarki, dasar: jumlah wilayah pemilik (presence count) sebagai
+  // kunci utama (makin sedikit wilayah yang punya = makin eksklusif = makin tinggi tingkatnya),
+  // lalu rata-rata unit per wilayah pemilik sebagai tiebreaker (makin kecil rata-rata = makin tinggi).
+  // Hasil rank dipetakan merata ke 10 tingkat (rank-based/equal-frequency) supaya semua tingkat
+  // terpakai, bukan numpuk di satu tingkat saja kalau presence count-nya banyak yang sama.
+  function computeAutoHierLevels(itemNames, rawMatrix){
+    const n = itemNames.length;
+    const N = rawMatrix.length;
+    const presenceCount = new Array(n).fill(0);
+    const itemSum = new Array(n).fill(0);
+    for (let i=0;i<N;i++){
+      for (let j=0;j<n;j++){
+        const v = rawMatrix[i][j];
+        if (v > 0){ presenceCount[j]++; itemSum[j] += v; }
+      }
+    }
+    const avgUnit = presenceCount.map((c,j)=> c>0 ? itemSum[j]/c : 0);
+
+    const order = itemNames.map((_,j)=>j).sort((a,b)=>{
+      const d = presenceCount[a]-presenceCount[b];
+      if (d !== 0) return d;
+      return avgUnit[a]-avgUnit[b];
+    });
+
+    const levels = new Array(n).fill(1);
+    order.forEach((j, rank) => {
+      levels[j] = Math.min(10, Math.max(1, Math.ceil((rank+1) / n * 10)));
+    });
+    return { levels, presenceCount, avgUnit };
+  }
+
+  function buildHierRefPanel(itemNames, rawMatrix){
     const tbody = document.getElementById('hierRefTableBody');
     tbody.innerHTML = '';
+    const auto = computeAutoHierLevels(itemNames, rawMatrix);
+    autoHierLevels = auto.levels;
     itemNames.forEach((name, j) => {
       const tr = document.createElement('tr');
-      const labelText = HIER_LEVEL_LABELS[1] || 'Tingkat 1';
+      const initLevel = auto.levels[j];
+      const labelText = HIER_LEVEL_LABELS[initLevel] || ('Tingkat ' + initLevel);
       tr.innerHTML = `
         <td style="font-family:'Inter',sans-serif; text-align:left;" title="${escapeHtml(name)}">${escapeHtml(truncate(name, 34))}</td>
         <td style="text-align:center;">
-          <input type="number" class="hierref-num" data-item="${j}" min="1" max="10" value="1" step="1">
+          <input type="number" class="hierref-num" data-item="${j}" min="1" max="10" value="${initLevel}" step="1">
         </td>
         <td class="hierref-preview" id="hierRefLbl_${j}">${escapeHtml(labelText)}</td>
       `;
@@ -2158,10 +2193,11 @@
 
   document.getElementById('hierRefResetBtn').addEventListener('click', () => {
     document.querySelectorAll('.hierref-num').forEach(inp => {
-      inp.value = 1;
-      const j = inp.dataset.item;
+      const j = parseInt(inp.dataset.item);
+      const v = (autoHierLevels && autoHierLevels[j]) ? autoHierLevels[j] : 1;
+      inp.value = v;
       const el = document.getElementById('hierRefLbl_' + j);
-      if (el) el.textContent = HIER_LEVEL_LABELS[1] || 'Tingkat 1';
+      if (el) el.textContent = HIER_LEVEL_LABELS[v] || ('Tingkat ' + v);
     });
   });
 
