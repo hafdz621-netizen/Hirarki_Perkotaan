@@ -1555,21 +1555,26 @@
   }
 
   // ---------- Indeks Sentralitas Marshall ----------
-  // Bobot sarana j = 100 / (jumlah wilayah yang memiliki sarana j, yaitu count>0)
+  // Mengikuti Yadav (1986), sebagaimana dikutip dalam literatur perencanaan wilayah Indonesia
+  // (mis. Apriana & Rudiarto, 2020, Jurnal Tunas Geografi):
+  // Bobot sarana j (N) = 100 / c, dengan c = jumlah TOTAL UNIT sarana j di seluruh wilayah studi
+  // (bukan jumlah wilayah yang memiliki sarana j).
   // Nilai sentralitas sel(i,j) = jumlah unit sarana j di wilayah i * bobot sarana j
   // Indeks Sentralitas wilayah i = jumlah seluruh nilai sentralitas pada baris i
   function computeMarshall(rawMatrix, itemNames, respNames){
     const N = rawMatrix.length;
     const n = itemNames.length;
 
-    const itemPresenceCount = new Array(n).fill(0); // jumlah wilayah yg punya sarana j (>0)
+    const itemPresenceCount = new Array(n).fill(0); // jumlah wilayah yg punya sarana j (>0) — info tambahan saja
+    const itemTotalUnits = new Array(n).fill(0);     // c = total unit sarana j di seluruh wilayah studi
     for (let j=0;j<n;j++){
       for (let i=0;i<N;i++){
         if (rawMatrix[i][j] > 0) itemPresenceCount[j]++;
+        itemTotalUnits[j] += rawMatrix[i][j];
       }
     }
 
-    const weights = itemPresenceCount.map(cnt => cnt > 0 ? (100 / cnt) : 0);
+    const weights = itemTotalUnits.map(c => c > 0 ? (100 / c) : 0);
 
     // centrality value matrix
     const centralityMatrix = rawMatrix.map(row => row.map((v,j) => v * weights[j]));
@@ -1589,10 +1594,11 @@
     const sortedItemNames = itemOrder.map(j=>itemNames[j]);
     const sortedWeights = itemOrder.map(j=>weights[j]);
     const sortedPresence = itemOrder.map(j=>itemPresenceCount[j]);
+    const sortedTotalUnits = itemOrder.map(j=>itemTotalUnits[j]);
 
     return {
-      N, n, itemNames, weights, itemPresenceCount,
-      sortedItemNames, sortedWeights, sortedPresence,
+      N, n, itemNames, weights, itemPresenceCount, itemTotalUnits,
+      sortedItemNames, sortedWeights, sortedPresence, sortedTotalUnits,
       sortedNames, sortedIndex, sortedRaw, sortedCentrality, classRes
     };
   }
@@ -2041,9 +2047,9 @@
   function renderMarshall(m){
     // weight table per facility
     const wrap = document.getElementById('marshallWeightTable');
-    let html = '<table class="matrix"><thead><tr><th class="corner">Sarana</th><th>Jml Wilayah Memiliki</th><th>Bobot (100/n)</th></tr></thead><tbody>';
+    let html = '<table class="matrix"><thead><tr><th class="corner">Sarana</th><th>Jml Wilayah Memiliki</th><th>Total Unit (c)</th><th>Bobot (100/c)</th></tr></thead><tbody>';
     m.sortedItemNames.forEach((name, idx) => {
-      html += `<tr><th style="text-align:left;">${escapeHtml(name)}</th><td class="score">${m.sortedPresence[idx]}</td><td class="score">${m.sortedWeights[idx].toFixed(3)}</td></tr>`;
+      html += `<tr><th style="text-align:left;">${escapeHtml(name)}</th><td class="score">${m.sortedPresence[idx]}</td><td class="score">${m.sortedTotalUnits[idx]}</td><td class="score">${m.sortedWeights[idx].toFixed(3)}</td></tr>`;
     });
     html += '</tbody></table>';
     wrap.innerHTML = html;
@@ -2366,10 +2372,10 @@
     const s5 = [];
     s5.push(['ANALISIS INDEKS SENTRALITAS MARSHALL']);
     s5.push([]);
-    s5.push(['TABEL PEMBOBOTAN SARANA  (Bobot = 100 / Jumlah Wilayah yang Memiliki Sarana)']);
-    s5.push(['Sarana', 'Jumlah Wilayah Memiliki', 'Bobot']);
+    s5.push(['TABEL PEMBOBOTAN SARANA  (Bobot = 100 / Jumlah Total Unit Sarana di Seluruh Wilayah Studi)']);
+    s5.push(['Sarana', 'Jumlah Wilayah Memiliki', 'Total Unit (c)', 'Bobot']);
     marshallResult.sortedItemNames.forEach((name, idx) => {
-      s5.push([name, marshallResult.sortedPresence[idx], Number(marshallResult.sortedWeights[idx].toFixed(4))]);
+      s5.push([name, marshallResult.sortedPresence[idx], marshallResult.sortedTotalUnits[idx], Number(marshallResult.sortedWeights[idx].toFixed(4))]);
     });
     s5.push([]);
     s5.push(['TABEL DATA MENTAH YANG DIBOBOTKAN  (nilai sel = jumlah unit × bobot sarana)']);
