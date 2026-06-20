@@ -563,6 +563,57 @@
   .map-empty-note{
     font-size:13px; color:var(--ink-soft); padding:30px; text-align:center;
   }
+
+  /* Hierarchy reference panel */
+  .hierref-card{
+    background:#f4f1ef;
+    border:1px solid var(--line);
+    border-left:5px solid var(--navy-soft);
+    border-radius:3px;
+    padding:20px 22px;
+    margin-bottom:18px;
+  }
+  .hierref-head{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:14px;
+  }
+  .hierref-title{
+    font-family:'Source Serif 4',serif; font-weight:600; font-size:15px; color:var(--ink);
+  }
+  .hierref-desc{
+    font-size:12px; color:var(--ink-soft); margin-top:4px; max-width:560px; line-height:1.55;
+  }
+  .hierref-actions{display:flex; gap:10px; align-items:center; flex-shrink:0; flex-wrap:wrap;}
+  .hierref-scroll{overflow-x:auto; overflow-y:auto; max-height:280px; border:1px solid var(--line); border-radius:3px;}
+  table.hierref-tbl{
+    border-collapse:collapse;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    width:100%;
+    min-width:440px;
+  }
+  table.hierref-tbl th, table.hierref-tbl td{
+    border:1px solid var(--line);
+    padding:6px 10px;
+  }
+  table.hierref-tbl thead th{
+    background:var(--navy); color:#fff; font-weight:600; font-size:11px; white-space:nowrap; text-align:left; position:sticky; top:0;
+  }
+  table.hierref-tbl tbody tr:nth-child(even){background:#ece9e6;}
+  table.hierref-tbl tbody tr:nth-child(odd){background:#f8f5f2;}
+  .hierref-num{
+    width:58px; text-align:center;
+    font-family:'JetBrains Mono',monospace; font-size:13px;
+    padding:4px 6px;
+    border:1px solid var(--line); border-radius:2px;
+    background:#fff;
+  }
+  .hierref-preview{font-size:11px; color:var(--navy-soft); font-style:italic;}
+  .hierref-note{
+    margin-top:12px; font-size:11.5px; color:var(--ink-soft);
+    background:rgba(6,145,193,0.07);
+    border-left:3px solid var(--navy-soft);
+    padding:8px 12px; border-radius:0 3px 3px 0;
+  }
 </style>
 </head>
 <body>
@@ -677,7 +728,39 @@
       <div class="section-num">3</div>
       <div class="section-title">Skalogram Biner</div>
       <div class="section-line"></div>
+      <button class="ghost" id="hierRefToggleBtn" style="display:none; font-size:12px; padding:7px 13px; flex-shrink:0;">⚙ Referensi Hierarki</button>
     </div>
+
+    <!-- Referensi Hierarki Sarana (tiebreaker) -->
+    <div id="hierRefCard" class="hierref-card" style="display:none;">
+      <div class="hierref-head">
+        <div>
+          <div class="hierref-title">Referensi Tingkat Hierarki Sarana <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--navy-soft); font-style:normal; font-weight:400; margin-left:8px;">— tiebreaker urutan skalogram</span></div>
+          <div class="hierref-desc">Tetapkan tingkat hierarki tiap jenis sarana. <strong>Tingkat 1 = hierarki tertinggi</strong> (paling eksklusif, misal Rumah Sakit, Universitas). Tingkat lebih besar = lebih dasar/umum. Digunakan sebagai <em>tiebreaker</em> ketika dua item atau dua wilayah memiliki jumlah yang sama persis — item lebih dasar tampil lebih kiri; wilayah dengan sarana lebih tinggi hierarkinya tampil lebih atas.</div>
+        </div>
+        <div class="hierref-actions">
+          <button class="ghost" id="hierRefResetBtn" style="font-size:12px; padding:7px 13px;">Reset (semua = 1)</button>
+          <button class="primary" id="applyHierRefBtn">Terapkan &amp; Hitung Ulang</button>
+        </div>
+      </div>
+      <div class="hierref-scroll">
+        <table class="hierref-tbl">
+          <thead><tr>
+            <th style="min-width:200px;">Jenis Sarana / Item</th>
+            <th style="min-width:110px; text-align:center;">Tingkat Hierarki</th>
+            <th style="min-width:160px;">Label</th>
+          </tr></thead>
+          <tbody id="hierRefTableBody"></tbody>
+        </table>
+      </div>
+      <div class="hierref-note">
+        <strong>Logika tiebreaker:</strong>
+        Item — jika total kepemilikan sama, sarana bertingkat lebih besar (lebih dasar) ditempatkan lebih kiri di matriks.
+        Wilayah — jika skor sama, wilayah yang memiliki sarana bertingkat lebih kecil (lebih eksklusif) ditempatkan lebih atas.
+        Jika semua tingkat sama (default = 1), urutan mengikuti indeks kolom asli file.
+      </div>
+    </div>
+
     <div class="tabs">
       <div class="tab active" data-hiertab="item">Peringkat Persebaran Item</div>
       <div class="tab" data-hiertab="resp">Peringkat Kelengkapan Item Wilayah</div>
@@ -1017,6 +1100,7 @@
   let workbookData = null; // raw rows from sheet
   let currentFileName = "";
   let lastAnalysis = null; // holds everything needed for Excel export
+  let hierLevels = null;   // array[j] = hierarchy tier for item j (1=highest, bigger=lower)
 
   const fileInput = document.getElementById('fileInput');
   const dropzone = document.getElementById('dropzone');
@@ -1167,6 +1251,10 @@
     document.getElementById('sec-ordo').classList.add('hidden-section');
     document.getElementById('sec-marshall').classList.add('hidden-section');
     document.getElementById('sec-map').classList.add('hidden-section');
+    document.getElementById('hierRefCard').style.display = 'none';
+    document.getElementById('hierRefToggleBtn').style.display = 'none';
+    document.getElementById('hierRefToggleBtn').textContent = '\u2699 Referensi Hierarki';
+    hierLevels = null;
   });
 
   // ---------- Sample data ----------
@@ -1309,8 +1397,11 @@
       return;
     }
 
-    const result = computeGuttman(matrix, itemNames, respNames);
-    const ordoResult = computeOrdoHirarki(rawMatrix, itemNames, respNames);
+    hierLevels = null; // reset on new analysis (new item set)
+    buildHierRefPanel(itemNames);
+
+    const result = computeGuttman(matrix, itemNames, respNames, hierLevels);
+    const ordoResult = computeOrdoHirarki(rawMatrix, itemNames, respNames, hierLevels);
     const marshallResult = computeMarshall(rawMatrix, itemNames, respNames);
 
     lastAnalysis = {
@@ -1331,7 +1422,10 @@
   }
 
   // Core Guttman scalogram computation
-  function computeGuttman(matrix, itemNames, respNames){
+  // hl = hierLevels array (optional). hl[j] = tier (1=highest/most specialized, bigger=more basic).
+  // Tiebreaker items: same total → more basic (higher hl) comes LEFT.
+  // Tiebreaker resp: same score → more specialized holdings (lower hierSum) comes TOP.
+  function computeGuttman(matrix, itemNames, respNames, hl){
     const N = matrix.length;       // respondents
     const n = itemNames.length;    // items
 
@@ -1339,14 +1433,30 @@
     const itemTotals = new Array(n).fill(0);
     for (let i=0;i<N;i++) for (let j=0;j<n;j++) itemTotals[j] += matrix[i][j];
 
-    // item order: descending by total (most endorsed first)
-    const itemOrder = itemTotals.map((t,j)=>j).sort((a,b)=> itemTotals[b]-itemTotals[a]);
+    // item order: descending by total; tiebreaker: descending by hl (higher tier# = more basic = left)
+    const itemOrder = itemTotals.map((t,j)=>j).sort((a,b)=> {
+      const d = itemTotals[b]-itemTotals[a];
+      if (d !== 0) return d;
+      const ha = hl ? (hl[a]||1) : 1;
+      const hb = hl ? (hl[b]||1) : 1;
+      return hb - ha; // higher level# (more basic) comes first/left
+    });
 
     // respondent totals
     const respTotals = matrix.map(row => row.reduce((s,v)=>s+v,0));
 
-    // respondent order: descending by total
-    const respOrder = respTotals.map((t,i)=>i).sort((a,b)=> respTotals[b]-respTotals[a]);
+    // respondent hierSum: sum of hl for possessed items (lower = more specialized = higher quality)
+    const respHierSum = hl
+      ? matrix.map(row => row.reduce((s,v,j)=> s + (v>0 ? (hl[j]||1) : 0), 0))
+      : null;
+
+    // respondent order: descending by total; tiebreaker: ascending hierSum (lower sum = more specialized = top)
+    const respOrder = respTotals.map((t,i)=>i).sort((a,b)=> {
+      const d = respTotals[b]-respTotals[a];
+      if (d !== 0) return d;
+      if (!respHierSum) return 0;
+      return respHierSum[a] - respHierSum[b];
+    });
 
     // build sorted matrix (rows=respOrder, cols=itemOrder)
     const sorted = respOrder.map(ri => itemOrder.map(ci => matrix[ri][ci]));
@@ -1402,14 +1512,24 @@
   // Metode langsung: ordo ditentukan dari TOTAL jumlah unit fasilitas per wilayah
   // (semakin banyak & lengkap fasilitas, semakin tinggi ordonya), lalu dikelompokkan
   // memakai kelas Sturges yang sama seperti hirarki skalogram.
-  function computeOrdoHirarki(rawMatrix, itemNames, respNames){
+  function computeOrdoHirarki(rawMatrix, itemNames, respNames, hl){
     const N = rawMatrix.length;
     const n = itemNames.length;
 
     const totalFacility = rawMatrix.map(row => row.reduce((s,v)=>s+v,0));
     const jenisFacility = rawMatrix.map(row => row.reduce((s,v)=> s + (v>0?1:0), 0));
 
-    const order = totalFacility.map((t,i)=>i).sort((a,b)=> totalFacility[b]-totalFacility[a]);
+    // resp hierSum for tiebreaker: sum of hl for types present (lower = more specialized = higher rank)
+    const respHierSum = hl
+      ? rawMatrix.map(row => row.reduce((s,v,j)=> s + (v>0 ? (hl[j]||1) : 0), 0))
+      : null;
+
+    const order = totalFacility.map((t,i)=>i).sort((a,b)=> {
+      const d = totalFacility[b]-totalFacility[a];
+      if (d !== 0) return d;
+      if (!respHierSum) return 0;
+      return respHierSum[a] - respHierSum[b];
+    });
     const sortedNames = order.map(i=>respNames[i]);
     const sortedTotals = order.map(i=>totalFacility[i]);
     const sortedJenis = order.map(i=>jenisFacility[i]);
@@ -1417,7 +1537,14 @@
     // item totals: total unit fasilitas per jenis sarana, dijumlahkan dari seluruh wilayah
     const itemTotals = new Array(n).fill(0);
     for (let i=0;i<N;i++) for (let j=0;j<n;j++) itemTotals[j] += rawMatrix[i][j];
-    const itemOrder = itemTotals.map((t,j)=>j).sort((a,b)=> itemTotals[b]-itemTotals[a]);
+    // item order tiebreaker: higher hl (more basic) comes first/left
+    const itemOrder = itemTotals.map((t,j)=>j).sort((a,b)=> {
+      const d = itemTotals[b]-itemTotals[a];
+      if (d !== 0) return d;
+      const ha = hl ? (hl[a]||1) : 1;
+      const hb = hl ? (hl[b]||1) : 1;
+      return hb - ha;
+    });
     const sortedItemNames = itemOrder.map(j=>itemNames[j]);
     const sortedItemTotals = itemOrder.map(j=>itemTotals[j]);
 
@@ -1957,6 +2084,94 @@
       'wilayah', 'indeks sentralitas', false
     );
   }
+
+
+  // ================= REFERENSI HIERARKI SARANA =================
+
+  const HIER_LEVEL_LABELS = [
+    '', // index 0 unused
+    'Tingkat I — Pusat Utama (paling eksklusif)',
+    'Tingkat II — Sekunder',
+    'Tingkat III — Tersier',
+    'Tingkat IV',
+    'Tingkat V',
+    'Tingkat VI',
+    'Tingkat VII',
+    'Tingkat VIII',
+    'Tingkat IX',
+    'Tingkat X — Paling dasar/umum',
+  ];
+
+  function buildHierRefPanel(itemNames){
+    const tbody = document.getElementById('hierRefTableBody');
+    tbody.innerHTML = '';
+    itemNames.forEach((name, j) => {
+      const tr = document.createElement('tr');
+      const labelText = HIER_LEVEL_LABELS[1] || 'Tingkat 1';
+      tr.innerHTML = `
+        <td style="font-family:'Inter',sans-serif; text-align:left;" title="${escapeHtml(name)}">${escapeHtml(truncate(name, 34))}</td>
+        <td style="text-align:center;">
+          <input type="number" class="hierref-num" data-item="${j}" min="1" max="10" value="1" step="1">
+        </td>
+        <td class="hierref-preview" id="hierRefLbl_${j}">${escapeHtml(labelText)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+    // live preview updates
+    document.querySelectorAll('.hierref-num').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const j = inp.dataset.item;
+        const v = Math.max(1, Math.min(10, parseInt(inp.value)||1));
+        inp.value = v;
+        const el = document.getElementById('hierRefLbl_' + j);
+        if (el) el.textContent = HIER_LEVEL_LABELS[v] || ('Tingkat ' + v);
+      });
+    });
+    document.getElementById('hierRefCard').style.display = 'none';
+    document.getElementById('hierRefToggleBtn').style.display = 'inline-flex';
+  }
+
+  function readHierLevels(n){
+    const levels = new Array(n).fill(1);
+    document.querySelectorAll('.hierref-num').forEach(inp => {
+      const j = parseInt(inp.dataset.item);
+      const v = parseInt(inp.value);
+      if (!isNaN(j) && j >= 0 && j < n && !isNaN(v) && v >= 1) levels[j] = v;
+    });
+    return levels;
+  }
+
+  document.getElementById('applyHierRefBtn').addEventListener('click', () => {
+    if (!lastAnalysis) return;
+    const { itemNames, respNames, rawMatrix, matrix, invalidCellCount } = lastAnalysis;
+    hierLevels = readHierLevels(itemNames.length);
+    lastAnalysis.hierLevels = hierLevels;
+    const result = computeGuttman(matrix, itemNames, respNames, hierLevels);
+    const ordoResult = computeOrdoHirarki(rawMatrix, itemNames, respNames, hierLevels);
+    const marshallResult = computeMarshall(rawMatrix, itemNames, respNames);
+    Object.assign(lastAnalysis, { result, ordoResult, marshallResult });
+    renderResults(result, invalidCellCount);
+    renderOrdoHirarki(ordoResult, {itemNames, respNames, rawMatrix});
+    renderMarshall(marshallResult);
+    document.getElementById('sec-hier').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  document.getElementById('hierRefResetBtn').addEventListener('click', () => {
+    document.querySelectorAll('.hierref-num').forEach(inp => {
+      inp.value = 1;
+      const j = inp.dataset.item;
+      const el = document.getElementById('hierRefLbl_' + j);
+      if (el) el.textContent = HIER_LEVEL_LABELS[1] || 'Tingkat 1';
+    });
+  });
+
+  document.getElementById('hierRefToggleBtn').addEventListener('click', () => {
+    const card = document.getElementById('hierRefCard');
+    const btn = document.getElementById('hierRefToggleBtn');
+    const isOpen = card.style.display !== 'none';
+    card.style.display = isOpen ? 'none' : 'block';
+    btn.textContent = isOpen ? '\u2699 Referensi Hierarki' : '\u2715 Tutup Referensi';
+  });
 
 
   document.querySelectorAll('[data-hiertab]').forEach(tab => {
