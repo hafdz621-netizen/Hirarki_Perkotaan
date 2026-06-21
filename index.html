@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Skalogram Perkotaan — Analisis Hirarki</title>
+<title>UrbanTara — Analisis Hirarki Perkotaan</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
@@ -81,6 +81,24 @@
     margin:0;
     letter-spacing:-0.01em;
     color:var(--ink);
+  }
+
+  .brand-title{
+    display:flex;
+    align-items:baseline;
+    gap:0;
+    font-family:'Source Serif 4', serif;
+    font-weight:800;
+    font-size:42px;
+    margin:0;
+    letter-spacing:-0.02em;
+    line-height:1;
+  }
+  .brand-title .brand-urban{
+    color:#163E67;
+  }
+  .brand-title .brand-tara{
+    color:#C9953D;
   }
   .subtitle{
     font-size:14.5px;
@@ -471,6 +489,75 @@
 
   .toolbar{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;}
 
+/* Project dock (save/open) */
+.project-dock{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:1200;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background:#f4f1ef;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px 16px 14px 18px;
+  box-shadow:0 2px 0 rgba(0,0,0,0.03), 0 12px 26px rgba(0,0,0,0.12);
+}
+.project-dock-label{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  margin-right:2px;
+  white-space:nowrap;
+}
+.project-dock-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+button.project-btn{
+  font-family:'Inter', sans-serif;
+  font-weight:600;
+  font-size:14px;
+  padding:10px 16px;
+  border-radius:10px;
+  cursor:pointer;
+  border:1px solid var(--line);
+  transition:transform .08s, background .15s, color .15s, border-color .15s;
+}
+button.project-btn:active{transform:translateY(1px);}
+button.project-btn.save{
+  background:var(--navy);
+  color:#fff;
+  border-color:var(--navy);
+}
+button.project-btn.save:hover{background:var(--navy-soft); border-color:var(--navy-soft);}
+button.project-btn.open{
+  background:#fff;
+  color:var(--ink);
+}
+button.project-btn.open:hover{border-color:var(--navy-soft); color:var(--navy-soft);}
+button.project-btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+@media (max-width:700px){
+  .project-dock{
+    right:10px;
+    left:10px;
+    bottom:10px;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .project-dock-actions{
+    width:100%;
+    justify-content:flex-end;
+  }
+}
+
   .formula-note{
     font-size:12.5px; color:var(--ink-soft); background:var(--paper-deep);
     border-left:3px solid var(--gold); padding:10px 14px; border-radius:0 3px 3px 0; margin-top:14px;
@@ -731,6 +818,8 @@
     padding:24px;
   }
   .modal-overlay.open{display:flex;}
+  body.modal-open{overflow:hidden;}
+  body.modal-open .project-dock{display:none;}
   .modal-box{
     background:#fff;
     width:100%; max-width:760px; max-height:84vh;
@@ -738,6 +827,7 @@
     box-shadow:0 18px 50px rgba(0,0,0,0.35);
     display:flex; flex-direction:column;
     overflow:hidden;
+    min-height:0;
   }
   .modal-head{
     display:flex; align-items:flex-start; justify-content:space-between;
@@ -766,7 +856,7 @@
     padding:2px 8px;
   }
   .modal-close:hover{color:var(--brick);}
-  .modal-body{display:none; padding:22px 26px 26px; overflow-y:auto;}
+  .modal-body{display:none; padding:22px 26px 26px; overflow-y:auto; min-height:0; flex:1; -webkit-overflow-scrolling:touch;}
   .modal-body.active{display:block;}
   .feature-block{margin-bottom:20px;}
   .feature-block:last-child{margin-bottom:0;}
@@ -890,8 +980,8 @@
 
   <header class="masthead">
     <div class="masthead-left">
-      <span class="eyebrow">Hierarki Perkotaan &middot; Urban Analysist</span>
-      <h1>Skalogram Perkotaan</h1>
+      <span class="eyebrow">Skalogram Perkotaan &middot; Hierarki Perkotaan &middot; Urban Analyst</span>
+      <h1 class="brand-title"><span class="brand-urban">Urban</span><span class="brand-tara">Tara</span></h1>
       <span class="feature-info-link" id="featureInfoBtn">&#9432; Penjelasan Fitur</span>
       <div class="subtitle">Olah data Skalogram otomatis, analisis hirarki perkotaan, indeks sentralitas marskall, analisis kelayakan skalogram, dan display peta skalogram</div>
     </div>
@@ -1057,6 +1147,17 @@
           </div>
         </div>
 
+        <!-- ⑦ SIMPAN / BUKA PROJECT -->
+        <div class="feature-block">
+          <h4><span class="fnum">7</span>Simpan / Buka Project</h4>
+          <p>Fitur ini menyimpan kondisi kerja aplikasi ke file <code>.json</code>: data mentah, pilihan kolom, atribut, hasil analisis, dan titik peta terakhir. File yang sama bisa dibuka lagi untuk memulihkan proyek tanpa mengulang dari awal.</p>
+          <div class="feat-tab-list" style="margin-top:8px;">
+            <div class="feat-tab-row"><span class="feat-tab-label">Simpan Project</span><span>Membuat file JSON berisi snapshot proyek aktif. Cocok untuk arsip, berbagi sesi kerja, dan backup hasil analisis.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Buka Project</span><span>Memuat kembali file JSON project, mengembalikan pilihan kolom, atribut, dan hasil analisis yang tersimpan.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Isi yang disimpan</span><span>Nama file asal, pengaturan header, kolom identitas, atribut, data workbook, hasil Skalogram, Marshall, dan titik peta terakhir jika tersedia.</span></div>
+          </div>
+          <div class="feat-note">Format JSON dipilih supaya mudah dibaca, mudah di-backup, dan mudah dipakai lagi di desktop maupun Android bila nanti aplikasi dibungkus ke Electron/Capacitor.</div>
+        </div>
       </div>
 
       <div class="modal-body" id="modalBodyRefs">
@@ -1200,9 +1301,9 @@
         <span class="hint" id="hintErr">dari total sel</span>
       </div>
       <div class="stat">
-        <span class="label">N Item &times; N fungsi</span>
+        <span class="label">Item &times; Responden</span>
         <span class="value" id="statSize">—</span>
-        <span class="hint" id="hintSize">N Item &middot; N Fungsi</span>
+        <span class="hint" id="hintSize">item &middot; responden</span>
       </div>
     </div>
     <div class="formula-note" id="formulaNote"></div>
@@ -1579,6 +1680,15 @@
 
 </div>
 
+  <div class="project-dock" aria-label="Project controls">
+    <span class="project-dock-label">PROJECT</span>
+    <div class="project-dock-actions">
+      <button class="project-btn save" id="saveProject" disabled>Save</button>
+      <button class="project-btn open" id="openProject">Open</button>
+    </div>
+    <input type="file" id="projectFile" accept=".urbhir,application/json" hidden>
+  </div>
+
 <script>
 (function(){
   "use strict";
@@ -1610,6 +1720,9 @@
   const filenamePill = document.getElementById('filenamePill');
   const filenameText = document.getElementById('filenameText');
   const sampleBtn = document.getElementById('sampleBtn');
+  const saveProject = document.getElementById('saveProject');
+  const openProject = document.getElementById('openProject');
+  const projectFile = document.getElementById('projectFile');
 
   let wbGlobal = null;
 
@@ -1709,9 +1822,11 @@
 
   function openFeatureInfoModal(){
     featureInfoOverlay.classList.add('open');
+    document.body.classList.add('modal-open');
   }
   function closeFeatureInfoModal(){
     featureInfoOverlay.classList.remove('open');
+    document.body.classList.remove('modal-open');
   }
   featureInfoBtn.addEventListener('click', openFeatureInfoModal);
   modalCloseBtn.addEventListener('click', closeFeatureInfoModal);
@@ -1760,6 +1875,8 @@
         filenameText.textContent = file.name;
         analyzeBtn.disabled = false;
         resetBtn.style.display = 'inline-block';
+        lastAnalysis = null;
+        syncProjectButtonState();
       }catch(err){
         showError("Gagal membaca file Excel. Pastikan formatnya .xlsx atau .xls yang valid.");
         console.error(err);
@@ -1866,6 +1983,7 @@
     analyzeBtn.disabled = true;
     resetBtn.style.display = 'none';
     clearError();
+    syncProjectButtonState();
     document.getElementById('sec-summary').classList.add('hidden-section');
     document.getElementById('sec-hier').classList.add('hidden-section');
     document.getElementById('sec-ordo').classList.add('hidden-section');
@@ -1875,6 +1993,9 @@
     document.getElementById('hierRefToggleBtn').style.display = 'none';
     document.getElementById('hierRefToggleBtn').textContent = '\u2699 Referensi Hierarki';
     hierLevels = null;
+    lastAnalysis = null;
+    lastMapPoints = [];
+    lastMapTotalTiers = null;
     attr1Active = false; resetAttrBtn(attrBtn1);
     attr2Active = false; resetAttrBtn(attrBtn2);
     updateAttrBtnVisibility();
@@ -1926,6 +2047,8 @@
     filenameText.textContent = 'data-contoh-internal.xlsx (simulasi)';
     analyzeBtn.disabled = false;
     resetBtn.style.display = 'inline-block';
+    lastAnalysis = null;
+    syncProjectButtonState();
   });
 
   // ---------- Analysis ----------
@@ -2077,6 +2200,7 @@
       result, ordoResult, marshallResult, invalidCellCount, skippedStringCols
     };
 
+    syncProjectButtonState();
     renderResults(result, invalidCellCount, skippedStringCols);
     renderOrdoHirarki(ordoResult, {itemNames, respNames, rawMatrix, regionAttrTexts, hasAttr});
     renderMarshall(marshallResult);
@@ -2983,6 +3107,174 @@
     }
   });
 
+  function safeFileBaseName(name){
+    return String(name || 'UrbanTara_Project')
+      .replace(/\.[^.]+$/, '')
+      .replace(/[\\/:*?"<>|]+/g, '_')
+      .replace(/\s+/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .slice(0, 80) || 'UrbanTara_Project';
+  }
+
+  function syncProjectButtonState(){
+    if (saveProject){
+      saveProject.disabled = !lastAnalysis;
+    }
+  }
+
+  function getMapUiState(){
+    const mapAdmin = document.getElementById('mapAdminLevelSelect');
+    const mapMethod = document.getElementById('mapMethodSelect');
+    const shpUrl = document.getElementById('shpUrlInput');
+    return {
+      adminLevel: mapAdmin ? mapAdmin.value : '',
+      method: mapMethod ? mapMethod.value : '',
+      shpUrl: shpUrl ? shpUrl.value : ''
+    };
+  }
+
+  function buildProjectSnapshot(){
+    return {
+      app: 'UrbanTara',
+      format: 'UrbanTara Project JSON',
+      version: 1,
+      savedAt: new Date().toISOString(),
+      sourceFileName: currentFileName,
+      workbookData,
+      ui: {
+        sheetName: sheetSelect ? sheetSelect.value : '',
+        headerRow: getHeaderRowNumber(),
+        idCol: parseInt(idColSelect.value, 10),
+        adminCol1: parseInt(adminCol1Select.value, 10),
+        adminCol2: parseInt(adminCol2Select.value, 10),
+        attr1Active,
+        attr2Active,
+        extraAttrCols,
+        map: getMapUiState()
+      },
+      analysisMeta: lastAnalysis ? {
+        CR: lastAnalysis.result && typeof lastAnalysis.result.CR === 'number' ? lastAnalysis.result.CR : null,
+        CS: lastAnalysis.result && typeof lastAnalysis.result.CS === 'number' ? lastAnalysis.result.CS : null,
+        totalError: lastAnalysis.result && typeof lastAnalysis.result.totalError === 'number' ? lastAnalysis.result.totalError : null,
+        itemCount: lastAnalysis.result && typeof lastAnalysis.result.n === 'number' ? lastAnalysis.result.n : null,
+        respCount: lastAnalysis.result && typeof lastAnalysis.result.N === 'number' ? lastAnalysis.result.N : null
+      } : null,
+      lastMapPoints,
+      lastMapTotalTiers
+    };
+  }
+
+  function downloadJson(obj, filename){
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+
+  function saveProjectAsJson(){
+    if (!lastAnalysis || !workbookData){
+      showError('Jalankan analisis terlebih dahulu sebelum menyimpan project.');
+      return;
+    }
+    try{
+      const stamp = new Date().toISOString().slice(0,10);
+      const baseName = safeFileBaseName(currentFileName || 'UrbanTara_Project');
+      const project = buildProjectSnapshot();
+      downloadJson(project, baseName + '_' + stamp + '.urbhir');
+    }catch(err){
+      console.error(err);
+      showError('Gagal menyimpan project Urbhir: ' + err.message);
+    }
+  }
+
+  async function openProjectFromFile(file){
+    try{
+      const text = await file.text();
+      const project = JSON.parse(text);
+
+      if (!project || !project.workbookData || !Array.isArray(project.workbookData)){
+        throw new Error('Struktur file project tidak valid. Pastikan file berasal dari UrbanTara.');
+      }
+
+      workbookData = project.workbookData;
+      wbGlobal = null;
+      currentFileName = file.name || project.sourceFileName || 'project.urbhir';
+
+      // restore base UI
+      filenamePill.style.display = 'inline-flex';
+      filenameText.textContent = currentFileName;
+      headerRowInput.disabled = false;
+      headerRowInput.value = String(project.ui && project.ui.headerRow !== undefined ? project.ui.headerRow : 1);
+
+      // buat ulang dropdown kolom berdasarkan data project
+      populateIdColSelect(workbookData);
+
+      sheetSelect.innerHTML = '<option value="project">Project JSON</option>';
+      sheetSelect.value = 'project';
+      sheetSelect.disabled = true;
+
+      const ui = project.ui || {};
+      idColSelect.value = String(ui.idCol !== undefined ? ui.idCol : 0);
+      adminCol1Select.value = String(ui.adminCol1 !== undefined ? ui.adminCol1 : -1);
+      adminCol2Select.value = String(ui.adminCol2 !== undefined ? ui.adminCol2 : -1);
+
+      attr1Active = !!ui.attr1Active;
+      attr2Active = !!ui.attr2Active;
+      attrBtn1.classList.toggle('active', attr1Active);
+      attrBtn1.textContent = attr1Active ? '\u2713 Dijadikan Atribut' : '+ Jadikan Atribut';
+      attrBtn2.classList.toggle('active', attr2Active);
+      attrBtn2.textContent = attr2Active ? '\u2713 Dijadikan Atribut' : '+ Jadikan Atribut';
+
+      extraAttrCols = Array.isArray(ui.extraAttrCols) ? ui.extraAttrCols.slice() : [];
+      renderExtraAttrList();
+      updateAttrBtnVisibility();
+
+      analyzeBtn.disabled = false;
+      resetBtn.style.display = 'inline-block';
+      clearError();
+
+      // jalankan ulang analisis dengan state yang dipulihkan
+      runAnalysis();
+
+      // pulihkan peta terakhir bila ada
+      if (Array.isArray(project.lastMapPoints) && project.lastMapPoints.length && project.lastMapTotalTiers){
+        try{
+          document.getElementById('sec-map').classList.remove('hidden-section');
+          renderMap(project.lastMapPoints, project.lastMapTotalTiers);
+        }catch(errMap){
+          console.warn('Peta project tidak berhasil dipulihkan:', errMap);
+        }
+      }
+      syncProjectButtonState();
+    }catch(err){
+      console.error(err);
+      showError('Gagal membuka project Urbhir: ' + err.message);
+    }
+  }
+
+  if (saveProject){
+    saveProject.addEventListener('click', saveProjectAsJson);
+  }
+  if (openProject){
+    openProject.addEventListener('click', () => {
+      if (projectFile) projectFile.click();
+    });
+  }
+  if (projectFile){
+    projectFile.addEventListener('change', async () => {
+      const file = projectFile.files && projectFile.files[0];
+      if (!file) return;
+      await openProjectFromFile(file);
+      projectFile.value = '';
+    });
+  }
+
   function styleSheetColumns(ws, widths){
     ws['!cols'] = widths.map(w => ({wch: w}));
   }
@@ -3177,6 +3469,7 @@
   // ================= MAP: GEOCODING & VISUALIZATION =================
   let leafletMap = null;
   let lastMapPoints = []; // [{name, lat, lon, tierInfo}] from the most recent successful map render
+  let lastMapTotalTiers = null; // number of tiers shown in the most recent map render
   let leafletMarkers = []; // {marker, tier}
   const geocodeCache = {}; // query -> {lat, lon} | null
   let geocodeFetchFailCount = 0;
@@ -3616,6 +3909,7 @@
 
   function renderMap(points, totalTiers){
     lastMapPoints = points;
+    lastMapTotalTiers = totalTiers;
     document.getElementById('downloadShpBtn').style.display = 'inline-block';
 
     const container = document.getElementById('mapContainer');
