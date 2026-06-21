@@ -284,11 +284,12 @@
   }
   table.matrix thead th.corner{background:var(--ink);}
   table.matrix tbody th{
-    background:var(--paper-deep);
     font-weight:600;
     text-align:left;
     position:sticky; left:0;
   }
+  table.matrix tbody tr:nth-child(odd) th { background:#8fb4be; color:var(--navy); }
+  table.matrix tbody tr:nth-child(even) th { background:#ffffff; color:var(--navy); }
   table.matrix td.one{background:#B2DFDB; color:#000000; font-weight:700;}
   table.matrix td.zero{background:#DEC66C; color:#000000;}
   table.matrix td.mismatch{
@@ -2073,16 +2074,27 @@
 
   // ---------- Render: Indeks Sentralitas Marshall ----------
   function renderMarshall(m){
-    // weight table per facility
+    // weight table per facility — hierref-tbl style (navy header, alternating rows)
     const wrap = document.getElementById('marshallWeightTable');
-    let html = '<table class="matrix"><thead><tr><th class="corner">Sarana</th><th>Jml Wilayah Memiliki</th><th>Total Unit (c)</th><th>Bobot (100/c)</th></tr></thead><tbody>';
+    let html = '<table class="hierref-tbl"><thead><tr>'
+      + '<th>Sarana</th>'
+      + '<th style="text-align:center;">Jml Wilayah Memiliki</th>'
+      + '<th style="text-align:center;">Total Unit (c)</th>'
+      + '<th style="text-align:center;">Bobot (100/c)</th>'
+      + '</tr></thead><tbody>';
     m.sortedItemNames.forEach((name, idx) => {
-      html += `<tr><th style="text-align:left;">${escapeHtml(name)}</th><td class="score">${m.sortedPresence[idx]}</td><td class="score">${m.sortedTotalUnits[idx]}</td><td class="score">${m.sortedWeights[idx].toFixed(3)}</td></tr>`;
+      html += `<tr>`
+        + `<td>${escapeHtml(name)}</td>`
+        + `<td style="text-align:center;">${m.sortedPresence[idx]}</td>`
+        + `<td style="text-align:center;">${m.sortedTotalUnits[idx]}</td>`
+        + `<td style="text-align:center;">${m.sortedWeights[idx].toFixed(3)}</td>`
+        + `</tr>`;
     });
     html += '</tbody></table>';
     wrap.innerHTML = html;
 
-    // weighted facility data per region (sarana terbobot)
+    // weighted facility data per region — same color scheme as other matrix tables
+    // val > 0 → class "one" (hijau), val = 0 → class "zero" (gold), indeks → class "score"
     const wrapWeighted = document.getElementById('marshallWeightedTable');
     let htmlW = '<table class="matrix"><thead><tr><th class="corner">Wilayah</th>';
     m.itemNames.forEach(name => { htmlW += `<th title="${escapeHtml(name)}">${escapeHtml(truncate(name,14))}</th>`; });
@@ -2090,7 +2102,8 @@
     m.sortedNames.forEach((name, i) => {
       htmlW += `<tr><th style="text-align:left;">${escapeHtml(truncate(name,18))}</th>`;
       m.sortedCentrality[i].forEach(val => {
-        htmlW += `<td>${val.toFixed(2)}</td>`;
+        const cls = val > 0 ? 'one' : 'zero';
+        htmlW += `<td class="${cls}">${val.toFixed(2)}</td>`;
       });
       htmlW += `<td class="score">${m.sortedIndex[i].toFixed(2)}</td></tr>`;
     });
