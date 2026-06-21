@@ -62,6 +62,18 @@
     color:var(--navy-soft);
     font-weight:600;
   }
+  .feature-info-link{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.75px;
+    font-weight:600;
+    letter-spacing:.04em;
+    color:#ED2939;
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:3px;
+    width:fit-content;
+  }
+  .feature-info-link:hover{color:#B11F2B;}
   h1{
     font-family:'Source Serif 4', serif;
     font-weight:700;
@@ -158,6 +170,73 @@
     font-size:12.5px; color:var(--navy-soft); cursor:pointer; text-decoration:underline; text-underline-offset:2px; align-self:flex-start;
   }
   .sample-link:hover{color:var(--brick);}
+
+  .attr-toggle-btn{
+    margin-top:2px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:600;
+    background:transparent;
+    border:1px dashed var(--navy-soft);
+    color:var(--navy-soft);
+    padding:5px 10px;
+    border-radius:3px;
+    cursor:pointer;
+    align-self:flex-start;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .attr-toggle-btn:hover{background:rgba(6,145,193,0.08);}
+  .attr-toggle-btn.active{
+    background:var(--navy-soft);
+    border-style:solid;
+    color:#fff;
+  }
+
+  .extra-attr-list{
+    display:flex; flex-wrap:wrap; gap:6px;
+    margin-top:2px;
+  }
+  .attr-pill{
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    background:var(--paper-deep);
+    border:1px solid var(--line);
+    padding:4px 6px 4px 10px;
+    border-radius:14px;
+    color:var(--ink-soft);
+  }
+  .attr-pill .remove-x{
+    cursor:pointer;
+    width:15px; height:15px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:50%;
+    background:var(--ink);
+    color:#fff;
+    font-size:10px;
+    line-height:1;
+    flex-shrink:0;
+  }
+  .attr-pill .remove-x:hover{background:var(--brick);}
+
+  .attr-pick-trigger{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    font-weight:600;
+    color:#29ABE2;
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:2px;
+    width:fit-content;
+  }
+  .attr-pick-trigger:hover{color:var(--navy-soft);}
+  .attr-pick-trigger.disabled-text{
+    color:var(--ink-soft);
+    opacity:.45;
+    cursor:not-allowed;
+    text-decoration:none;
+    pointer-events:none;
+  }
 
   .filename-pill{
     margin-top:14px;
@@ -302,6 +381,20 @@
   table.matrix td.err-col{background:var(--paper-deep); font-weight:700;}
   table.matrix td.err-col.has-err{background:var(--bad-bg); color:var(--bad-ink);}
 
+  /* Attribute column (kabupaten/kecamatan/lainnya dijadikan atribut) — font lebih kecil, lebar cell mengikuti panjang teks,
+     setiap atribut ditampilkan bertingkat (atribut 1| / atribut 2) */
+  table.matrix th.attr-col-head{background:var(--brick); white-space:nowrap;}
+  table.matrix td.attr-cell{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.75px;
+    line-height:1.5;
+    text-align:left;
+    white-space:nowrap;
+    color:var(--ink-soft);
+    background:#fff;
+    vertical-align:middle;
+  }
+
   .legend{display:flex; gap:18px; margin-top:12px; flex-wrap:wrap; font-size:12px; color:var(--ink-soft);}
   .legend span{display:inline-flex; align-items:center; gap:6px;}
   .legend .swatch{width:13px;height:13px;border-radius:2px; display:inline-block;}
@@ -342,6 +435,18 @@
     color:#fff;
   }
   .hier-name{font-weight:600; font-size:14.5px; width:140px; flex-shrink:0;}
+  .hier-name-wrap{
+    width:140px; flex-shrink:0;
+    display:flex; flex-direction:column; gap:2px;
+  }
+  .hier-name-wrap .hier-name{width:auto;}
+  .hier-attr{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.75px;
+    line-height:1.3;
+    color:var(--ink-soft);
+    word-break:break-word;
+  }
   .hier-bar-track{flex:1; background:var(--paper-deep); border-radius:2px; height:18px; position:relative; overflow:hidden;}
   .hier-bar-fill{height:100%; background:linear-gradient(90deg, var(--navy), var(--navy-soft));}
   .hier-score{
@@ -510,26 +615,6 @@
     font-size:12.5px; color:var(--ink-soft); font-style:italic; padding:14px 0 4px;
   }
 
-  /* Attribute column chips (upload section) */
-  .attr-chip{
-    font-family:'JetBrains Mono', monospace;
-    font-size:11.5px;
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:20px;
-    padding:5px 6px 5px 13px;
-    display:inline-flex; align-items:center; gap:8px;
-  }
-  .attr-chip .rm{
-    width:16px; height:16px; border-radius:50%;
-    background:var(--ink); color:#fff;
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-size:10.5px; line-height:1; flex-shrink:0;
-    font-family:'Inter', sans-serif;
-  }
-  .attr-chip .rm:hover{background:var(--brick);}
-  .attr-empty-note{font-size:11.5px; color:var(--ink-soft); font-style:italic;}
-
   .hier-bar-fill.class-fill{background:var(--bar-color, var(--navy));}
 
   /* Map section */
@@ -635,6 +720,169 @@
     border-left:3px solid var(--navy-soft);
     padding:8px 12px; border-radius:0 3px 3px 0;
   }
+
+  /* Blok melayang: Penjelasan Fitur / Referensi Ilmiah */
+  .modal-overlay{
+    display:none;
+    position:fixed; inset:0;
+    background:rgba(26,38,44,0.55);
+    z-index:1000;
+    align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:#fff;
+    width:100%; max-width:760px; max-height:84vh;
+    border-radius:6px;
+    box-shadow:0 18px 50px rgba(0,0,0,0.35);
+    display:flex; flex-direction:column;
+    overflow:hidden;
+  }
+  .modal-head{
+    display:flex; align-items:flex-start; justify-content:space-between;
+    padding:14px 14px 0 22px;
+    border-bottom:1px solid var(--line);
+    background:var(--paper);
+  }
+  .modal-tabs{display:flex; gap:2px;}
+  .modal-tab{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; font-weight:600;
+    padding:9px 16px;
+    background:var(--paper-deep);
+    color:var(--ink-soft);
+    cursor:pointer;
+    border-radius:3px 3px 0 0;
+    border:1px solid var(--line);
+    border-bottom:none;
+  }
+  .modal-tab.active{background:#fff; color:var(--ink);}
+  .modal-close{
+    cursor:pointer;
+    font-size:22px;
+    line-height:1;
+    color:var(--ink-soft);
+    padding:2px 8px;
+  }
+  .modal-close:hover{color:var(--brick);}
+  .modal-body{display:none; padding:22px 26px 26px; overflow-y:auto;}
+  .modal-body.active{display:block;}
+  .feature-block{margin-bottom:20px;}
+  .feature-block:last-child{margin-bottom:0;}
+  .feature-block h4{
+    font-family:'Source Serif 4', serif;
+    font-size:16.5px; font-weight:700;
+    color:var(--ink);
+    margin:0 0 4px;
+    display:flex; align-items:center; gap:9px;
+  }
+  .feature-block h4 .fnum{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px; font-weight:700;
+    background:var(--navy); color:#fff;
+    width:21px; height:21px; border-radius:50%;
+    display:inline-flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .feature-block p{
+    font-size:13px; line-height:1.65; color:var(--ink-soft); margin:0;
+  }
+  .ref-intro{font-size:12.5px; color:var(--ink-soft); line-height:1.6; margin:0 0 18px; font-style:italic;}
+  .ref-group{margin-bottom:18px;}
+  .ref-group:last-child{margin-bottom:0;}
+  .ref-group-title{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--navy-soft);
+    margin-bottom:9px;
+    padding-bottom:4px;
+    border-bottom:1px dashed var(--line);
+  }
+  .ref-item{
+    font-size:12.5px; line-height:1.55; color:var(--ink); margin-bottom:11px;
+    padding-left:14px; border-left:2px solid var(--paper-deep);
+  }
+  .ref-item:last-child{margin-bottom:0;}
+  .ref-item .ref-note{
+    display:block; font-size:11px; color:var(--ink-soft); font-style:italic; margin-top:3px;
+  }
+  .ref-item a{color:var(--navy-soft);}
+
+  /* --- Penjelasan Fitur: enriched layout --- */
+  .feat-btn-tag{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; font-weight:600;
+    background:var(--navy); color:#fff;
+    padding:2px 7px; border-radius:3px;
+    letter-spacing:.02em;
+    vertical-align:middle;
+    white-space:nowrap;
+  }
+  .feat-btn-tag.ghost{background:transparent; color:var(--navy); border:1px solid var(--navy);}
+  .feat-btn-tag.red{background:#ED2939;}
+  .feat-steps{
+    margin:8px 0 0 0;
+    padding-left:0;
+    list-style:none;
+    counter-reset:fstep;
+  }
+  .feat-steps > li{
+    counter-increment:fstep;
+    display:flex; gap:9px; align-items:flex-start;
+    font-size:12.5px; line-height:1.6; color:var(--ink-soft);
+    margin-bottom:7px;
+  }
+  .feat-steps > li::before{
+    content:counter(fstep);
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px; font-weight:700;
+    background:var(--paper-deep);
+    color:var(--ink-soft);
+    min-width:20px; height:20px;
+    border-radius:50%;
+    display:inline-flex; align-items:center; justify-content:center;
+    flex-shrink:0; margin-top:2px;
+    border:1px solid rgba(0,0,0,.15);
+  }
+  .feat-note{
+    font-size:11.5px; color:var(--ink-soft); line-height:1.55;
+    background:rgba(6,145,193,0.07);
+    border-left:3px solid var(--navy-soft);
+    padding:7px 11px; border-radius:0 3px 3px 0;
+    margin-top:9px;
+  }
+  .feat-note.warn{
+    background:rgba(255,174,0,0.1);
+    border-left-color:var(--gold);
+  }
+  .feat-sub{margin-top:11px;}
+  .feat-sub-title{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--navy-soft); margin-bottom:5px;
+  }
+  .feat-tab-list{
+    display:flex; flex-direction:column; gap:5px;
+    margin-top:5px;
+  }
+  .feat-tab-row{
+    display:flex; align-items:flex-start; gap:8px;
+    font-size:12.5px; color:var(--ink-soft); line-height:1.55;
+  }
+  .feat-tab-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px; font-weight:600;
+    background:var(--paper-deep); color:var(--ink);
+    padding:2px 8px; border-radius:2px;
+    border:1px solid rgba(0,0,0,.18);
+    white-space:nowrap; flex-shrink:0; margin-top:2px;
+  }
+  .feat-divider{
+    border:none; border-top:1px dashed rgba(0,0,0,.15);
+    margin:14px 0 11px;
+  }
 </style>
 </head>
 <body>
@@ -644,6 +892,7 @@
     <div class="masthead-left">
       <span class="eyebrow">Hierarki Perkotaan &middot; Urban Analysist</span>
       <h1>Skalogram Perkotaan</h1>
+      <span class="feature-info-link" id="featureInfoBtn">&#9432; Penjelasan Fitur</span>
       <div class="subtitle">Olah data Skalogram otomatis, analisis hirarki perkotaan, indeks sentralitas marskall, analisis kelayakan skalogram, dan display peta skalogram</div>
     </div>
     <div class="masthead-right">
@@ -651,6 +900,214 @@
       INDEKS SENTRALITAS MARSHALL &middot; DENSITAS BINER
     </div>
   </header>
+
+  <!-- BLOK MELAYANG: Penjelasan Fitur / Referensi Ilmiah -->
+  <div class="modal-overlay" id="featureInfoOverlay">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-tabs">
+          <div class="modal-tab active" id="modalTabFeatures">Penjelasan Fitur</div>
+          <div class="modal-tab" id="modalTabRefs">Referensi Ilmiah</div>
+        </div>
+        <span class="modal-close" id="modalCloseBtn" title="Tutup">&times;</span>
+      </div>
+
+      <div class="modal-body active" id="modalBodyFeatures">
+
+        <!-- ① IMPOR DATA -->
+        <div class="feature-block">
+          <h4><span class="fnum">1</span>Impor Data</h4>
+          <p>Muat data dari file Excel dan atur kolom mana yang menjadi identitas wilayah, atribut keterangan, dan data jumlah fasilitas.</p>
+
+          <div class="feat-sub">
+            <div class="feat-sub-title">Format Excel yang dibutuhkan</div>
+            <p style="font-size:12.5px; line-height:1.6; color:var(--ink-soft); margin:0;">
+              Susun tabel sehingga setiap <strong>baris = satu wilayah</strong> dan setiap <strong>kolom = satu jenis sarana/fasilitas</strong>. Isi sel berupa jumlah unit (angka; boleh 0). Baris pertama (atau baris mana pun yang Anda tentukan) adalah baris header/nama kolom. Tidak harus hanya ada satu sheet — sheet lain boleh ada, Anda bisa memilihnya.
+            </p>
+          </div>
+
+          <hr class="feat-divider">
+          <div class="feat-sub-title">Langkah memasukkan data & fungsi tiap kontrol</div>
+          <ol class="feat-steps">
+            <li>
+              <span><strong>Area unggah file</strong> — tarik file <code>.xlsx</code> / <code>.xls</code> ke dalam kotak, atau klik kotak tersebut untuk membuka jendela pilih file. Setelah file berhasil dibaca, nama file ditampilkan di pil di bawah kotak.</span>
+            </li>
+            <li>
+              <span><strong>Sheet</strong> — dropdown yang muncul setelah file dimuat. Pilih sheet mana yang berisi tabel data utama jika file punya lebih dari satu sheet.</span>
+            </li>
+            <li>
+              <span><strong>Baris header</strong> — nomor baris yang berisi nama kolom (default = 1, artinya baris pertama). Isi <strong>0</strong> jika tabel tidak punya baris header sama sekali (kolom diberi nama A, B, C, … secara otomatis). Ubah jika ada baris judul/keterangan di atas tabel sebenarnya.</span>
+            </li>
+            <li>
+              <span><strong>Kolom identitas wilayah</strong> — pilih kolom yang berisi <em>nama wilayah</em> (mis. nama desa/kecamatan). Kolom ini menjadi label baris di semua tabel hasil. Kolom yang dipilih di sini <em>tidak</em> dihitung sebagai data sarana.</span>
+            </li>
+            <li>
+              <span><strong>Kolom Kabupaten/Kota</strong> &amp; <strong>Kolom Kecamatan</strong> — opsional. Digunakan untuk memperjelas nama wilayah saat pencarian lokasi di peta (geocoding). Setelah dipilih, muncul tombol <span class="feat-btn-tag">+ Jadikan Atribut</span> — klik tombol ini agar nilai kolom tersebut ikut ditampilkan sebagai keterangan di bawah nama wilayah pada daftar peringkat dan tabel. Klik lagi untuk membatalkan. Kolom-kolom ini pun tidak dihitung sebagai data sarana.</span>
+            </li>
+            <li>
+              <span><strong>"pilih atribut identitas"</strong> — klik teks ini untuk memunculkan dropdown kolom tambahan. Pilih kolom apa pun (mis. kode wilayah, klasifikasi administrasi) untuk dijadikan atribut keterangan; bisa dipilih lebih dari satu. Setiap kolom yang dipilih ditampilkan sebagai chip di bawah dropdown dan <em>dikecualikan</em> dari perhitungan data sarana.</span>
+            </li>
+            <li>
+              <span><span class="feat-btn-tag ghost">atau gunakan data contoh</span> — muat dataset demo bawaan (20 kecamatan, 21 jenis sarana) langsung tanpa perlu unggah file. Berguna untuk mencoba fitur aplikasi.</span>
+            </li>
+            <li>
+              <span><span class="feat-btn-tag">Jalankan Analisis Skalogram</span> — mulai perhitungan. Tombol ini aktif setelah file dimuat dan kolom identitas dipilih. Hasil semua analisis (Skalogram, Hirarki, Marshall) dihitung sekaligus dan ditampilkan di bagian 2–5.</span>
+            </li>
+            <li>
+              <span><span class="feat-btn-tag ghost">Reset</span> — hapus semua data dan hasil, kembalikan ke kondisi awal. Muncul setelah analisis berhasil dijalankan.</span>
+            </li>
+          </ol>
+          <div class="feat-note warn">Semua kolom yang tidak ditetapkan sebagai identitas wilayah atau atribut secara otomatis dianggap sebagai data jumlah unit sarana. Pastikan tidak ada kolom "total" atau kolom keterangan lain yang ikut terbaca sebagai sarana.</div>
+        </div>
+
+        <!-- ② RINGKASAN KOEFISIEN -->
+        <div class="feature-block">
+          <h4><span class="fnum">2</span>Ringkasan Koefisien</h4>
+          <p>Tampil otomatis setelah analisis dijalankan. Menampilkan empat statistik utama hasil Skalogram Guttman:</p>
+          <div class="feat-tab-list" style="margin-top:8px;">
+            <div class="feat-tab-row"><span class="feat-tab-label">CR</span><span>Coefficient of Reproducibility — rasio kesesuaian data dengan pola ideal Guttman. Syarat minimal <strong>≥ 0,90</strong> agar skala dianggap valid.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">CS</span><span>Coefficient of Scalability — mengukur apakah skala benar-benar unidimensional. Syarat minimal <strong>≥ 0,60</strong>.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Error</span><span>Jumlah sel yang menyimpang dari pola ideal (semakin kecil semakin baik).</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Ukuran</span><span>Jumlah item × jumlah wilayah — total sel matriks.</span></div>
+          </div>
+          <hr class="feat-divider">
+          <div class="feat-sub-title">Tombol di bagian ini</div>
+          <div class="feat-tab-list">
+            <div class="feat-tab-row">
+              <span class="feat-tab-label" style="white-space:nowrap;">⬇ Download Hasil Excel</span>
+              <span>Ekspor seluruh hasil analisis ke file <code>.xlsx</code> dengan 8 sheet: (1) Data Mentah, (2) Matriks Ideal, (3) Matriks Observasi &amp; CR, (4) Hirarki Skalogram, (5) Data Marshall Terbobot, (6) Hirarki Marshall, (7) Hirarki Jumlah Fasilitas, (8) Referensi Hierarki Sarana. Sheet yang berisi identitas wilayah menyertakan kolom <em>Atribut</em> bila fitur atribut diaktifkan. Sheet hirarki (4, 6, 7) tidak menyertakan kolom Atribut.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ③ SKALOGRAM GUTTMAN -->
+        <div class="feature-block">
+          <h4><span class="fnum">3</span>Skalogram Guttman</h4>
+          <p>Data jumlah unit di-<em>binarisasi</em> (0 = tidak ada, 1 = ada) lalu disusun menjadi matriks dan dibandingkan dengan pola ideal Guttman. Navigasi hasil lewat tab di bagian ini.</p>
+          <div class="feat-tab-list" style="margin-top:8px;">
+            <div class="feat-tab-row"><span class="feat-tab-label">Peringkat Persebaran Item</span><span>Daftar sarana diurutkan dari yang paling banyak dimiliki wilayah ke paling sedikit. Bar menunjukkan proporsi kepemilikan. Tidak dapat diubah isinya — murni hasil binarisasi data Anda.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Peringkat Kelengkapan Item Wilayah</span><span>Daftar wilayah diurutkan dari skor skalogram (jumlah jenis sarana yang ada) tertinggi ke terendah. Keterangan atribut ditampilkan di bawah nama wilayah jika fitur atribut diaktifkan.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Hierarki Wilayah</span><span>Wilayah dikelompokkan ke dalam kelas/orde menggunakan rumus Sturges (jumlah kelas = 1 + 3,322 × log₁₀ n). Batas kelas dihitung dari rentang skor skalogram. Tidak dapat diubah manual — selalu dihitung ulang otomatis.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Matriks Observasi</span><span>Data biner terurut (wilayah diurutkan dari skor tertinggi, sarana dari kepemilikan terbanyak). Sel yang menyimpang dari pola ideal ditandai dengan warna merah.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Matriks Ideal</span><span>Pola tangga ideal Guttman sebagai pembanding — pada baris dengan skor k, item peringkat 1 sampai k bernilai 1, sisanya 0.</span></div>
+          </div>
+          <hr class="feat-divider">
+          <div class="feat-sub-title">Tombol ⚙ Referensi Hierarki</div>
+          <p style="font-size:12.5px; line-height:1.6; color:var(--ink-soft); margin:0 0 6px;">Muncul setelah analisis dijalankan. Membuka/menutup panel pengaturan <em>tiebreaker</em> urutan — dipakai ketika dua wilayah atau dua sarana memiliki skor yang sama persis.</p>
+          <div class="feat-tab-list">
+            <div class="feat-tab-row"><span class="feat-tab-label">Tingkat Hierarki</span><span>Kolom angka di panel yang bisa Anda edit langsung. Tingkat 1 = paling eksklusif/langka (mis. Rumah Sakit, Universitas). Nilai lebih besar = lebih dasar/umum. Sarana bertingkat lebih besar ditempatkan lebih kiri di matriks; wilayah yang punya sarana bertingkat lebih kecil ditempatkan lebih atas jika skornya sama.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Reset ke Otomatis</span><span>Hitung ulang tingkat hierarki secara otomatis berdasarkan jumlah wilayah pemilik tiap sarana (semakin sedikit wilayah memiliki sarana tersebut, semakin tinggi hierarkinya). Rata-rata unit per wilayah dipakai sebagai tiebreaker kedua.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Terapkan &amp; Hitung Ulang</span><span>Simpan nilai tingkat yang telah Anda edit dan jalankan ulang semua analisis dengan urutan tiebreaker baru. Semua tab dan hasil peta diperbarui seketika.</span></div>
+          </div>
+        </div>
+
+        <!-- ④ HIRARKI PERKOTAAN -->
+        <div class="feature-block">
+          <h4><span class="fnum">4</span>Hirarki Perkotaan — Jumlah Fasilitas</h4>
+          <p>Analisis langsung dari jumlah unit (bukan data biner). Wilayah diurutkan dan diklasifikasikan berdasarkan total fasilitas.</p>
+          <div class="feat-tab-list" style="margin-top:8px;">
+            <div class="feat-tab-row"><span class="feat-tab-label">Peringkat Unit</span><span>Sarana diurutkan dari total unit terbanyak di seluruh wilayah ke paling sedikit.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Peringkat Wilayah</span><span>Wilayah diurutkan dari total unit &amp; jumlah jenis sarana terbanyak. Atribut keterangan wilayah ditampilkan di bawah nama wilayah jika fitur atribut diaktifkan. Urutan dipengaruhi pengaturan tiebreaker di panel Referensi Hierarki.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Hierarki Wilayah</span><span>Klasifikasi wilayah ke dalam orde/kelas menggunakan rumus Sturges berbasis total unit fasilitas.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Tabel Skalogram</span><span>Tabel mentah jumlah unit per sarana per wilayah (bukan biner), dilengkapi kolom Atribut di sisi kiri jika fitur atribut diaktifkan.</span></div>
+          </div>
+        </div>
+
+        <!-- ⑤ INDEKS SENTRALITAS MARSHALL -->
+        <div class="feature-block">
+          <h4><span class="fnum">5</span>Indeks Sentralitas Marshall</h4>
+          <p>Setiap jenis sarana diberi bobot 100/c (c = total unit sarana di seluruh wilayah studi) — sarana yang lebih langka mendapat bobot lebih tinggi. Bobot dikalikan jumlah unit per wilayah untuk menghasilkan Indeks Sentralitas.</p>
+          <div class="feat-tab-list" style="margin-top:8px;">
+            <div class="feat-tab-row"><span class="feat-tab-label">Bobot per Sarana</span><span>Tabel bobot tiap jenis sarana: jumlah wilayah yang memilikinya, total unit seluruh wilayah, dan nilai bobot (100/c). Semakin kecil c, semakin eksklusif sarana tersebut.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Sarana Terbobot per Wilayah</span><span>Tabel nilai terbobot per sel (jumlah unit × bobot sarana) beserta total Indeks Sentralitas tiap wilayah. Kolom Atribut muncul di sisi kiri jika fitur atribut diaktifkan.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Peringkat Indeks Sentralitas</span><span>Wilayah diurutkan dari indeks sentralitas tertinggi ke terendah. Keterangan atribut ditampilkan di bawah nama wilayah.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Hirarki Marshall</span><span>Wilayah dikelompokkan ke kelas hierarki menggunakan rumus Sturges berbasis nilai Indeks Sentralitas.</span></div>
+          </div>
+        </div>
+
+        <!-- ⑥ PETA -->
+        <div class="feature-block">
+          <h4><span class="fnum">6</span>Peta Hirarki Perkotaan</h4>
+          <p>Sebaran titik wilayah pada peta interaktif, diwarnai sesuai hierarki hasil analisis. Koordinat dicari otomatis dari nama wilayah (geocoding) atau dari file SHP titik desa yang diunggah.</p>
+
+          <div class="feat-sub">
+            <div class="feat-sub-title">Kontrol peta</div>
+            <div class="feat-tab-list">
+              <div class="feat-tab-row"><span class="feat-tab-label">Skala Wilayah</span><span>Pilih antara <strong>Desa/Kelurahan</strong> atau <strong>Kecamatan/Kabupaten</strong>. Level Desa disarankan memakai file SHP untuk akurasi koordinat; level Kecamatan menggunakan Nominatim (geocoding online, maks. 1 permintaan/detik).</span></div>
+              <div class="feat-tab-row"><span class="feat-tab-label">Metode analisis</span><span>Pilih metode yang menentukan warna &amp; tingkat hierarki titik peta: <em>Skalogram Guttman</em>, <em>Indeks Sentralitas Marshall</em>, atau <em>Jumlah Fasilitas Langsung</em>. Anda bisa berganti metode dan tampilkan ulang peta kapan saja.</span></div>
+              <div class="feat-tab-row"><span class="feat-tab-label">Tampilkan Peta</span><span>Mulai pencarian koordinat dan tampilkan titik-titik wilayah. Proses bisa memakan waktu jika wilayah banyak dan memakai Nominatim. Titik yang tidak ditemukan dilewati (jumlah yang berhasil ditampilkan dilaporkan di atas peta).</span></div>
+            </div>
+          </div>
+
+          <hr class="feat-divider">
+          <div class="feat-sub-title">Unggah SHP Titik Desa (opsional, untuk level Desa)</div>
+          <ol class="feat-steps">
+            <li><span>Siapkan file ZIP berisi setidaknya <code>.shp</code>, <code>.shx</code>, dan <code>.dbf</code> bertipe geometri <strong>Titik (Point)</strong> — satu titik per desa/kelurahan.</span></li>
+            <li><span>Tarik file ZIP ke area unggah SHP, atau klik kotak tersebut. Alternatif: tempel URL langsung ke field URL lalu klik <span class="feat-btn-tag ghost">Muat dari URL</span>. (Default URL sudah terisi dengan data desa GitHub yang bisa langsung dicoba.)</span></li>
+            <li><span>Setelah file dimuat, pilih field di SHP yang berisi <strong>nama Desa</strong>, <strong>nama Kecamatan</strong>, dan <strong>nama Kabupaten/Kota</strong> dari dropdown masing-masing. Sistem akan mencocokkan nama wilayah data Anda dengan field-field ini.</span></li>
+          </ol>
+          <div class="feat-note">Pencocokan nama bersifat <em>fuzzy</em> (tidak peka huruf besar/kecil, mengabaikan spasi berlebih). Desa yang tidak cocok dengan SHP secara otomatis di-fallback ke Nominatim jika ada koneksi internet.</div>
+
+          <hr class="feat-divider">
+          <div class="feat-sub-title">Interaksi peta &amp; ekspor</div>
+          <div class="feat-tab-list">
+            <div class="feat-tab-row"><span class="feat-tab-label">Klik titik</span><span>Muncul popup berisi: <strong>nama wilayah</strong>, keterangan <em>atribut</em> (jika fitur atribut diaktifkan), label hierarki, nilai skor/indeks, dan sumber koordinat (SHP atau Nominatim).</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Chip legenda</span><span>Klik chip warna di bawah peta untuk menyembunyikan/menampilkan titik-titik tier tertentu. Berguna untuk fokus pada hierarki tertentu.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">⬇ Download Titik Peta (.zip SHP)</span><span>Ekspor semua titik yang berhasil ditampilkan sebagai Shapefile WGS84 (Point). DBF berisi field: <code>NAME</code> (nama wilayah), <code>ATTR</code> (keterangan atribut, jika ada), <code>TIER</code> (nomor tier), <code>TIERLABEL</code> (label hierarki), <code>SCORE</code> (nilai skor/indeks). Bisa langsung dibuka di QGIS, ArcGIS, dll.</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-body" id="modalBodyRefs">
+        <p class="ref-intro">Daftar pustaka yang menjadi dasar ilmiah metode Skalogram Guttman, Indeks Sentralitas Marshall, dan analisis hierarki wilayah yang digunakan dalam aplikasi ini.</p>
+
+        <div class="ref-group">
+          <div class="ref-group-title">Teori &amp; Metode Dasar</div>
+          <div class="ref-item">
+            Guttman, L. (1944). A Basis for Scaling Qualitative Data. <em>American Sociological Review</em>, 9(2), 139–150.
+            <span class="ref-note">Tulisan asal-usul teknik scalogram &amp; Coefficient of Reproducibility (CR) yang dipakai di bagian Skalogram Guttman.</span>
+          </div>
+          <div class="ref-item">
+            Christaller, W. (1933). <em>Die zentralen Orte in Süddeutschland</em>. Jena: Gustav Fischer.
+            <span class="ref-note">Teori Tempat Sentral (Central Place Theory) — dasar konsep hierarki perkotaan/pusat pelayanan wilayah.</span>
+          </div>
+          <div class="ref-item">
+            Marshall, J. U. (1969). <em>The Location of Service Towns</em>. Toronto: University of Toronto, Department of Geography.
+            <span class="ref-note">Sumber rumus bobot 100/c yang menjadi dasar Indeks Sentralitas Marshall.</span>
+          </div>
+        </div>
+
+        <div class="ref-group">
+          <div class="ref-group-title">Buku &amp; Metodologi Perencanaan Wilayah</div>
+          <div class="ref-item">
+            Rondinelli, D. A. (1985). <em>Applied Methods of Regional Analysis: The Spatial Dimensions of Development Policy</em>. Boulder, CO: Westview Press.
+            <span class="ref-note">Penerapan teknik skalogram untuk analisis fungsi &amp; hierarki permukiman dalam perencanaan wilayah.</span>
+          </div>
+          <div class="ref-item">
+            Tarigan, R. (2009). <em>Perencanaan Pembangunan Wilayah</em> (Edisi Revisi). Jakarta: Bumi Aksara.
+          </div>
+          <div class="ref-item">
+            Rustiadi, E., Saefulhakim, S., Panuju, D. R., &amp; Pravitasari, A. E. (2018). <em>Perencanaan dan Pengembangan Wilayah</em>. Jakarta: Yayasan Pustaka Obor Indonesia.
+          </div>
+        </div>
+
+        <div class="ref-group">
+          <div class="ref-group-title">Penerapan &amp; Studi Kasus di Indonesia</div>
+          <div class="ref-item">
+            Jumiyanti, K. R., Machimu, J. S., &amp; Walahe, D. (2026). Service Center Hierarchy in Gorontalo: Empirical Analysis through Scalogram and Centrality. <em>Journal of Applied Economics in Developing Countries</em>, 11(1), 1–22. <a href="https://doi.org/10.20961/jaedc.v11i1.114993" target="_blank" rel="noopener">doi.org/10.20961/jaedc.v11i1.114993</a>
+            <span class="ref-note">Studi terbaru yang memakai kombinasi skalogram Guttman + indeks sentralitas Marshall sama seperti aplikasi ini.</span>
+          </div>
+          <div class="ref-item">
+            Faradila, N., Rustiadi, E., &amp; Pravitasari, A. E. (2022). Analisis Hierarki Pusat-Pusat Pelayanan dalam Pengembangan Wilayah Kabupaten Parigi Moutong. <em>Journal of Regional and Rural Development Planning</em>, 6(1), 25–39.
+          </div>
+          <div class="ref-item">
+            Jufri, A., &amp; Nonce, M. (2016). Identifikasi Pusat Pertumbuhan di Kabupaten Halmahera Barat Menggunakan Analisis Skalogram. <em>Indonesian Journal of Spatial Analysis</em>, 12(2), 156–172.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- SECTION 1: UPLOAD -->
   <section id="sec-upload">
@@ -687,25 +1144,19 @@
             <div class="opt-row">
               <label>Kolom Kabupaten/Kota (opsional)</label>
               <select id="adminCol1Select" disabled><option>— tidak ada —</option></select>
+              <button type="button" class="attr-toggle-btn" id="attrBtn1" style="display:none;">+ Jadikan Atribut</button>
             </div>
             <div class="opt-row">
               <label>Kolom Kecamatan (jika desa)</label>
               <select id="adminCol2Select" disabled><option>— tidak ada —</option></select>
+              <button type="button" class="attr-toggle-btn" id="attrBtn2" style="display:none;">+ Jadikan Atribut</button>
             </div>
           </div>
           <div class="opt-row">
-            <label>Kolom Atribut (opsional, boleh lebih dari satu)</label>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <select id="attrColSelect" disabled style="flex:1 1 170px;"><option value="-1">— tidak ada —</option></select>
-              <button class="ghost" type="button" id="addAttrColBtn" disabled style="white-space:nowrap; font-size:12px; padding:8px 12px;">+ Jadikan Kolom Atribut</button>
-            </div>
-            <div class="region-pills" id="attrColsList" style="margin-top:2px;">
-              <span class="attr-empty-note" id="attrColsEmptyNote">belum ada kolom atribut dipilih</span>
-            </div>
-            <label id="attrShowToggleWrap" style="display:none; align-items:center; gap:7px; font-size:11.5px; color:var(--ink-soft); margin-top:6px; cursor:pointer;">
-              <input type="checkbox" id="attrShowToggle">
-              Tampilkan kolom Atribut pada tabel-tabel data (opsional)
-            </label>
+            <label>Kolom Atribut Lainnya (opsional, bisa lebih dari satu)</label>
+            <span class="attr-pick-trigger disabled-text" id="extraAttrTrigger">pilih atribut identitas</span>
+            <select id="extraAttrColSelect" disabled style="display:none;"><option>— pilih file dulu —</option></select>
+            <div class="extra-attr-list" id="extraAttrList"></div>
           </div>
           <span class="sample-link" id="sampleBtn">atau gunakan data contoh untuk mencoba</span>
         </div>
@@ -1137,7 +1588,6 @@
   let lastAnalysis = null; // holds everything needed for Excel export
   let hierLevels = null;   // array[j] = hierarchy tier for item j (1=highest, bigger=lower)
   let autoHierLevels = null; // array[j] = auto-suggested tier (presence count + avg unit tiebreaker), used by Reset
-  let attrCols = []; // [{idx, label}] kolom-kolom yang ditandai sebagai Kolom Atribut
 
   const fileInput = document.getElementById('fileInput');
   const dropzone = document.getElementById('dropzone');
@@ -1146,11 +1596,14 @@
   const idColSelect = document.getElementById('idColSelect');
   const adminCol1Select = document.getElementById('adminCol1Select');
   const adminCol2Select = document.getElementById('adminCol2Select');
-  const attrColSelect = document.getElementById('attrColSelect');
-  const addAttrColBtn = document.getElementById('addAttrColBtn');
-  const attrColsList = document.getElementById('attrColsList');
-  const attrShowToggleWrap = document.getElementById('attrShowToggleWrap');
-  const attrShowToggle = document.getElementById('attrShowToggle');
+  const attrBtn1 = document.getElementById('attrBtn1');
+  const attrBtn2 = document.getElementById('attrBtn2');
+  let attr1Active = false; // kolom Kabupaten/Kota dijadikan atribut?
+  let attr2Active = false; // kolom Kecamatan dijadikan atribut?
+  const extraAttrColSelect = document.getElementById('extraAttrColSelect');
+  const extraAttrTrigger = document.getElementById('extraAttrTrigger');
+  const extraAttrListEl = document.getElementById('extraAttrList');
+  let extraAttrCols = []; // [{idx, label}] kolom-kolom lain yang dipilih sebagai atribut
   const analyzeBtn = document.getElementById('analyzeBtn');
   const resetBtn = document.getElementById('resetBtn');
   const errorMsg = document.getElementById('errorMsg');
@@ -1168,6 +1621,118 @@
     errorMsg.style.display = 'none';
     errorMsg.textContent = '';
   }
+
+  // ---------- Tombol "Jadikan Atribut" (Kabupaten/Kota & Kecamatan) ----------
+  function resetAttrBtn(btn){
+    btn.classList.remove('active');
+    btn.textContent = '+ Jadikan Atribut';
+  }
+  function updateAttrBtnVisibility(){
+    const show1 = !adminCol1Select.disabled && adminCol1Select.value !== '-1';
+    attrBtn1.style.display = show1 ? 'inline-block' : 'none';
+    if (!show1 && attr1Active){ attr1Active = false; resetAttrBtn(attrBtn1); }
+
+    const show2 = !adminCol2Select.disabled && adminCol2Select.value !== '-1';
+    attrBtn2.style.display = show2 ? 'inline-block' : 'none';
+    if (!show2 && attr2Active){ attr2Active = false; resetAttrBtn(attrBtn2); }
+  }
+  adminCol1Select.addEventListener('change', () => {
+    attr1Active = false; resetAttrBtn(attrBtn1); // kolom berubah → harus diaktifkan ulang
+    updateAttrBtnVisibility();
+  });
+  adminCol2Select.addEventListener('change', () => {
+    attr2Active = false; resetAttrBtn(attrBtn2);
+    updateAttrBtnVisibility();
+  });
+  attrBtn1.addEventListener('click', () => {
+    attr1Active = !attr1Active;
+    attrBtn1.classList.toggle('active', attr1Active);
+    attrBtn1.textContent = attr1Active ? '\u2713 Dijadikan Atribut' : '+ Jadikan Atribut';
+  });
+  attrBtn2.addEventListener('click', () => {
+    attr2Active = !attr2Active;
+    attrBtn2.classList.toggle('active', attr2Active);
+    attrBtn2.textContent = attr2Active ? '\u2713 Dijadikan Atribut' : '+ Jadikan Atribut';
+  });
+
+  // ---------- Kolom Atribut Lainnya (pilih kolom apa pun sebagai atribut tambahan) ----------
+  function renderExtraAttrList(){
+    extraAttrListEl.innerHTML = '';
+    extraAttrCols.forEach((item, i) => {
+      const pill = document.createElement('span');
+      pill.className = 'attr-pill';
+      pill.innerHTML = `${escapeHtml(item.label)}<span class="remove-x" data-i="${i}" title="Hapus atribut ini">\u2715</span>`;
+      extraAttrListEl.appendChild(pill);
+    });
+    extraAttrListEl.querySelectorAll('.remove-x').forEach(x => {
+      x.addEventListener('click', () => {
+        const i = parseInt(x.dataset.i, 10);
+        extraAttrCols.splice(i, 1);
+        renderExtraAttrList();
+      });
+    });
+  }
+  function openExtraAttrSelect(){
+    if (extraAttrColSelect.disabled) return;
+    extraAttrTrigger.style.display = 'none';
+    extraAttrColSelect.style.display = 'inline-block';
+    extraAttrColSelect.value = '-1';
+    extraAttrColSelect.focus();
+    if (typeof extraAttrColSelect.showPicker === 'function'){
+      try { extraAttrColSelect.showPicker(); } catch(e){ /* not supported, focus() is enough */ }
+    }
+  }
+  function closeExtraAttrSelect(){
+    extraAttrColSelect.style.display = 'none';
+    extraAttrTrigger.style.display = 'inline-block';
+  }
+  extraAttrTrigger.addEventListener('click', openExtraAttrSelect);
+  extraAttrColSelect.addEventListener('change', () => {
+    const val = parseInt(extraAttrColSelect.value, 10);
+    if (!isNaN(val) && val >= 0 && !extraAttrCols.some(item => item.idx === val)){
+      const label = extraAttrColSelect.options[extraAttrColSelect.selectedIndex].textContent;
+      extraAttrCols.push({ idx: val, label });
+      renderExtraAttrList();
+    }
+    closeExtraAttrSelect();
+  });
+  extraAttrColSelect.addEventListener('blur', closeExtraAttrSelect);
+
+  // ---------- Blok melayang: Penjelasan Fitur / Referensi Ilmiah ----------
+  const featureInfoBtn = document.getElementById('featureInfoBtn');
+  const featureInfoOverlay = document.getElementById('featureInfoOverlay');
+  const modalCloseBtn = document.getElementById('modalCloseBtn');
+  const modalTabFeatures = document.getElementById('modalTabFeatures');
+  const modalTabRefs = document.getElementById('modalTabRefs');
+  const modalBodyFeatures = document.getElementById('modalBodyFeatures');
+  const modalBodyRefs = document.getElementById('modalBodyRefs');
+
+  function openFeatureInfoModal(){
+    featureInfoOverlay.classList.add('open');
+  }
+  function closeFeatureInfoModal(){
+    featureInfoOverlay.classList.remove('open');
+  }
+  featureInfoBtn.addEventListener('click', openFeatureInfoModal);
+  modalCloseBtn.addEventListener('click', closeFeatureInfoModal);
+  featureInfoOverlay.addEventListener('click', (e) => {
+    if (e.target === featureInfoOverlay) closeFeatureInfoModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && featureInfoOverlay.classList.contains('open')) closeFeatureInfoModal();
+  });
+  modalTabFeatures.addEventListener('click', () => {
+    modalTabFeatures.classList.add('active');
+    modalTabRefs.classList.remove('active');
+    modalBodyFeatures.classList.add('active');
+    modalBodyRefs.classList.remove('active');
+  });
+  modalTabRefs.addEventListener('click', () => {
+    modalTabRefs.classList.add('active');
+    modalTabFeatures.classList.remove('active');
+    modalBodyRefs.classList.add('active');
+    modalBodyFeatures.classList.remove('active');
+  });
 
   // ---------- File handling ----------
   dropzone.addEventListener('click', () => fileInput.click());
@@ -1238,9 +1803,7 @@
     idColSelect.innerHTML = '';
     adminCol1Select.innerHTML = '';
     adminCol2Select.innerHTML = '';
-    attrColSelect.innerHTML = '';
-    attrCols = [];
-    renderAttrChips();
+    extraAttrColSelect.innerHTML = '';
 
     const noneOpt = document.createElement('option');
     noneOpt.value = '-1'; noneOpt.textContent = '(tanpa kolom identitas — beri nama Wilayah 1, Wilayah 2, ...)';
@@ -1252,9 +1815,12 @@
     const noneAdmin2 = document.createElement('option');
     noneAdmin2.value = '-1'; noneAdmin2.textContent = '— tidak ada —';
     adminCol2Select.appendChild(noneAdmin2);
-    const noneAttr = document.createElement('option');
-    noneAttr.value = '-1'; noneAttr.textContent = '— tidak ada —';
-    attrColSelect.appendChild(noneAttr);
+    const noneExtra = document.createElement('option');
+    noneExtra.value = '-1'; noneExtra.textContent = '— pilih kolom —';
+    extraAttrColSelect.appendChild(noneExtra);
+
+    extraAttrCols = [];
+    renderExtraAttrList();
 
     if (!rows || !rows.length) return;
     const headerRowNum = getHeaderRowNumber();
@@ -1265,7 +1831,7 @@
       : refRowForWidth.map((_,i) => 'Kolom ' + (i+1));
     headerRow.forEach((h, i) => {
       const label = (h === null || h === undefined || h === '') ? ('Kolom ' + (i+1)) : String(h);
-      [idColSelect, adminCol1Select, adminCol2Select, attrColSelect].forEach(sel => {
+      [idColSelect, adminCol1Select, adminCol2Select, extraAttrColSelect].forEach(sel => {
         const opt = document.createElement('option');
         opt.value = i;
         opt.textContent = label;
@@ -1278,60 +1844,13 @@
     adminCol1Select.disabled = false;
     adminCol2Select.value = '-1';
     adminCol2Select.disabled = false;
-    attrColSelect.value = '-1';
-    attrColSelect.disabled = false;
-    addAttrColBtn.disabled = false;
+    extraAttrColSelect.value = '-1';
+    extraAttrColSelect.disabled = false;
+    extraAttrTrigger.classList.remove('disabled-text');
+    attr1Active = false; resetAttrBtn(attrBtn1);
+    attr2Active = false; resetAttrBtn(attrBtn2);
+    updateAttrBtnVisibility();
   }
-
-  // ---------- Kolom Atribut: pilih kolom lalu klik tombol untuk menandainya ----------
-  function renderAttrChips(){
-    attrColsList.innerHTML = '';
-    if (!attrCols.length){
-      const note = document.createElement('span');
-      note.className = 'attr-empty-note';
-      note.id = 'attrColsEmptyNote';
-      note.textContent = 'belum ada kolom atribut dipilih';
-      attrColsList.appendChild(note);
-    } else {
-      attrCols.forEach(ac => {
-        const chip = document.createElement('span');
-        chip.className = 'attr-chip';
-        chip.innerHTML = `${escapeHtml(ac.label)} <span class="rm" data-idx="${ac.idx}">\u2715</span>`;
-        chip.querySelector('.rm').addEventListener('click', () => {
-          attrCols = attrCols.filter(x => x.idx !== ac.idx);
-          renderAttrChips();
-        });
-        attrColsList.appendChild(chip);
-      });
-    }
-    attrShowToggleWrap.style.display = attrCols.length ? 'flex' : 'none';
-  }
-
-  addAttrColBtn.addEventListener('click', () => {
-    const v = parseInt(attrColSelect.value, 10);
-    if (isNaN(v) || v < 0) return;
-    if (attrCols.some(a => a.idx === v)) return; // sudah ditandai
-    const label = attrColSelect.options[attrColSelect.selectedIndex].textContent;
-    attrCols.push({ idx: v, label: label });
-    renderAttrChips();
-  });
-
-  function attrColEnabled(){
-    return attrCols.length > 0 && attrShowToggle.checked;
-  }
-
-  attrShowToggle.addEventListener('change', () => {
-    if (!lastAnalysis) return;
-    renderMatrix('obsMatrix', lastAnalysis.result, true);
-    renderMatrix('idealMatrix', lastAnalysis.result, false);
-    renderRawSkalogram({
-      itemNames: lastAnalysis.itemNames,
-      respNames: lastAnalysis.respNames,
-      rawMatrix: lastAnalysis.rawMatrix,
-      attrValues: lastAnalysis.attrValues
-    });
-    renderMarshall(lastAnalysis.marshallResult);
-  });
 
   resetBtn.addEventListener('click', () => {
     wbGlobal = null;
@@ -1343,12 +1862,6 @@
     headerRowInput.value = '1';
     idColSelect.innerHTML = '<option>— pilih file dulu —</option>';
     idColSelect.disabled = true;
-    attrColSelect.innerHTML = '<option>— pilih file dulu —</option>';
-    attrColSelect.disabled = true;
-    addAttrColBtn.disabled = true;
-    attrCols = [];
-    renderAttrChips();
-    attrShowToggle.checked = false;
     filenamePill.style.display = 'none';
     analyzeBtn.disabled = true;
     resetBtn.style.display = 'none';
@@ -1362,6 +1875,15 @@
     document.getElementById('hierRefToggleBtn').style.display = 'none';
     document.getElementById('hierRefToggleBtn').textContent = '\u2699 Referensi Hierarki';
     hierLevels = null;
+    attr1Active = false; resetAttrBtn(attrBtn1);
+    attr2Active = false; resetAttrBtn(attrBtn2);
+    updateAttrBtnVisibility();
+    extraAttrColSelect.innerHTML = '<option>— pilih file dulu —</option>';
+    extraAttrColSelect.disabled = true;
+    extraAttrTrigger.classList.add('disabled-text');
+    closeExtraAttrSelect();
+    extraAttrCols = [];
+    renderExtraAttrList();
   });
 
   // ---------- Sample data ----------
@@ -1399,6 +1921,7 @@
     idColSelect.value = '1';
     adminCol1Select.value = '0';
     adminCol2Select.value = '-1';
+    updateAttrBtnVisibility();
     filenamePill.style.display = 'inline-flex';
     filenameText.textContent = 'data-contoh-internal.xlsx (simulasi)';
     analyzeBtn.disabled = false;
@@ -1436,9 +1959,7 @@
     const idCol = parseInt(idColSelect.value, 10);
     const adminCol1 = parseInt(adminCol1Select.value, 10);
     const adminCol2 = parseInt(adminCol2Select.value, 10);
-    const attrColIdxs = attrCols.map(a => a.idx);
-    const attrColLabel = attrCols.map(a => a.label).join(' | ');
-    const excludedCols = new Set([idCol, adminCol1, adminCol2, ...attrColIdxs].filter(c => c >= 0));
+    const excludedCols = new Set([idCol, adminCol1, adminCol2, ...extraAttrCols.map(item => item.idx)].filter(c => c >= 0));
     const nCols = rows[0].length;
     const rawItemCols = [];
     for (let c=0; c<nCols; c++){
@@ -1483,7 +2004,7 @@
     const respNames = [];
     const geocodeQueries = []; // "Wilayah, Kecamatan, Kabupaten/Kota" string per region, for Nominatim lookup
     const adminComponents = []; // {desa, kecamatan, kabupaten} per region, for offline SHP lookup
-    const attrValues = []; // string "atribut1 | atribut2" per region, sejajar dengan respNames
+    const regionAttrTexts = []; // teks atribut per wilayah (gabungan kolom yang "Dijadikan Atribut"), mis. "Kendal" atau "Kendal | Boja"
     const matrix = []; // binary 0/1 (for Guttman)
     const rawMatrix = []; // raw facility counts (for Ordo & Marshall)
     let invalidCellCount = 0;
@@ -1497,8 +2018,15 @@
       const kabupatenVal = (adminCol1 >= 0 && r[adminCol1] !== null && r[adminCol1] !== undefined && r[adminCol1] !== '') ? String(r[adminCol1]) : '';
       adminComponents.push({ desa: name, kecamatan: kecamatanVal, kabupaten: kabupatenVal });
 
-      const attrVal = attrColIdxs.map(c => (r[c] !== null && r[c] !== undefined && r[c] !== '') ? String(r[c]) : '').join(' | ');
-      attrValues.push(attrVal);
+      // atribut: kolom yang ditandai "Dijadikan Atribut" (Kabupaten/Kota, Kecamatan), lalu kolom-kolom dari "Kolom Atribut Lainnya"
+      const attrParts = [];
+      if (attr1Active && kabupatenVal) attrParts.push(kabupatenVal);
+      if (attr2Active && kecamatanVal) attrParts.push(kecamatanVal);
+      extraAttrCols.forEach(item => {
+        const v = r[item.idx];
+        if (v !== null && v !== undefined && v !== '') attrParts.push(String(v));
+      });
+      regionAttrTexts.push(attrParts.join(' | '));
 
       // build geocode query: Wilayah, Kecamatan (if any), Kabupaten/Kota (if any), Indonesia
       const parts = [name];
@@ -1526,6 +2054,8 @@
       matrix.push(binRow);
     });
 
+    const hasAttr = regionAttrTexts.some(t => t && t.length);
+
     if (itemCols.length < 2){
       showError("Minimal diperlukan 2 kolom item/sarana untuk analisis skalogram.");
       return;
@@ -1538,18 +2068,17 @@
     hierLevels = null; // reset on new analysis (new item set)
     buildHierRefPanel(itemNames, rawMatrix);
 
-    const result = computeGuttman(matrix, itemNames, respNames, hierLevels, attrValues);
-    const ordoResult = computeOrdoHirarki(rawMatrix, itemNames, respNames, hierLevels, attrValues);
-    const marshallResult = computeMarshall(rawMatrix, itemNames, respNames, attrValues);
+    const result = computeGuttman(matrix, itemNames, respNames, hierLevels, regionAttrTexts);
+    const ordoResult = computeOrdoHirarki(rawMatrix, itemNames, respNames, hierLevels, regionAttrTexts);
+    const marshallResult = computeMarshall(rawMatrix, itemNames, respNames, regionAttrTexts);
 
     lastAnalysis = {
-      itemNames, respNames, rawMatrix, matrix, geocodeQueries, adminComponents,
-      attrValues, attrColLabel,
+      itemNames, respNames, rawMatrix, matrix, geocodeQueries, adminComponents, regionAttrTexts, hasAttr,
       result, ordoResult, marshallResult, invalidCellCount, skippedStringCols
     };
 
     renderResults(result, invalidCellCount, skippedStringCols);
-    renderOrdoHirarki(ordoResult, {itemNames, respNames, rawMatrix, attrValues});
+    renderOrdoHirarki(ordoResult, {itemNames, respNames, rawMatrix, regionAttrTexts, hasAttr});
     renderMarshall(marshallResult);
 
     document.getElementById('sec-summary').classList.remove('hidden-section');
@@ -1564,7 +2093,7 @@
   // hl = hierLevels array (optional). hl[j] = tier (1=highest/most specialized, bigger=more basic).
   // Tiebreaker items: same total → more basic (higher hl) comes LEFT.
   // Tiebreaker resp: same score → more specialized holdings (lower hierSum) comes TOP.
-  function computeGuttman(matrix, itemNames, respNames, hl, attrValues){
+  function computeGuttman(matrix, itemNames, respNames, hl, attrTexts){
     const N = matrix.length;       // respondents
     const n = itemNames.length;    // items
 
@@ -1603,7 +2132,7 @@
     const sortedItemNames = itemOrder.map(ci => itemNames[ci]);
     const sortedRespScores = respOrder.map(ri => respTotals[ri]);
     const sortedItemTotals = itemOrder.map(ci => itemTotals[ci]);
-    const sortedAttrValues = respOrder.map(ri => attrValues ? (attrValues[ri] || '') : '');
+    const sortedAttrTexts = respOrder.map(ri => (attrTexts && attrTexts[ri]) ? attrTexts[ri] : '');
 
     // ideal matrix + error matrix based on cutting point = respondent's own score
     const ideal = [];
@@ -1643,7 +2172,7 @@
 
     return {
       N, n, sorted, ideal, errorMatrix, rowErrors,
-      sortedRespNames, sortedItemNames, sortedRespScores, sortedItemTotals, sortedAttrValues,
+      sortedRespNames, sortedItemNames, sortedRespScores, sortedItemTotals, sortedAttrTexts,
       totalError, totalCells, CR, MMR, CS
     };
   }
@@ -1652,7 +2181,7 @@
   // Metode langsung: ordo ditentukan dari TOTAL jumlah unit fasilitas per wilayah
   // (semakin banyak & lengkap fasilitas, semakin tinggi ordonya), lalu dikelompokkan
   // memakai kelas Sturges yang sama seperti hirarki skalogram.
-  function computeOrdoHirarki(rawMatrix, itemNames, respNames, hl, attrValues){
+  function computeOrdoHirarki(rawMatrix, itemNames, respNames, hl, attrTexts){
     const N = rawMatrix.length;
     const n = itemNames.length;
 
@@ -1673,7 +2202,7 @@
     const sortedNames = order.map(i=>respNames[i]);
     const sortedTotals = order.map(i=>totalFacility[i]);
     const sortedJenis = order.map(i=>jenisFacility[i]);
-    const sortedAttrValues = order.map(i=> attrValues ? (attrValues[i] || '') : '');
+    const sortedAttrTexts = order.map(i => (attrTexts && attrTexts[i]) ? attrTexts[i] : '');
 
     // item totals: total unit fasilitas per jenis sarana, dijumlahkan dari seluruh wilayah
     const itemTotals = new Array(n).fill(0);
@@ -1691,7 +2220,7 @@
 
     const classRes = computeSturgesClasses(sortedNames, sortedTotals, false);
 
-    return {N, n, sortedNames, sortedTotals, sortedJenis, sortedAttrValues, sortedItemNames, sortedItemTotals, classRes};
+    return {N, n, sortedNames, sortedTotals, sortedJenis, sortedAttrTexts, sortedItemNames, sortedItemTotals, classRes};
   }
 
   // ---------- Indeks Sentralitas Marshall ----------
@@ -1701,7 +2230,7 @@
   // (bukan jumlah wilayah yang memiliki sarana j).
   // Nilai sentralitas sel(i,j) = jumlah unit sarana j di wilayah i * bobot sarana j
   // Indeks Sentralitas wilayah i = jumlah seluruh nilai sentralitas pada baris i
-  function computeMarshall(rawMatrix, itemNames, respNames, attrValues){
+  function computeMarshall(rawMatrix, itemNames, respNames, attrTexts){
     const N = rawMatrix.length;
     const n = itemNames.length;
 
@@ -1726,7 +2255,7 @@
     const sortedIndex = order.map(i=>centralityIndex[i]);
     const sortedRaw = order.map(i=>rawMatrix[i]);
     const sortedCentrality = order.map(i=>centralityMatrix[i]);
-    const sortedAttrValues = order.map(i=> attrValues ? (attrValues[i] || '') : '');
+    const sortedAttrTexts = order.map(i => (attrTexts && attrTexts[i]) ? attrTexts[i] : '');
 
     const classRes = computeSturgesClasses(sortedNames, sortedIndex.map(v=>Math.round(v*100)/100), true);
 
@@ -1740,7 +2269,7 @@
     return {
       N, n, itemNames, weights, itemPresenceCount, itemTotalUnits,
       sortedItemNames, sortedWeights, sortedPresence, sortedTotalUnits,
-      sortedNames, sortedIndex, sortedRaw, sortedCentrality, sortedAttrValues, classRes
+      sortedNames, sortedIndex, sortedRaw, sortedCentrality, sortedAttrTexts, classRes
     };
   }
 
@@ -1818,9 +2347,14 @@
     res.sortedRespScores.forEach((score, idx) => {
       const row = document.createElement('div');
       row.className = 'hier-row';
+      const attrText = res.sortedAttrTexts ? res.sortedAttrTexts[idx] : '';
+      const attrHtml = attrText ? `<div class="hier-attr">${escapeHtml(attrText)}</div>` : '';
       row.innerHTML = `
         <div class="hier-rank" style="background:${rankColor(idx, res.sortedRespScores.length)}">${idx+1}</div>
-        <div class="hier-name" title="${escapeHtml(res.sortedRespNames[idx])}">${escapeHtml(truncate(res.sortedRespNames[idx], 22))}</div>
+        <div class="hier-name-wrap">
+          <div class="hier-name" title="${escapeHtml(res.sortedRespNames[idx])}">${escapeHtml(truncate(res.sortedRespNames[idx], 22))}</div>
+          ${attrHtml}
+        </div>
         <div class="hier-bar-track"><div class="hier-bar-fill" style="width:${(score/maxRespScore*100).toFixed(1)}%"></div></div>
         <div class="hier-score">${score} / ${res.n}</div>
       `;
@@ -2056,14 +2590,21 @@
   function escapeHtml(s){
     return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
+  // Tampilkan teks atribut (gabungan " | ") sebagai baris bertingkat di dalam cell tabel:
+  // "Kendal | Boja"  ->  "Kendal|<br>Boja"  (setiap baris diberi "|" di akhir, kecuali baris terakhir)
+  function formatAttrCellHtml(attrText){
+    if (!attrText) return '';
+    const parts = attrText.split(' | ');
+    return parts.map((p, i) => escapeHtml(p) + (i < parts.length - 1 ? '|' : '')).join('<br>');
+  }
 
   function renderMatrix(containerId, res, useObserved){
     const container = document.getElementById(containerId);
     const dataMatrix = useObserved ? res.sorted : res.ideal;
-    const showAttr = attrColEnabled() && Array.isArray(res.sortedAttrValues);
+    const hasAttr = res.sortedAttrTexts && res.sortedAttrTexts.some(t => t);
 
     let html = '<table class="matrix"><thead><tr><th class="corner">Wilayah</th>';
-    if (showAttr) html += '<th class="corner">Atribut</th>';
+    if (hasAttr) html += '<th class="attr-col-head">Atribut</th>';
     res.sortedItemNames.forEach((name, j) => {
       html += `<th title="${escapeHtml(name)}">${escapeHtml(truncate(name, 14))}</th>`;
     });
@@ -2073,9 +2614,9 @@
 
     for (let i=0;i<res.N;i++){
       html += `<tr><th title="${escapeHtml(res.sortedRespNames[i])}">${escapeHtml(truncate(res.sortedRespNames[i],16))}</th>`;
-      if (showAttr){
-        const av = res.sortedAttrValues[i] || '';
-        html += `<th title="${escapeHtml(av)}" style="position:static; text-align:left; font-weight:400; background:var(--paper-deep);">${escapeHtml(truncate(av || '\u2014',16))}</th>`;
+      if (hasAttr){
+        const attrText = res.sortedAttrTexts[i] || '';
+        html += `<td class="attr-cell" title="${escapeHtml(attrText)}">${formatAttrCellHtml(attrText)}</td>`;
       }
       for (let j=0;j<res.n;j++){
         const val = dataMatrix[i][j];
@@ -2112,16 +2653,21 @@
       itemListEl.appendChild(row);
     });
 
-    // ranking list
+    // ranking list (Peringkat Wilayah)
     const listEl = document.getElementById('ordoRankList');
     listEl.innerHTML = '';
     const maxTotal = Math.max(...ordo.sortedTotals, 1);
     ordo.sortedNames.forEach((name, idx) => {
       const row = document.createElement('div');
       row.className = 'hier-row';
+      const attrText = ordo.sortedAttrTexts ? ordo.sortedAttrTexts[idx] : '';
+      const attrHtml = attrText ? `<div class="hier-attr">${escapeHtml(attrText)}</div>` : '';
       row.innerHTML = `
         <div class="hier-rank" style="background:${rankColor(idx, ordo.sortedNames.length)}">${idx+1}</div>
-        <div class="hier-name" title="${escapeHtml(name)}">${escapeHtml(truncate(name, 22))}</div>
+        <div class="hier-name-wrap">
+          <div class="hier-name" title="${escapeHtml(name)}">${escapeHtml(truncate(name, 22))}</div>
+          ${attrHtml}
+        </div>
         <div class="hier-bar-track"><div class="hier-bar-fill" style="width:${(ordo.sortedTotals[idx]/maxTotal*100).toFixed(1)}%"></div></div>
         <div class="hier-score">${ordo.sortedTotals[idx]} unit \u00B7 ${ordo.sortedJenis[idx]} jenis</div>
       `;
@@ -2140,10 +2686,10 @@
 
   // ---------- Render: Tabel Data Mentah (urutan file asli + totals) ----------
   function renderRawSkalogram(state){
-    const { itemNames, respNames, rawMatrix, attrValues } = state;
+    const { itemNames, respNames, rawMatrix, regionAttrTexts } = state;
     const N = respNames.length;
     const n = itemNames.length;
-    const showAttr = attrColEnabled() && Array.isArray(attrValues);
+    const hasAttr = regionAttrTexts && regionAttrTexts.some(t => t);
 
     // per-row totals
     const rowTotals = rawMatrix.map(row => row.reduce((s,v)=>s+v,0));
@@ -2158,7 +2704,7 @@
 
     // ── header ──────────────────────────────────────────────────
     html += '<thead><tr><th class="corner" style="min-width:90px;">Wilayah</th>';
-    if (showAttr) html += '<th class="corner" style="min-width:90px;">Atribut</th>';
+    if (hasAttr) html += '<th class="attr-col-head">Atribut</th>';
     itemNames.forEach(name => {
       html += `<th title="${escapeHtml(name)}">${escapeHtml(truncate(name, 12))}</th>`;
     });
@@ -2170,9 +2716,9 @@
     html += '<tbody>';
     for (let i = 0; i < N; i++){
       html += `<tr><th title="${escapeHtml(respNames[i])}">${escapeHtml(truncate(respNames[i], 18))}</th>`;
-      if (showAttr){
-        const av = attrValues[i] || '';
-        html += `<th title="${escapeHtml(av)}" style="position:static; text-align:left; font-weight:400; background:var(--paper-deep);">${escapeHtml(truncate(av || '\u2014',18))}</th>`;
+      if (hasAttr){
+        const attrText = regionAttrTexts[i] || '';
+        html += `<td class="attr-cell" title="${escapeHtml(attrText)}">${formatAttrCellHtml(attrText)}</td>`;
       }
       for (let j = 0; j < n; j++){
         const v = rawMatrix[i][j];
@@ -2188,7 +2734,7 @@
     // ── footer / total row ───────────────────────────────────────
     html += '<tfoot><tr>';
     html += `<th style="background:var(--ink);color:#fff;text-align:left;padding:7px 8px;font-family:\'JetBrains Mono\',monospace;font-size:11px;">TOTAL</th>`;
-    if (showAttr) html += `<th style="background:var(--ink);color:#fff;"></th>`;
+    if (hasAttr) html += `<td style="background:var(--ink);"></td>`;
     colTotals.forEach(ct => {
       html += `<td style="background:var(--paper-deep);font-family:\'JetBrains Mono\',monospace;font-weight:700;text-align:center;border:1px solid #000;">${ct}</td>`;
     });
@@ -2223,17 +2769,17 @@
 
     // weighted facility data per region — same color scheme as other matrix tables
     // val > 0 → class "one" (hijau), val = 0 → class "zero" (gold), indeks → class "score"
-    const showAttr = attrColEnabled() && Array.isArray(m.sortedAttrValues);
     const wrapWeighted = document.getElementById('marshallWeightedTable');
+    const hasAttrW = m.sortedAttrTexts && m.sortedAttrTexts.some(t => t);
     let htmlW = '<table class="matrix"><thead><tr><th class="corner">Wilayah</th>';
-    if (showAttr) htmlW += '<th class="corner">Atribut</th>';
+    if (hasAttrW) htmlW += '<th class="attr-col-head">Atribut</th>';
     m.itemNames.forEach(name => { htmlW += `<th title="${escapeHtml(name)}">${escapeHtml(truncate(name,14))}</th>`; });
     htmlW += '<th>Indeks Sentralitas</th></tr></thead><tbody>';
     m.sortedNames.forEach((name, i) => {
       htmlW += `<tr><th style="text-align:left;">${escapeHtml(truncate(name,18))}</th>`;
-      if (showAttr){
-        const av = m.sortedAttrValues[i] || '';
-        htmlW += `<th title="${escapeHtml(av)}" style="position:static; text-align:left; font-weight:400; background:var(--paper-deep);">${escapeHtml(truncate(av || '\u2014',18))}</th>`;
+      if (hasAttrW){
+        const attrText = m.sortedAttrTexts[i] || '';
+        htmlW += `<td class="attr-cell" title="${escapeHtml(attrText)}">${formatAttrCellHtml(attrText)}</td>`;
       }
       m.sortedCentrality[i].forEach(val => {
         const cls = val > 0 ? 'one' : 'zero';
@@ -2251,9 +2797,14 @@
     m.sortedNames.forEach((name, idx) => {
       const row = document.createElement('div');
       row.className = 'hier-row';
+      const attrText = m.sortedAttrTexts ? m.sortedAttrTexts[idx] : '';
+      const attrHtml = attrText ? `<div class="hier-attr">${escapeHtml(attrText)}</div>` : '';
       row.innerHTML = `
         <div class="hier-rank" style="background:${rankColor(idx, m.sortedNames.length)}">${idx+1}</div>
-        <div class="hier-name" title="${escapeHtml(name)}">${escapeHtml(truncate(name, 22))}</div>
+        <div class="hier-name-wrap">
+          <div class="hier-name" title="${escapeHtml(name)}">${escapeHtml(truncate(name, 22))}</div>
+          ${attrHtml}
+        </div>
         <div class="hier-bar-track"><div class="hier-bar-fill" style="width:${(m.sortedIndex[idx]/maxIdx*100).toFixed(1)}%"></div></div>
         <div class="hier-score">${m.sortedIndex[idx].toFixed(2)}</div>
       `;
@@ -2359,15 +2910,15 @@
 
   document.getElementById('applyHierRefBtn').addEventListener('click', () => {
     if (!lastAnalysis) return;
-    const { itemNames, respNames, rawMatrix, matrix, invalidCellCount, attrValues } = lastAnalysis;
+    const { itemNames, respNames, rawMatrix, matrix, invalidCellCount, regionAttrTexts, hasAttr } = lastAnalysis;
     hierLevels = readHierLevels(itemNames.length);
     lastAnalysis.hierLevels = hierLevels;
-    const result = computeGuttman(matrix, itemNames, respNames, hierLevels, attrValues);
-    const ordoResult = computeOrdoHirarki(rawMatrix, itemNames, respNames, hierLevels, attrValues);
-    const marshallResult = computeMarshall(rawMatrix, itemNames, respNames, attrValues);
+    const result = computeGuttman(matrix, itemNames, respNames, hierLevels, regionAttrTexts);
+    const ordoResult = computeOrdoHirarki(rawMatrix, itemNames, respNames, hierLevels, regionAttrTexts);
+    const marshallResult = computeMarshall(rawMatrix, itemNames, respNames, regionAttrTexts);
     Object.assign(lastAnalysis, { result, ordoResult, marshallResult });
     renderResults(result, invalidCellCount);
-    renderOrdoHirarki(ordoResult, {itemNames, respNames, rawMatrix, attrValues});
+    renderOrdoHirarki(ordoResult, {itemNames, respNames, rawMatrix, regionAttrTexts, hasAttr});
     renderMarshall(marshallResult);
     document.getElementById('sec-hier').scrollIntoView({behavior:'smooth', block:'start'});
   });
@@ -2462,21 +3013,20 @@
   }
 
   function exportToExcel(state){
-    const { itemNames, respNames, rawMatrix, matrix, result, ordoResult, marshallResult, invalidCellCount, attrValues } = state;
+    const { itemNames, respNames, rawMatrix, matrix, result, ordoResult, marshallResult, invalidCellCount, regionAttrTexts, hasAttr } = state;
     const wb = XLSX.utils.book_new();
     const N = respNames.length, n = itemNames.length;
     const classResSkalogram = computeSturgesClasses(result.sortedRespNames, result.sortedRespScores, false);
-    const hasAttr = attrCols.length > 0 && Array.isArray(attrValues);
-    const attrHeader = state.attrColLabel ? ('Atribut (' + state.attrColLabel + ')') : 'Atribut';
+    const attrCol = (text) => hasAttr ? [text || ''] : []; // sel 'Atribut' (kosong array kalau fitur atribut tidak dipakai)
 
     // ============ SHEET 1: Data Mentah + Sturges (skor skalogram) ============
     const s1 = [];
     s1.push(['DATA MENTAH — JUMLAH FASILITAS PER WILAYAH']);
     s1.push([]);
-    s1.push(['Wilayah', ...(hasAttr ? [attrHeader] : []), ...itemNames, 'Total Skor (Skalogram, biner)']);
+    s1.push(['Wilayah', ...(hasAttr ? ['Atribut'] : []), ...itemNames, 'Total Skor (Skalogram, biner)']);
     for (let i=0;i<N;i++){
       const binScore = matrix[i].reduce((s,v)=>s+v,0);
-      s1.push([respNames[i], ...(hasAttr ? [attrValues[i] || ''] : []), ...rawMatrix[i], binScore]);
+      s1.push([respNames[i], ...attrCol(regionAttrTexts[i]), ...rawMatrix[i], binScore]);
     }
     s1.push([]);
     s1.push(['PERHITUNGAN JUMLAH KELAS — RUMUS STURGES (berbasis Skor Skalogram)']);
@@ -2486,7 +3036,7 @@
       s1.push(['Catatan: ' + invalidCellCount + ' sel berisi nilai non-numerik, diperlakukan sebagai 0.']);
     }
     const ws1 = XLSX.utils.aoa_to_sheet(s1);
-    styleSheetColumns(ws1, [22, ...(hasAttr ? [22] : []), ...itemNames.map(()=>14), 16]);
+    styleSheetColumns(ws1, [22, ...(hasAttr ? [24] : []), ...itemNames.map(()=>14), 16]);
     XLSX.utils.book_append_sheet(wb, ws1, '1. Data & Sturges');
 
     // ============ SHEET 2: Matriks Ideal ============
@@ -2494,12 +3044,12 @@
     s2.push(['MATRIKS IDEAL (POLA TANGGA GUTTMAN)']);
     s2.push(['Wilayah & item diurutkan dari skor/total tertinggi ke terendah. Pola ideal: pada baris dengan skor k, item rank 1..k = 1, sisanya = 0.']);
     s2.push([]);
-    s2.push(['Wilayah', ...(hasAttr ? [attrHeader] : []), ...result.sortedItemNames, 'Skor Total']);
+    s2.push(['Wilayah', ...(hasAttr ? ['Atribut'] : []), ...result.sortedItemNames, 'Skor Total']);
     for (let i=0;i<result.N;i++){
-      s2.push([result.sortedRespNames[i], ...(hasAttr ? [result.sortedAttrValues[i] || ''] : []), ...result.ideal[i], result.sortedRespScores[i]]);
+      s2.push([result.sortedRespNames[i], ...attrCol(result.sortedAttrTexts && result.sortedAttrTexts[i]), ...result.ideal[i], result.sortedRespScores[i]]);
     }
     const ws2 = XLSX.utils.aoa_to_sheet(s2);
-    styleSheetColumns(ws2, [22, ...(hasAttr ? [22] : []), ...result.sortedItemNames.map(()=>10), 12]);
+    styleSheetColumns(ws2, [22, ...(hasAttr ? [24] : []), ...result.sortedItemNames.map(()=>10), 12]);
     XLSX.utils.book_append_sheet(wb, ws2, '2. Matriks Ideal');
 
     // ============ SHEET 3: Matriks Observasi + Error + CR ============
@@ -2507,12 +3057,12 @@
     s3.push(['MATRIKS OBSERVASI (DATA AKTUAL TERURUT) DENGAN ERROR']);
     s3.push(['Sel yang menyimpang dari pola ideal Guttman ditandai "Error" (nilai asli tetap ditampilkan di dalam kurung).']);
     s3.push([]);
-    s3.push(['Wilayah', ...(hasAttr ? [attrHeader] : []), ...result.sortedItemNames, 'Skor Total', 'Jumlah Error']);
+    s3.push(['Wilayah', ...(hasAttr ? ['Atribut'] : []), ...result.sortedItemNames, 'Skor Total', 'Jumlah Error']);
     for (let i=0;i<result.N;i++){
       const cells = result.sorted[i].map((val, j) =>
         result.errorMatrix[i][j] === 1 ? ('Error (' + val + ')') : val
       );
-      s3.push([result.sortedRespNames[i], ...(hasAttr ? [result.sortedAttrValues[i] || ''] : []), ...cells, result.sortedRespScores[i], result.rowErrors[i]]);
+      s3.push([result.sortedRespNames[i], ...attrCol(result.sortedAttrTexts && result.sortedAttrTexts[i]), ...cells, result.sortedRespScores[i], result.rowErrors[i]]);
     }
     s3.push([]);
     s3.push(['RINGKASAN ERROR & COEFFICIENT OF REPRODUCIBILITY (CR)']);
@@ -2524,16 +3074,16 @@
     s3.push(['Status CR (syarat ≥ 0.90)', result.CR >= 0.9 ? 'BAIK (skala valid)' : 'KURANG BAIK']);
     s3.push(['Status CS (syarat ≥ 0.60)', result.CS >= 0.6 ? 'BAIK (skala unidimensional)' : 'KURANG BAIK']);
     const ws3 = XLSX.utils.aoa_to_sheet(s3);
-    styleSheetColumns(ws3, [22, ...(hasAttr ? [22] : []), ...result.sortedItemNames.map(()=>10), 12, 14]);
+    styleSheetColumns(ws3, [22, ...(hasAttr ? [24] : []), ...result.sortedItemNames.map(()=>10), 12, 14]);
     XLSX.utils.book_append_sheet(wb, ws3, '3. Matriks Observasi & CR');
 
     // ============ SHEET 4: Hirarki Skalogram + Tabel Interval ============
     const s4 = [];
     s4.push(['HIRARKI HASIL ANALISIS SKALOGRAM GUTTMAN']);
     s4.push([]);
-    s4.push(['Peringkat', 'Wilayah', ...(hasAttr ? [attrHeader] : []), 'Skor Total']);
+    s4.push(['Peringkat', 'Wilayah', 'Skor Total']);
     result.sortedRespNames.forEach((name, idx) => {
-      s4.push([idx+1, name, ...(hasAttr ? [result.sortedAttrValues[idx] || ''] : []), result.sortedRespScores[idx]]);
+      s4.push([idx+1, name, result.sortedRespScores[idx]]);
     });
     s4.push([]);
     s4.push(['PERHITUNGAN JUMLAH KELAS — RUMUS STURGES']);
@@ -2542,7 +3092,7 @@
     s4.push(['TABEL INTERVAL KELAS / HIRARKI']);
     classTableRows(classResSkalogram, 'Wilayah', 'Skor').forEach(r => s4.push(r));
     const ws4 = XLSX.utils.aoa_to_sheet(s4);
-    styleSheetColumns(ws4, [12, 24, ...(hasAttr ? [22] : []), 12, 14, 14, 14, 60]);
+    styleSheetColumns(ws4, [12, 24, 12, 14, 14, 14, 60]);
     XLSX.utils.book_append_sheet(wb, ws4, '4. Hirarki Skalogram');
 
     // ============ SHEET 5: Marshall — Bobot & Data Terbobot ============
@@ -2556,23 +3106,23 @@
     });
     s5.push([]);
     s5.push(['TABEL DATA MENTAH YANG DIBOBOTKAN  (nilai sel = jumlah unit × bobot sarana)']);
-    s5.push(['Wilayah', ...(hasAttr ? [attrHeader] : []), ...itemNames, 'Indeks Sentralitas (Total)']);
+    s5.push(['Wilayah', ...(hasAttr ? ['Atribut'] : []), ...itemNames, 'Indeks Sentralitas (Total)']);
     for (let i=0;i<N;i++){
       const weightedRow = itemNames.map((nm, j) => Number((rawMatrix[i][j] * marshallResult.weights[j]).toFixed(3)));
       const total = weightedRow.reduce((s,v)=>s+v,0);
-      s5.push([respNames[i], ...(hasAttr ? [attrValues[i] || ''] : []), ...weightedRow, Number(total.toFixed(3))]);
+      s5.push([respNames[i], ...attrCol(regionAttrTexts[i]), ...weightedRow, Number(total.toFixed(3))]);
     }
     const ws5 = XLSX.utils.aoa_to_sheet(s5);
-    styleSheetColumns(ws5, [22, ...(hasAttr ? [22] : []), ...itemNames.map(()=>14), 18]);
+    styleSheetColumns(ws5, [22, ...(hasAttr ? [24] : []), ...itemNames.map(()=>14), 18]);
     XLSX.utils.book_append_sheet(wb, ws5, '5. Marshall - Bobot & Data');
 
     // ============ SHEET 6: Hirarki Marshall + Tabel Interval ============
     const s6 = [];
     s6.push(['HIRARKI PERKOTAAN — HASIL ANALISIS INDEKS SENTRALITAS MARSHALL']);
     s6.push([]);
-    s6.push(['Peringkat', 'Wilayah', ...(hasAttr ? [attrHeader] : []), 'Indeks Sentralitas']);
+    s6.push(['Peringkat', 'Wilayah', 'Indeks Sentralitas']);
     marshallResult.sortedNames.forEach((name, idx) => {
-      s6.push([idx+1, name, ...(hasAttr ? [marshallResult.sortedAttrValues[idx] || ''] : []), Number(marshallResult.sortedIndex[idx].toFixed(3))]);
+      s6.push([idx+1, name, Number(marshallResult.sortedIndex[idx].toFixed(3))]);
     });
     s6.push([]);
     s6.push(['PERHITUNGAN JUMLAH KELAS — RUMUS STURGES']);
@@ -2581,16 +3131,16 @@
     s6.push(['TABEL INTERVAL KELAS / HIRARKI']);
     classTableRows(marshallResult.classRes, 'Wilayah', 'Indeks').forEach(r => s6.push(r));
     const ws6 = XLSX.utils.aoa_to_sheet(s6);
-    styleSheetColumns(ws6, [12, 24, ...(hasAttr ? [22] : []), 16, 14, 14, 14, 60]);
+    styleSheetColumns(ws6, [12, 24, 16, 14, 14, 14, 60]);
     XLSX.utils.book_append_sheet(wb, ws6, '6. Hirarki Marshall');
 
     // ============ SHEET 7: Hirarki Langsung (Ordo Jumlah Fasilitas) + Tabel Interval ============
     const s7 = [];
     s7.push(['HIRARKI HASIL ANALISIS DATA SECARA LANGSUNG (ORDO BERDASARKAN JUMLAH FASILITAS)']);
     s7.push([]);
-    s7.push(['Peringkat', 'Wilayah', ...(hasAttr ? [attrHeader] : []), 'Total Unit Fasilitas', 'Jumlah Jenis Sarana']);
+    s7.push(['Peringkat', 'Wilayah', 'Total Unit Fasilitas', 'Jumlah Jenis Sarana']);
     ordoResult.sortedNames.forEach((name, idx) => {
-      s7.push([idx+1, name, ...(hasAttr ? [ordoResult.sortedAttrValues[idx] || ''] : []), ordoResult.sortedTotals[idx], ordoResult.sortedJenis[idx]]);
+      s7.push([idx+1, name, ordoResult.sortedTotals[idx], ordoResult.sortedJenis[idx]]);
     });
     s7.push([]);
     s7.push(['PERHITUNGAN JUMLAH KELAS — RUMUS STURGES']);
@@ -2599,7 +3149,7 @@
     s7.push(['TABEL INTERVAL KELAS / HIRARKI']);
     classTableRows(ordoResult.classRes, 'Wilayah', 'Jumlah Fasilitas').forEach(r => s7.push(r));
     const ws7 = XLSX.utils.aoa_to_sheet(s7);
-    styleSheetColumns(ws7, [12, 24, ...(hasAttr ? [22] : []), 16, 16, 14, 14, 60]);
+    styleSheetColumns(ws7, [12, 24, 16, 16, 14, 14, 60]);
     XLSX.utils.book_append_sheet(wb, ws7, '7. Hirarki Langsung');
 
     // ============ SHEET 8: Referensi Tingkat Hierarki Sarana (tiebreaker) ============
@@ -3034,7 +3584,8 @@
 
       if (geo){
         const tierInfo = tierData.lookup[names[i]] || null;
-        points.push({ name: names[i], lat: geo.lat, lon: geo.lon, tierInfo, source: usedShp ? 'shp' : 'nominatim' });
+        const attrVal = (lastAnalysis.regionAttrTexts && lastAnalysis.regionAttrTexts[i]) ? lastAnalysis.regionAttrTexts[i] : '';
+        points.push({ name: names[i], lat: geo.lat, lon: geo.lon, tierInfo, source: usedShp ? 'shp' : 'nominatim', attr: attrVal });
       }
     }
 
@@ -3096,10 +3647,15 @@
       }).addTo(leafletMap);
 
       const sourceLabel = p.source === 'shp' ? 'SHP titik desa' : (p.source === 'nominatim' ? 'Nominatim (geocoding)' : '');
-      const popupHtml = `<b>${escapeHtml(p.name)}</b><br>` +
-        (p.tierInfo ? `${escapeHtml(p.tierInfo.tierLabel)}<br>Skor/Indeks: ${typeof p.tierInfo.score === 'number' ? (Number.isInteger(p.tierInfo.score) ? p.tierInfo.score : p.tierInfo.score.toFixed(2)) : p.tierInfo.score}` : 'Tier tidak diketahui') +
-        (sourceLabel ? `<br><span style="color:#888; font-size:11px;">Sumber: ${sourceLabel}</span>` : '');
-      marker.bindPopup(popupHtml);
+      const popupHtml =
+        `<b style="font-size:13.5px;">${escapeHtml(p.name)}</b>` +
+        (p.attr ? `<br><span style="color:#555; font-size:11.5px; font-style:italic;">${escapeHtml(p.attr)}</span>` : '') +
+        `<br>` +
+        (p.tierInfo
+          ? `<span style="font-size:12px;">${escapeHtml(p.tierInfo.tierLabel)}</span><br><span style="font-size:12px;">Skor/Indeks: <b>${typeof p.tierInfo.score === 'number' ? (Number.isInteger(p.tierInfo.score) ? p.tierInfo.score : p.tierInfo.score.toFixed(2)) : p.tierInfo.score}</b></span>`
+          : '<span style="font-size:12px; color:#888;">Tier tidak diketahui</span>') +
+        (sourceLabel ? `<br><span style="color:#aaa; font-size:10.5px;">Sumber: ${sourceLabel}</span>` : '');
+      marker.bindPopup(popupHtml, { maxWidth: 260 });
 
       leafletMarkers.push({ marker, tier });
       bounds.push([p.lat, p.lon]);
@@ -3293,12 +3849,14 @@
 
       const fields = [
         { name: 'NAME', type: 'C', length: 60 },
+        { name: 'ATTR', type: 'C', length: 120 },
         { name: 'TIER', type: 'N', length: 5, decimals: 0 },
         { name: 'TIERLABEL', type: 'C', length: 50 },
         { name: 'SCORE', type: 'N', length: 14, decimals: 2 },
       ];
       const dbfRecords = lastMapPoints.map(p => ({
         NAME: p.name,
+        ATTR: p.attr || '',
         TIER: p.tierInfo ? p.tierInfo.tier : 0,
         TIERLABEL: p.tierInfo ? p.tierInfo.tierLabel : 'Tidak diketahui',
         SCORE: p.tierInfo && typeof p.tierInfo.score === 'number' ? p.tierInfo.score : 0
