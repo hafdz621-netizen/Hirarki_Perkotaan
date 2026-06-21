@@ -2874,7 +2874,23 @@
         // wasn't found in the uploaded SHP.
         statusText.textContent = `Mencari lokasi via Nominatim (${i+1}/${names.length}): ${names[i]}`;
         progressFill.style.width = (((i+1)/names.length)*100).toFixed(0) + '%';
-        geo = await geocodeOne(queries[i], contactEmail);
+
+        // Untuk skala desa: query dari administrasi tertinggi ke terendah, pakai " and "
+        // → "Kabupaten and Kecamatan and Desa"
+        // Untuk skala kecamatan: tetap pakai query lama (comma-separated)
+        let nominatimQuery;
+        if (adminLevel === 'desa') {
+          const ac = adminComponents[i];
+          const qparts = [];
+          if (ac.kabupaten) qparts.push(ac.kabupaten);
+          if (ac.kecamatan) qparts.push(ac.kecamatan);
+          qparts.push(ac.desa);
+          nominatimQuery = qparts.join(' and ');
+        } else {
+          nominatimQuery = queries[i];
+        }
+
+        geo = await geocodeOne(nominatimQuery, contactEmail);
         if (geo) nominatimFallbackCount++;
         // Nominatim Usage Policy: absolute max 1 request/second. We use 1.2s as a safety margin.
         await sleep(1200);
