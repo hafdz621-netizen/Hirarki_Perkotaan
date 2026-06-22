@@ -757,6 +757,58 @@ button.project-btn:disabled{
     font-size:13px; color:var(--ink-soft); padding:30px; text-align:center;
   }
 
+  /* Admin boundary status message */
+  .admin-boundary-msg {
+    margin-top: 8px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 7px 12px;
+    border-radius: 3px;
+    background: rgba(6,145,193,0.08);
+    border-left: 3px solid var(--navy-soft);
+    color: var(--navy);
+    display: none;
+  }
+  .admin-boundary-msg.warn  { background: rgba(255,174,0,0.12); border-left-color: var(--gold); color: #7a5500; }
+  .admin-boundary-msg.err   { background: var(--bad-bg); border-left-color: var(--brick); color: var(--bad-ink); }
+  .admin-boundary-msg.ok    { background: rgba(69,141,64,0.1); border-left-color: var(--ok-ink); color: #2e6b2a; }
+  .admin-boundary-msg.loading::before { content: '⟳  '; }
+
+  /* Leaflet layer control customization */
+  .leaflet-control-layers {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    border: 1px solid var(--line) !important;
+    border-radius: 3px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+  }
+  .leaflet-control-layers-expanded {
+    padding: 8px 12px !important;
+    max-height: 340px;
+    overflow-y: auto;
+  }
+  .leaflet-control-layers-separator {
+    margin: 6px 0 !important;
+  }
+  .leaflet-control-layers label {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 3px 0;
+  }
+  /* Admin boundary tooltip */
+  .admin-boundary-tip {
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 3px;
+    padding: 3px 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  }
+
   /* Hierarchy reference panel */
   .hierref-card{
     background:#f4f1ef;
@@ -1668,6 +1720,7 @@ button.project-btn:disabled{
 
     <div id="mapContainer"><div class="map-empty-note">Klik "Cari Lokasi &amp; Tampilkan Peta" untuk memulai pencarian koordinat wilayah.</div></div>
     <div class="map-legend" id="mapLegend"></div>
+    <div id="adminBoundaryMsg" class="admin-boundary-msg"></div>
     <div style="margin-top:16px;">
       <button class="ghost" id="downloadShpBtn" style="display:none;">Download Titik Peta (.zip — Shapefile)</button>
     </div>
@@ -3473,6 +3526,7 @@ button.project-btn:disabled{
   let leafletMarkers = []; // {marker, tier}
   const geocodeCache = {}; // query -> {lat, lon} | null
   let geocodeFetchFailCount = 0;
+  let adminBoundaryCache = {}; // cache admin boundary fetches — key: "level:bboxKey"
 
   function sleep(ms){ return new Promise(res => setTimeout(res, ms)); }
 
@@ -3915,17 +3969,146 @@ button.project-btn:disabled{
     const container = document.getElementById('mapContainer');
     container.innerHTML = ''; // clear empty-note or previous map div content
 
+    hideAdminMsg();
+    adminBoundaryCache = {}; // fresh cache for each new render
+
     if (leafletMap){
       leafletMap.remove();
       leafletMap = null;
     }
 
     leafletMap = L.map('mapContainer');
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors',
-      maxZoom: 18
-    }).addTo(leafletMap);
 
+    // ── BASEMAPS ────────────────────────────────────────────────────────
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19
+    });
+    const esriSatLayer = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        maxZoom: 18
+    });
+    const esriTopoLayer = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
+        maxZoom: 18
+    });
+    const cartoLightLayer = L.tileLayer(
+      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+    });
+
+    // ── OVERLAY: Esri Sentinel-2 Land Use / Land Cover 2021 ────────────
+    const sentinelLULCLayer = L.tileLayer(
+      'https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Sentinel2_10m_LandCover/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Esri &amp; Impact Observatory &mdash; Sentinel-2 10m LULC 2021 | <a href="https://livingatlas.arcgis.com" target="_blank">Esri Living Atlas</a>',
+        maxZoom: 18,
+        opacity: 0.82
+    });
+
+    // ── ADMIN BOUNDARY LAYER GROUPS (Overpass/OSM) ──────────────────────
+    const kabkotaGroup   = L.layerGroup();
+    const kecamatanGroup = L.layerGroup();
+    const desaGroup      = L.layerGroup();
+
+    const adminCfg = {
+      kabkota:   { group: kabkotaGroup,   osmLevel: '5', minZoom: 6,  color: '#c0392b', weight: 2,   fillOpacity: 0.05, label: 'Kab/Kota' },
+      kecamatan: { group: kecamatanGroup, osmLevel: '6', minZoom: 9,  color: '#d35400', weight: 1.5, fillOpacity: 0.03, label: 'Kecamatan' },
+      desa:      { group: desaGroup,      osmLevel: '7', minZoom: 11, color: '#27ae60', weight: 1,   fillOpacity: 0.02, label: 'Desa/Kel' }
+    };
+    const activeAdminSet = new Set();
+
+    // Add default basemap
+    osmLayer.addTo(leafletMap);
+
+    // ── LAYER CONTROL ───────────────────────────────────────────────────
+    const baseMapsCtrl = {
+      'OpenStreetMap':  osmLayer,
+      'Esri Satellite': esriSatLayer,
+      'Esri Topo Map':  esriTopoLayer,
+      'CartoDB Light':  cartoLightLayer
+    };
+    const overlayCtrl = {
+      '&#x1F33F; Sentinel-2 LULC (2021)': sentinelLULCLayer,
+      '&#x1F534; Batas Kab/Kota':         kabkotaGroup,
+      '&#x1F7E0; Batas Kecamatan':        kecamatanGroup,
+      '&#x1F7E2; Batas Desa/Kel':         desaGroup
+    };
+    L.control.layers(baseMapsCtrl, overlayCtrl, { position: 'topright', collapsed: true }).addTo(leafletMap);
+
+    // Map each LayerGroup to its config key
+    const groupToKey = new Map([
+      [kabkotaGroup,   'kabkota'],
+      [kecamatanGroup, 'kecamatan'],
+      [desaGroup,      'desa']
+    ]);
+
+    // Fetch & render admin boundaries for a given key, respecting zoom & cache
+    async function refreshAdminLayer(key) {
+      const cfg = adminCfg[key];
+      const zoom = leafletMap.getZoom();
+      if (zoom < cfg.minZoom) {
+        showAdminMsg(
+          'Zoom in lebih dekat untuk melihat batas ' + cfg.label +
+          ' (zoom saat ini: ' + zoom + ', min: ' + cfg.minZoom + ')',
+          'warn'
+        );
+        return;
+      }
+      const bounds = leafletMap.getBounds();
+      const bk = [
+        bounds.getSouth().toFixed(2), bounds.getWest().toFixed(2),
+        bounds.getNorth().toFixed(2), bounds.getEast().toFixed(2)
+      ].join('|');
+      const ck = key + ':' + bk;
+      if (adminBoundaryCache[ck]) return; // already loaded/pending for this tile
+      adminBoundaryCache[ck] = true; // mark as pending
+
+      showAdminMsg('Memuat batas ' + cfg.label + ' dari OpenStreetMap…', 'loading');
+      try {
+        const geojson = await fetchAdminBoundaries(cfg.osmLevel, bounds);
+        if (!activeAdminSet.has(key)) return; // user toggled off while loading
+        const gLayer = L.geoJSON(geojson, {
+          style: {
+            color: cfg.color,
+            weight: cfg.weight,
+            fillOpacity: cfg.fillOpacity,
+            fillColor: cfg.color
+          },
+          onEachFeature(feature, lyr) {
+            const nm = (feature.properties && (feature.properties.name || feature.properties['name:id'])) || '';
+            if (nm) lyr.bindTooltip(nm, { sticky: true, opacity: 0.9, className: 'admin-boundary-tip' });
+          }
+        });
+        cfg.group.addLayer(gLayer);
+        const count = geojson.features.length;
+        showAdminMsg('\u2713 ' + count + ' batas ' + cfg.label + ' berhasil dimuat', 'ok');
+      } catch (err) {
+        console.error('Admin boundary fetch error:', err);
+        delete adminBoundaryCache[ck]; // allow retry on next move
+        showAdminMsg('Gagal memuat batas admin: ' + err.message + '. Zoom in atau coba lagi.', 'err');
+      }
+    }
+
+    leafletMap.on('overlayadd', async function(e) {
+      const key = groupToKey.get(e.layer);
+      if (key) { activeAdminSet.add(key); await refreshAdminLayer(key); }
+    });
+    leafletMap.on('overlayremove', function(e) {
+      const key = groupToKey.get(e.layer);
+      if (key) {
+        activeAdminSet.delete(key);
+        if (activeAdminSet.size === 0) hideAdminMsg();
+      }
+    });
+    leafletMap.on('moveend', function() {
+      if (activeAdminSet.size > 0) activeAdminSet.forEach(function(k){ refreshAdminLayer(k); });
+    });
+
+    // ── MARKERS ─────────────────────────────────────────────────────────
     leafletMarkers = [];
     const bounds = [];
 
@@ -4002,6 +4185,104 @@ button.project-btn:disabled{
 
     // ensure map renders correctly inside a previously-hidden container
     setTimeout(() => { if (leafletMap) leafletMap.invalidateSize(); }, 200);
+  }
+
+  // ── ADMIN BOUNDARY: STATUS HELPERS ──────────────────────────────────────
+  function showAdminMsg(msg, type) {
+    const el = document.getElementById('adminBoundaryMsg');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'admin-boundary-msg' + (type ? ' ' + type : '');
+    el.style.display = 'block';
+  }
+  function hideAdminMsg() {
+    const el = document.getElementById('adminBoundaryMsg');
+    if (el) { el.style.display = 'none'; el.textContent = ''; }
+  }
+
+  // ── ADMIN BOUNDARY: OVERPASS API FETCH ──────────────────────────────────
+  // Queries OSM relations with the given admin_level within the map bounds.
+  // Uses POST to avoid URL length limits; timeout = 40s on the server side.
+  async function fetchAdminBoundaries(osmLevel, bounds) {
+    const S = bounds.getSouth().toFixed(5);
+    const W = bounds.getWest().toFixed(5);
+    const N = bounds.getNorth().toFixed(5);
+    const E = bounds.getEast().toFixed(5);
+    const query =
+      '[out:json][timeout:40];' +
+      '(relation["boundary"="administrative"]["admin_level"="' + osmLevel + '"](' + S + ',' + W + ',' + N + ',' + E + '););' +
+      'out geom;';
+    const resp = await fetch('https://overpass-api.de/api/interpreter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'data=' + encodeURIComponent(query)
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    return overpassToGeoJSON(data);
+  }
+
+  // ── ADMIN BOUNDARY: OVERPASS → GEOJSON CONVERTER ────────────────────────
+  // Converts the raw Overpass JSON (with member geometry) to a GeoJSON FeatureCollection.
+  // Each OSM relation becomes a Feature with Polygon or MultiPolygon geometry.
+  function overpassToGeoJSON(data) {
+    const features = [];
+    for (const el of (data.elements || [])) {
+      if (el.type !== 'relation') continue;
+      const outerSegs = [], innerSegs = [];
+      for (const m of (el.members || [])) {
+        if (m.type !== 'way' || !m.geometry || m.geometry.length < 2) continue;
+        const coords = m.geometry.map(function(pt){ return [pt.lon, pt.lat]; });
+        if (m.role === 'inner') innerSegs.push(coords);
+        else outerSegs.push(coords); // role === 'outer' or empty
+      }
+      if (!outerSegs.length) continue;
+      const outerRings = assembleRings(outerSegs);
+      if (!outerRings.length) continue;
+      const innerRings = assembleRings(innerSegs);
+      const geometry = outerRings.length === 1
+        ? { type: 'Polygon',      coordinates: [outerRings[0]].concat(innerRings) }
+        : { type: 'MultiPolygon', coordinates: outerRings.map(function(r){ return [r]; }) };
+      const tags = el.tags || {};
+      features.push({
+        type: 'Feature',
+        geometry: geometry,
+        properties: Object.assign({ osm_id: el.id, name: tags.name || tags['name:id'] || '' }, tags)
+      });
+    }
+    return { type: 'FeatureCollection', features: features };
+  }
+
+  // ── ADMIN BOUNDARY: RING ASSEMBLER ──────────────────────────────────────
+  // Joins way segments (each an array of [lon,lat] coords) into closed rings
+  // by matching endpoints (tolerance 5e-6 degrees ≈ 0.5 m).
+  function assembleRings(segs) {
+    if (!segs.length) return [];
+    const pool = segs.map(function(s){ return s.slice(); }); // shallow clone
+    const rings = [];
+    const EPS = 5e-6;
+    function eq(a, b){ return Math.abs(a[0]-b[0]) < EPS && Math.abs(a[1]-b[1]) < EPS; }
+
+    while (pool.length) {
+      var ring = pool.splice(0, 1)[0];
+      var changed = true;
+      while (changed && pool.length) {
+        changed = false;
+        var rStart = ring[0], rEnd = ring[ring.length - 1];
+        for (var i = 0; i < pool.length; i++) {
+          var s = pool[i], sStart = s[0], sEnd = s[s.length - 1];
+          if      (eq(rEnd,   sStart)) { ring = ring.concat(s.slice(1));                   pool.splice(i,1); changed=true; break; }
+          else if (eq(rEnd,   sEnd))   { ring = ring.concat(s.slice().reverse().slice(1)); pool.splice(i,1); changed=true; break; }
+          else if (eq(rStart, sEnd))   { ring = s.concat(ring.slice(1));                   pool.splice(i,1); changed=true; break; }
+          else if (eq(rStart, sStart)) { ring = s.slice().reverse().concat(ring.slice(1)); pool.splice(i,1); changed=true; break; }
+        }
+      }
+      // Close ring if not already closed
+      var f = ring[0], l = ring[ring.length - 1];
+      if (ring.length > 2 && (f[0] !== l[0] || f[1] !== l[1])) ring.push(ring[0]);
+      if (ring.length >= 4) rings.push(ring);
+    }
+    return rings;
   }
 
   // ================= SHAPEFILE (SHP/SHX/DBF) EXPORT =================
