@@ -1170,7 +1170,7 @@ button.project-btn:disabled{
         <!-- ⑥ PETA -->
         <div class="feature-block">
           <h4><span class="fnum">6</span>Peta Hirarki Perkotaan</h4>
-          <p>Sebaran titik wilayah pada peta interaktif, diwarnai sesuai hierarki hasil analisis. Koordinat dicari otomatis dari nama wilayah (geocoding) atau dari file SHP titik desa yang diunggah. Tersedia pilihan basemap, overlay citra multitemporal, dan tampilan batas administrasi dari BIG (ArcGIS REST).</p>
+          <p>Sebaran titik wilayah pada peta interaktif, diwarnai sesuai hierarki hasil analisis. Koordinat dicari otomatis dari nama wilayah (geocoding) atau dari file SHP titik desa yang diunggah. Tersedia pilihan basemap, overlay citra multitemporal, dan tampilan batas administrasi dari OpenStreetMap.</p>
 
           <div class="feat-sub">
             <div class="feat-sub-title">Kontrol dasar peta</div>
@@ -1195,17 +1195,17 @@ button.project-btn:disabled{
           <div class="feat-tab-list" style="margin-top:8px;">
             <div class="feat-tab-row">
               <span class="feat-tab-label">🌿 ESA WorldCover 2021</span>
-              <span>Overlay <strong>Land Use / Land Cover 2021</strong> resolusi 10 m dari ESA (European Space Agency), dihasilkan dari citra Sentinel-1 dan Sentinel-2. Menampilkan tutupan lahan: terbangun, vegetasi, perairan, lahan terbuka, dll. dengan kode warna standar ESA. Berguna untuk membandingkan hirarki wilayah dengan kondisi penutup lahan aktual. Diakses via WMS publik Terrascope (titiler.terrascope.be) — butuh koneksi internet, tidak butuh akun.</span>
+              <span>Overlay <strong>Land Use / Land Cover 2021</strong> resolusi 10 m dari ESA (European Space Agency), dihasilkan dari citra Sentinel-1 dan Sentinel-2. Menampilkan tutupan lahan: terbangun, vegetasi, perairan, lahan terbuka, dll. dengan kode warna standar ESA. Berguna untuk membandingkan hirarki wilayah dengan kondisi penutup lahan aktual. Diakses via WMS publik Terrascope — butuh koneksi internet, tidak butuh akun.</span>
             </div>
           </div>
 
           <hr class="feat-divider">
-          <div class="feat-sub-title">🗺 Batas administrasi — BIG ArcGIS REST (Badan Informasi Geospasial)</div>
-          <p style="font-size:12.5px; line-height:1.6; color:var(--ink-soft); margin:0 0 8px;">Batas administrasi ditampilkan sebagai overlay raster langsung dari server resmi BIG (ArcGIS REST) — tidak perlu upload file apapun, dan tidak ada batas ukuran data karena rendering dilakukan di server. Aktifkan salah satu atau semua level dari panel kontrol layer di pojok kanan atas peta.</p>
+          <div class="feat-sub-title">🗺 Batas administrasi — WMS BIG (Badan Informasi Geospasial)</div>
+          <p style="font-size:12.5px; line-height:1.6; color:var(--ink-soft); margin:0 0 8px;">Batas administrasi ditampilkan sebagai overlay WMS langsung dari server resmi BIG — tidak perlu upload file apapun, dan tidak ada batas ukuran data karena rendering dilakukan di server. Aktifkan salah satu atau semua level dari panel kontrol layer di pojok kanan atas peta.</p>
           <div class="feat-tab-list">
-            <div class="feat-tab-row"><span class="feat-tab-label">🔴 Batas Kab/Kota</span><span>Batas administratif setingkat kabupaten/kota, diambil langsung dari BIG ArcGIS REST.</span></div>
-            <div class="feat-tab-row"><span class="feat-tab-label">🟠 Batas Kecamatan</span><span>Batas administratif setingkat kecamatan, diambil langsung dari BIG ArcGIS REST.</span></div>
-            <div class="feat-tab-row"><span class="feat-tab-label">🟢 Batas Desa/Kel</span><span>Batas administratif setingkat desa/kelurahan, diambil langsung dari BIG ArcGIS REST.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">🔴 Batas Kab/Kota</span><span>Batas administratif setingkat kabupaten/kota, diambil langsung dari WMS BIG.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">🟠 Batas Kecamatan</span><span>Batas administratif setingkat kecamatan, diambil langsung dari WMS BIG.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">🟢 Batas Desa/Kel</span><span>Batas administratif setingkat desa/kelurahan, diambil langsung dari WMS BIG.</span></div>
           </div>
           <div class="feat-note" style="margin-top:8px;">Klik pada garis batas administrasi yang sedang aktif untuk menampilkan nama wilayah pada titik tersebut (jika koneksi ke server BIG tersedia). Jika level lebih dari satu sedang aktif, sistem memprioritaskan level paling detail (Desa/Kel &gt; Kecamatan &gt; Kab/Kota). Warna garis ditentukan oleh styling default server BIG dan tidak dapat diubah dari aplikasi ini.</div>
 
@@ -3989,100 +3989,19 @@ button.project-btn:disabled{
     renderMap(points, tierData.totalTiers);
   }
 
-  
-  // ── ADMIN BOUNDARY: BIG ArcGIS REST CONFIG ─────────────────────────────
-  // BIG sudah berpindah ke ArcGIS REST MapServer. Satu service yang dipakai:
-  // BATAS_WILAYAH (layer 9=Kab/Kota, 10=Kecamatan, 11=Desa/Kelurahan).
-  // Layer ini ditampilkan sebagai image overlay dari endpoint /export,
-  // sedangkan nama wilayah diambil dari endpoint /identify.
-  const BIG_ADMIN_SERVICE_URL = 'https://geoservices.big.go.id/rbi/rest/services/BATASWILAYAH/BATAS_WILAYAH/MapServer';
-  const BIG_ADMIN_LAYERS = {
-    kabkota:   { id: 9,  label: 'Kab/Kota'   },
-    kecamatan: { id: 10, label: 'Kecamatan'  },
-    desa:      { id: 11, label: 'Desa/Kel'   }
+  // ── ADMIN BOUNDARY: WMS BIG (Badan Informasi Geospasial) CONFIG ──────────
+  // GetMap (tile rendering) & GetFeatureInfo (klik utk nama wilayah) keduanya
+  // memakai base URL & nama layer di bawah ini. Nama layer exact bisa berbeda
+  // di server BIG — ganti string-nya di sini saja kalau perlu disesuaikan.
+  const BIG_WMS_BASE = 'https://geoserver.big.go.id/geoserver/batas_administrasi/wms';
+  const BIG_WMS_LAYERS = {
+    kabkota:   'batas_administrasi:batas_kabupaten_kota',
+    kecamatan: 'batas_administrasi:batas_kecamatan',
+    desa:      'batas_administrasi:batas_desa_kelurahan'
   };
+  // Field nama wilayah yang dicoba berurutan dari hasil GetFeatureInfo BIG
   const ADMIN_NAME_FIELDS = ['NAMOBJ', 'WADMKD', 'WADMKC', 'WADMKK', 'name', 'NAMA', 'nama'];
   const GETFEATUREINFO_TIMEOUT_MS = 8000;
-
-  const BigAdminExportLayer = L.GridLayer.extend({
-    initialize: function (layerId, options) {
-      L.setOptions(this, options);
-      this._layerId = layerId;
-    },
-    createTile: function (coords, done) {
-      const tile = document.createElement('img');
-      const size = this.getTileSize();
-      const nwPoint = coords.scaleBy(size);
-      const sePoint = nwPoint.add(size);
-      const nw = this._map.unproject(nwPoint, coords.z);
-      const se = this._map.unproject(sePoint, coords.z);
-
-      tile.alt = '';
-      tile.setAttribute('role', 'presentation');
-      tile.crossOrigin = 'anonymous';
-      tile.width = size.x;
-      tile.height = size.y;
-      tile.style.opacity = this.options.opacity ?? 1;
-      tile.onload = () => done(null, tile);
-      tile.onerror = (err) => done(err, tile);
-
-      const params = new URLSearchParams({
-        f: 'image',
-        transparent: 'true',
-        format: 'png32',
-        dpi: '96',
-        bboxSR: '4326',
-        imageSR: '4326',
-        size: `${size.x},${size.y}`,
-        bbox: `${nw.lng},${se.lat},${se.lng},${nw.lat}`,
-        layers: `show:${this._layerId}`
-      });
-
-      tile.src = `${this.options.url}/export?${params.toString()}`;
-      return tile;
-    }
-  });
-
-  function createBigAdminLayer(layerId, opacity) {
-    return new BigAdminExportLayer(layerId, {
-      url: BIG_ADMIN_SERVICE_URL,
-      opacity: opacity ?? 0.88,
-      updateWhenZooming: false,
-      updateWhenIdle: true,
-      keepBuffer: 2
-    });
-  }
-
-  function buildIdentifyUrl(layerId, latlng) {
-    const size = leafletMap.getSize();
-    const bounds = leafletMap.getBounds();
-    const sw = bounds.getSouthWest();
-    const ne = bounds.getNorthEast();
-
-    const params = new URLSearchParams({
-      f: 'json',
-      tolerance: '4',
-      returnGeometry: 'false',
-      returnFieldName: 'true',
-      returnUnformattedValues: 'true',
-      imageDisplay: `${size.x},${size.y},96`,
-      mapExtent: `${sw.lng},${sw.lat},${ne.lng},${ne.lat}`,
-      geometryType: 'esriGeometryPoint',
-      geometry: `${latlng.lng},${latlng.lat}`,
-      sr: '4326',
-      layers: `all:${layerId}`
-    });
-
-    return `${BIG_ADMIN_SERVICE_URL}/identify?${params.toString()}`;
-  }
-
-  function pickAdminName(attrs) {
-    if (!attrs) return '';
-    for (const field of ADMIN_NAME_FIELDS) {
-      if (attrs[field]) return String(attrs[field]);
-    }
-    return '';
-  }
 
   function renderMap(points, totalTiers){
     lastMapPoints = points;
@@ -4124,11 +4043,10 @@ button.project-btn:disabled{
     });
 
     // ── OVERLAY: ESA WorldCover 2021 (10 m LULC, Sentinel-1 & 2 based) ─
-    // Terrascope sekarang memakai titiler.terrascope.be/wms dan layer name
-    // baru "esa-worldcover-map-10m-2021-v2_map".
+    // Uses Terrascope public WMS — no auth, global, EPSG:3857 supported.
     const sentinelLULCLayer = L.tileLayer.wms(
-      'https://titiler.terrascope.be/wms', {
-        layers: 'esa-worldcover-map-10m-2021-v2_map',
+      'https://services.terrascope.be/wms/v2', {
+        layers: 'WORLDCOVER_2021_MAP',
         format: 'image/png',
         transparent: true,
         attribution: '&copy; ESA WorldCover 2021 | <a href="https://esa-worldcover.org" target="_blank">ESA WorldCover</a> via Terrascope',
@@ -4136,10 +4054,34 @@ button.project-btn:disabled{
         opacity: 0.82
     });
 
-    // ── ADMIN BOUNDARY LAYERS: BIG ArcGIS REST ─────────────────────────
-    const kabkotaLayer = createBigAdminLayer(BIG_ADMIN_LAYERS.kabkota.id, 0.9);
-    const kecamatanLayer = createBigAdminLayer(BIG_ADMIN_LAYERS.kecamatan.id, 0.9);
-    const desaLayer = createBigAdminLayer(BIG_ADMIN_LAYERS.desa.id, 0.9);
+    // ── ADMIN BOUNDARY LAYERS: WMS BIG (Badan Informasi Geospasial) ──────
+    // Render via WMS tile image — tidak ada isu CORS untuk tile-nya sendiri.
+    // Warna garis ditentukan SLD default server BIG (tidak bisa diatur dari
+    // tileLayer.wms biasa) — hanya opacity yang kita kontrol di sini.
+    const kabkotaLayer = L.tileLayer.wms(BIG_WMS_BASE, {
+      layers: BIG_WMS_LAYERS.kabkota,
+      format: 'image/png',
+      transparent: true,
+      version: '1.1.1',
+      attribution: '&copy; BIG Indonesia',
+      opacity: 0.9
+    });
+    const kecamatanLayer = L.tileLayer.wms(BIG_WMS_BASE, {
+      layers: BIG_WMS_LAYERS.kecamatan,
+      format: 'image/png',
+      transparent: true,
+      version: '1.1.1',
+      attribution: '&copy; BIG Indonesia',
+      opacity: 0.9
+    });
+    const desaLayer = L.tileLayer.wms(BIG_WMS_BASE, {
+      layers: BIG_WMS_LAYERS.desa,
+      format: 'image/png',
+      transparent: true,
+      version: '1.1.1',
+      attribution: '&copy; BIG Indonesia',
+      opacity: 0.9
+    });
 
     // Add default basemap
     osmLayer.addTo(leafletMap);
@@ -4159,89 +4101,95 @@ button.project-btn:disabled{
     };
     L.control.layers(baseMapsCtrl, overlayCtrl, { position: 'topright', collapsed: true }).addTo(leafletMap);
 
-    // ── GetFeatureInfo / Identify: lacak layer batas admin yang sedang aktif
-    const adminLayers = {
-      kabkota:   { layer: kabkotaLayer,   layerId: BIG_ADMIN_LAYERS.kabkota.id,   label: BIG_ADMIN_LAYERS.kabkota.label },
-      kecamatan: { layer: kecamatanLayer, layerId: BIG_ADMIN_LAYERS.kecamatan.id, label: BIG_ADMIN_LAYERS.kecamatan.label },
-      desa:      { layer: desaLayer,      layerId: BIG_ADMIN_LAYERS.desa.id,      label: BIG_ADMIN_LAYERS.desa.label }
+    // ── GetFeatureInfo: lacak layer batas admin WMS yang sedang aktif ─────
+    // Klik peta akan query level paling detail yang aktif: desa > kecamatan > kab/kota.
+    const adminWmsLayers = {
+      kabkota:   { layer: kabkotaLayer,   wmsLayerName: BIG_WMS_LAYERS.kabkota,   label: 'Kab/Kota' },
+      kecamatan: { layer: kecamatanLayer, wmsLayerName: BIG_WMS_LAYERS.kecamatan, label: 'Kecamatan' },
+      desa:      { layer: desaLayer,      wmsLayerName: BIG_WMS_LAYERS.desa,      label: 'Desa/Kel' }
     };
     const adminLayerToKey = new Map([
-      [kabkotaLayer, 'kabkota'],
+      [kabkotaLayer,   'kabkota'],
       [kecamatanLayer, 'kecamatan'],
-      [desaLayer, 'desa']
+      [desaLayer,      'desa']
     ]);
-    const activeAdminLayerKeys = new Set();
+    const activeAdminWmsKeys = new Set();
 
     leafletMap.on('overlayadd', function(e) {
       const key = adminLayerToKey.get(e.layer);
-      if (key) activeAdminLayerKeys.add(key);
+      if (key) activeAdminWmsKeys.add(key);
     });
     leafletMap.on('overlayremove', function(e) {
       const key = adminLayerToKey.get(e.layer);
-      if (key) activeAdminLayerKeys.delete(key);
+      if (key) activeAdminWmsKeys.delete(key);
     });
 
     function getActiveAdminKey() {
-      if (activeAdminLayerKeys.has('desa')) return 'desa';
-      if (activeAdminLayerKeys.has('kecamatan')) return 'kecamatan';
-      if (activeAdminLayerKeys.has('kabkota')) return 'kabkota';
-      return null;
+      if (activeAdminWmsKeys.has('desa')) return 'desa';
+      if (activeAdminWmsKeys.has('kecamatan')) return 'kecamatan';
+      if (activeAdminWmsKeys.has('kabkota')) return 'kabkota';
+      return null; // tidak ada layer batas admin yang aktif
     }
 
-    async function identifyAdminName(latlng) {
-      const keyOrder = ['desa', 'kecamatan', 'kabkota'];
-      for (const key of keyOrder) {
-        if (!activeAdminLayerKeys.has(key)) continue;
-        const cfg = adminLayers[key];
-        const url = buildIdentifyUrl(cfg.layerId, latlng);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), GETFEATUREINFO_TIMEOUT_MS);
-
-        try {
-          const resp = await fetch(url, { signal: controller.signal });
-          clearTimeout(timeoutId);
-          if (!resp.ok) throw new Error('HTTP ' + resp.status);
-          const data = await resp.json();
-          const result = data && Array.isArray(data.results) ? data.results[0] : null;
-          const attrs = result && (result.attributes || (result.feature && result.feature.attributes)) ? (result.attributes || result.feature.attributes) : null;
-          const name = pickAdminName(attrs);
-          if (name) return { name, label: cfg.label };
-        } catch (err) {
-          clearTimeout(timeoutId);
-          console.warn('ArcGIS Identify gagal untuk', key, err);
-        }
-      }
-      return null;
+    // Susun URL GetFeatureInfo (BBOX dalam EPSG:3857, sesuai CRS default Leaflet)
+    function buildGetFeatureInfoUrl(wmsLayerName, latlng) {
+      const point = leafletMap.latLngToContainerPoint(latlng);
+      const size = leafletMap.getSize();
+      const crs = leafletMap.options.crs || L.CRS.EPSG3857;
+      const sw = crs.project(leafletMap.getBounds().getSouthWest());
+      const ne = crs.project(leafletMap.getBounds().getNorthEast());
+      const bbox = [sw.x, sw.y, ne.x, ne.y].join(',');
+      return BIG_WMS_BASE
+        + '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo'
+        + '&LAYERS=' + encodeURIComponent(wmsLayerName)
+        + '&QUERY_LAYERS=' + encodeURIComponent(wmsLayerName)
+        + '&INFO_FORMAT=application/json'
+        + '&FEATURE_COUNT=1'
+        + '&X=' + Math.round(point.x)
+        + '&Y=' + Math.round(point.y)
+        + '&SRS=EPSG:3857'
+        + '&WIDTH=' + Math.round(size.x)
+        + '&HEIGHT=' + Math.round(size.y)
+        + '&BBOX=' + bbox;
     }
 
-    // Klik peta → Identify ke BIG pada level batas admin paling detail yang aktif.
+    // Klik peta → GetFeatureInfo ke WMS BIG pada level batas admin paling
+    // detail yang sedang aktif. CORS / fetch gagal ditangani tanpa crash.
     leafletMap.on('click', async function(e) {
       const key = getActiveAdminKey();
       if (!key) return; // tidak ada layer batas admin aktif — tidak perlu query
+      const cfg = adminWmsLayers[key];
+      const url = buildGetFeatureInfoUrl(cfg.wmsLayerName, e.latlng);
 
-      showAdminMsg('Mengambil nama wilayah (' + adminLayers[key].label + ')…', 'loading');
+      showAdminMsg('Mengambil nama wilayah (' + cfg.label + ')…', 'loading');
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), GETFEATUREINFO_TIMEOUT_MS);
       try {
-        const hit = await identifyAdminName(e.latlng);
+        const resp = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
         hideAdminMsg();
 
-        if (!hit) {
-          L.popup({ maxWidth: 240 })
-            .setLatLng(e.latlng)
-            .setContent('<span style="font-size:12px; color:#888;">Nama wilayah tidak tersedia.</span>')
-            .openOn(leafletMap);
-          return;
-        }
+        const feature = data && data.features && data.features[0];
+        if (!feature) return; // tidak ada fitur tepat di titik klik — tidak perlu popup
+
+        const props = feature.properties || {};
+        let name = '';
+        for (const f of ADMIN_NAME_FIELDS) { if (props[f]) { name = props[f]; break; } }
+        if (!name) name = '(nama wilayah tidak ditemukan pada data)';
 
         L.popup({ maxWidth: 260 })
           .setLatLng(e.latlng)
           .setContent(
-            '<b style="font-size:13px;">' + escapeHtml(String(hit.name)) + '</b>' +
-            '<br><span style="color:#888; font-size:11px;">Level: ' + escapeHtml(hit.label) + '</span>'
+            '<b style="font-size:13px;">' + escapeHtml(String(name)) + '</b>' +
+            '<br><span style="color:#888; font-size:11px;">Level: ' + escapeHtml(cfg.label) + '</span>'
           )
           .openOn(leafletMap);
       } catch (err) {
+        clearTimeout(timeoutId);
         hideAdminMsg();
-        console.warn('Identify BIG gagal:', err);
+        console.warn('GetFeatureInfo gagal (CORS/jaringan/timeout):', err);
         L.popup({ maxWidth: 240 })
           .setLatLng(e.latlng)
           .setContent('<span style="font-size:12px; color:#888;">Nama wilayah tidak tersedia.</span>')
@@ -4267,9 +4215,10 @@ button.project-btn:disabled{
       const sourceLabel = p.source === 'shp' ? 'SHP titik desa' : (p.source === 'nominatim' ? 'Nominatim (geocoding)' : '');
       const popupHtml =
         `<b style="font-size:13.5px;">${escapeHtml(p.name)}</b>` +
-        (p.attr ? `<br><span style="color:#555; font-size:11.5px;">${escapeHtml(p.attr)}</span>` : '') +
+        (p.attr ? `<br><span style="color:#555; font-size:11.5px; font-style:italic;">${escapeHtml(p.attr)}</span>` : '') +
+        `<br>` +
         (p.tierInfo
-          ? `<br><span style="font-size:12px;">${escapeHtml(p.tierInfo.tierLabel)}</span><br><span style="font-size:12px;">Skor/Indeks: <b>${typeof p.tierInfo.score === 'number' ? (Number.isInteger(p.tierInfo.score) ? p.tierInfo.score : p.tierInfo.score.toFixed(2)) : p.tierInfo.score}</b></span>`
+          ? `<span style="font-size:12px;">${escapeHtml(p.tierInfo.tierLabel)}</span><br><span style="font-size:12px;">Skor/Indeks: <b>${typeof p.tierInfo.score === 'number' ? (Number.isInteger(p.tierInfo.score) ? p.tierInfo.score : p.tierInfo.score.toFixed(2)) : p.tierInfo.score}</b></span>`
           : '<span style="font-size:12px; color:#888;">Tier tidak diketahui</span>') +
         (sourceLabel ? `<br><span style="color:#aaa; font-size:10.5px;">Sumber: ${sourceLabel}</span>` : '');
       marker.bindPopup(popupHtml, { maxWidth: 260 });
@@ -4327,7 +4276,20 @@ button.project-btn:disabled{
     setTimeout(() => { if (leafletMap) leafletMap.invalidateSize(); }, 200);
   }
 
-// ================= SHAPEFILE (SHP/SHX/DBF) EXPORT =================
+  // ── ADMIN BOUNDARY: STATUS HELPERS ──────────────────────────────────────
+  function showAdminMsg(msg, type) {
+    const el = document.getElementById('adminBoundaryMsg');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'admin-boundary-msg' + (type ? ' ' + type : '');
+    el.style.display = 'block';
+  }
+  function hideAdminMsg() {
+    const el = document.getElementById('adminBoundaryMsg');
+    if (el) { el.style.display = 'none'; el.textContent = ''; }
+  }
+
+  // ================= SHAPEFILE (SHP/SHX/DBF) EXPORT =================
   // Reference: ESRI Shapefile Technical Description (White Paper, July 1998).
   // Browser-compatible rewrite using DataView/ArrayBuffer (no Node Buffer available here).
 
