@@ -1194,18 +1194,18 @@ button.project-btn:disabled{
           <div class="feat-note" style="margin-top:10px;">Overlay berikut bisa diaktifkan <strong>bersamaan</strong> di atas basemap mana pun:</div>
           <div class="feat-tab-list" style="margin-top:8px;">
             <div class="feat-tab-row">
-              <span class="feat-tab-label">🌿 ESA WorldCover 2021</span>
-              <span>Overlay <strong>Land Use / Land Cover 2021</strong> resolusi 10 m dari ESA (European Space Agency), dihasilkan dari citra Sentinel-1 dan Sentinel-2. Menampilkan tutupan lahan: terbangun, vegetasi, perairan, lahan terbuka, dll. dengan kode warna standar ESA. Berguna untuk membandingkan hirarki wilayah dengan kondisi penutup lahan aktual. Diakses via WMS publik Terrascope — butuh koneksi internet, tidak butuh akun.</span>
+              <span class="feat-tab-label">🌿 LULC Indonesia 10m</span>
+              <span>Overlay <strong>Land Use / Land Cover</strong> resolusi 10 m khusus wilayah Indonesia (Hybrid Landcover, CSIRO). Menampilkan tutupan lahan: terbangun, vegetasi, perairan, lahan terbuka, dll. Berguna untuk membandingkan hirarki wilayah dengan kondisi penutup lahan aktual. Diakses via tile cache publik ArcGIS — butuh koneksi internet, tidak butuh akun.</span>
             </div>
           </div>
 
           <hr class="feat-divider">
-          <div class="feat-sub-title">🗺 Batas administrasi — WMS BIG (Badan Informasi Geospasial)</div>
-          <p style="font-size:12.5px; line-height:1.6; color:var(--ink-soft); margin:0 0 8px;">Batas administrasi ditampilkan sebagai overlay WMS langsung dari server resmi BIG — tidak perlu upload file apapun, dan tidak ada batas ukuran data karena rendering dilakukan di server. Aktifkan salah satu atau semua level dari panel kontrol layer di pojok kanan atas peta.</p>
+          <div class="feat-sub-title">🗺 Batas administrasi — layanan resmi BIG (Kebijakan Satu Peta)</div>
+          <p style="font-size:12.5px; line-height:1.6; color:var(--ink-soft); margin:0 0 8px;">Batas administrasi ditampilkan sebagai overlay langsung dari server resmi BIG — tidak perlu upload file apapun, dan tidak ada batas ukuran data karena rendering dilakukan di server. Aktifkan salah satu atau semua level dari panel kontrol layer di pojok kanan atas peta.</p>
           <div class="feat-tab-list">
-            <div class="feat-tab-row"><span class="feat-tab-label">🔴 Batas Kab/Kota</span><span>Batas administratif setingkat kabupaten/kota, diambil langsung dari WMS BIG.</span></div>
-            <div class="feat-tab-row"><span class="feat-tab-label">🟠 Batas Kecamatan</span><span>Batas administratif setingkat kecamatan, diambil langsung dari WMS BIG.</span></div>
-            <div class="feat-tab-row"><span class="feat-tab-label">🟢 Batas Desa/Kel</span><span>Batas administratif setingkat desa/kelurahan, diambil langsung dari WMS BIG.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">🔴 Batas Kab/Kota</span><span>Batas administratif setingkat kabupaten/kota, diambil langsung dari layanan BIG.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">🟠 Batas Kecamatan</span><span>Batas administratif setingkat kecamatan, diambil langsung dari layanan BIG.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">🟢 Batas Desa/Kel</span><span>Batas administratif setingkat desa/kelurahan, diambil langsung dari layanan BIG.</span></div>
           </div>
           <div class="feat-note" style="margin-top:8px;">Klik pada garis batas administrasi yang sedang aktif untuk menampilkan nama wilayah pada titik tersebut (jika koneksi ke server BIG tersedia). Jika level lebih dari satu sedang aktif, sistem memprioritaskan level paling detail (Desa/Kel &gt; Kecamatan &gt; Kab/Kota). Warna garis ditentukan oleh styling default server BIG dan tidak dapat diubah dari aplikasi ini.</div>
 
@@ -3989,19 +3989,46 @@ button.project-btn:disabled{
     renderMap(points, tierData.totalTiers);
   }
 
-  // ── ADMIN BOUNDARY: WMS BIG (Badan Informasi Geospasial) CONFIG ──────────
-  // GetMap (tile rendering) & GetFeatureInfo (klik utk nama wilayah) keduanya
-  // memakai base URL & nama layer di bawah ini. Nama layer exact bisa berbeda
-  // di server BIG — ganti string-nya di sini saja kalau perlu disesuaikan.
-  const BIG_WMS_BASE = 'https://geoserver.big.go.id/geoserver/batas_administrasi/wms';
-  const BIG_WMS_LAYERS = {
-    kabkota:   'batas_administrasi:batas_kabupaten_kota',
-    kecamatan: 'batas_administrasi:batas_kecamatan',
-    desa:      'batas_administrasi:batas_desa_kelurahan'
-  };
-  // Field nama wilayah yang dicoba berurutan dari hasil GetFeatureInfo BIG
-  const ADMIN_NAME_FIELDS = ['NAMOBJ', 'WADMKD', 'WADMKC', 'WADMKK', 'name', 'NAMA', 'nama'];
-  const GETFEATUREINFO_TIMEOUT_MS = 8000;
+  // ── LULC (Land Use / Land Cover) CONFIG ───────────────────────────────
+  // Layanan lama (ESA WorldCover via Terrascope WMS v2) sudah dimatikan oleh
+  // penyedianya. Diganti ke tile cache ArcGIS publik berikut: Hybrid
+  // Landcover Indonesia 10m (CSIRO) — skema tile standar {z}/{y}/{x},
+  // EPSG:3857, tidak butuh auth, tidak ada isu CORS (murni <img> tile).
+  const LULC_TILE_URL = 'https://tiles.arcgis.com/tiles/82C0E4OYu0hT3hkh/arcgis/rest/services/Indonesia_Hybrid_Landcover_2020/MapServer/tile/{z}/{y}/{x}';
+
+  // ── ADMIN BOUNDARY: ArcGIS REST MapServer BIG (Kebijakan Satu Peta) ───
+  // Render (tile dinamis lewat operasi "export") & klik-cari-nama (operasi
+  // "identify") keduanya memakai base URL & index layer di bawah ini.
+  // Ganti di sini saja kalau BIG mengubah struktur service-nya.
+  const BIG_MAPSERVER_URL = 'https://kspservices.big.go.id/satupeta/rest/services/PUBLIK/BATAS_WILAYAH/MapServer';
+  const BIG_LAYER_INDEX = { kabkota: 2, kecamatan: 3, desa: 4 };
+  // Field nama wilayah yang dicoba berurutan dari hasil identify BIG
+  // (server ini memakai huruf kecil untuk nama field; beberapa nama field
+  // alternatif disertakan untuk jaga-jaga jika strukturnya berubah)
+  const ADMIN_NAME_FIELDS = ['namobj', 'NAMOBJ', 'wadmkd', 'WADMKD', 'wadmkc', 'WADMKC', 'wadmkk', 'WADMKK', 'name', 'nama'];
+  const ADMIN_IDENTIFY_TIMEOUT_MS = 8000;
+
+  // Custom Leaflet tile layer yang merender ArcGIS Dynamic MapServer (operasi
+  // "export") sebagai tile peta biasa. Dipakai karena server BIG ini adalah
+  // ArcGIS REST Server (bukan OGC WMS / GeoServer), sehingga L.tileLayer.wms()
+  // tidak cocok dipakai langsung — gambar tile tetap dimuat lewat <img> jadi
+  // tidak ada isu CORS untuk tile itu sendiri (CORS hanya relevan utk identify).
+  const ArcGISExportTileLayer = L.TileLayer.extend({
+    getTileUrl: function (coords) {
+      const tileBounds = this._tileCoordsToBounds(coords);
+      const crs = (this._map && this._map.options.crs) || L.CRS.EPSG3857;
+      const nw = crs.project(tileBounds.getNorthWest());
+      const se = crs.project(tileBounds.getSouthEast());
+      const bbox = [nw.x, se.y, se.x, nw.y].join(',');
+      const size = this.getTileSize();
+      return this._url + '/export'
+        + '?bbox=' + bbox
+        + '&bboxSR=3857&imageSR=3857'
+        + '&size=' + size.x + ',' + size.y
+        + '&dpi=96&format=png32&transparent=true&f=image'
+        + '&layers=show:' + this.options.layerIndex;
+    }
+  });
 
   function renderMap(points, totalTiers){
     lastMapPoints = points;
@@ -4042,44 +4069,33 @@ button.project-btn:disabled{
         maxZoom: 20
     });
 
-    // ── OVERLAY: ESA WorldCover 2021 (10 m LULC, Sentinel-1 & 2 based) ─
-    // Uses Terrascope public WMS — no auth, global, EPSG:3857 supported.
-    const sentinelLULCLayer = L.tileLayer.wms(
-      'https://services.terrascope.be/wms/v2', {
-        layers: 'WORLDCOVER_2021_MAP',
-        format: 'image/png',
-        transparent: true,
-        attribution: '&copy; ESA WorldCover 2021 | <a href="https://esa-worldcover.org" target="_blank">ESA WorldCover</a> via Terrascope',
-        maxNativeZoom: 14,
-        opacity: 0.82
+    // ── OVERLAY: LULC Indonesia 10m (Hybrid Landcover, CSIRO) ───────────
+    // Tile cache ArcGIS publik (lihat LULC_TILE_URL di atas) — standar
+    // L.tileLayer biasa, bukan WMS, karena ini map service yang ter-cache.
+    const lulcLayer = L.tileLayer(LULC_TILE_URL, {
+      attribution: '&copy; CSIRO — Indonesia Hybrid Landcover 2020 (10 m)',
+      maxNativeZoom: 16,
+      minNativeZoom: 1,
+      maxZoom: 19,
+      opacity: 0.82
     });
 
-    // ── ADMIN BOUNDARY LAYERS: WMS BIG (Badan Informasi Geospasial) ──────
-    // Render via WMS tile image — tidak ada isu CORS untuk tile-nya sendiri.
-    // Warna garis ditentukan SLD default server BIG (tidak bisa diatur dari
-    // tileLayer.wms biasa) — hanya opacity yang kita kontrol di sini.
-    const kabkotaLayer = L.tileLayer.wms(BIG_WMS_BASE, {
-      layers: BIG_WMS_LAYERS.kabkota,
-      format: 'image/png',
-      transparent: true,
-      version: '1.1.1',
-      attribution: '&copy; BIG Indonesia',
+    // ── ADMIN BOUNDARY LAYERS: ArcGIS REST MapServer BIG (KSP) ───────────
+    // Tile dirender dinamis lewat operasi "export" (lihat ArcGISExportTileLayer
+    // di atas) — gambar dimuat via <img>, tidak ada isu CORS untuk tile itu sendiri.
+    const kabkotaLayer = new ArcGISExportTileLayer(BIG_MAPSERVER_URL, {
+      layerIndex: BIG_LAYER_INDEX.kabkota,
+      attribution: '&copy; BIG Indonesia (Kebijakan Satu Peta)',
       opacity: 0.9
     });
-    const kecamatanLayer = L.tileLayer.wms(BIG_WMS_BASE, {
-      layers: BIG_WMS_LAYERS.kecamatan,
-      format: 'image/png',
-      transparent: true,
-      version: '1.1.1',
-      attribution: '&copy; BIG Indonesia',
+    const kecamatanLayer = new ArcGISExportTileLayer(BIG_MAPSERVER_URL, {
+      layerIndex: BIG_LAYER_INDEX.kecamatan,
+      attribution: '&copy; BIG Indonesia (Kebijakan Satu Peta)',
       opacity: 0.9
     });
-    const desaLayer = L.tileLayer.wms(BIG_WMS_BASE, {
-      layers: BIG_WMS_LAYERS.desa,
-      format: 'image/png',
-      transparent: true,
-      version: '1.1.1',
-      attribution: '&copy; BIG Indonesia',
+    const desaLayer = new ArcGISExportTileLayer(BIG_MAPSERVER_URL, {
+      layerIndex: BIG_LAYER_INDEX.desa,
+      attribution: '&copy; BIG Indonesia (Kebijakan Satu Peta)',
       opacity: 0.9
     });
 
@@ -4094,19 +4110,19 @@ button.project-btn:disabled{
       'CartoDB Light':  cartoLightLayer
     };
     const overlayCtrl = {
-      '&#x1F33F; ESA WorldCover 2021': sentinelLULCLayer,
+      '&#x1F33F; LULC Indonesia 10m':  lulcLayer,
       '&#x1F534; Batas Kab/Kota':      kabkotaLayer,
       '&#x1F7E0; Batas Kecamatan':     kecamatanLayer,
       '&#x1F7E2; Batas Desa/Kel':      desaLayer
     };
     L.control.layers(baseMapsCtrl, overlayCtrl, { position: 'topright', collapsed: true }).addTo(leafletMap);
 
-    // ── GetFeatureInfo: lacak layer batas admin WMS yang sedang aktif ─────
+    // ── Identify: lacak layer batas admin yang sedang aktif ──────────────
     // Klik peta akan query level paling detail yang aktif: desa > kecamatan > kab/kota.
-    const adminWmsLayers = {
-      kabkota:   { layer: kabkotaLayer,   wmsLayerName: BIG_WMS_LAYERS.kabkota,   label: 'Kab/Kota' },
-      kecamatan: { layer: kecamatanLayer, wmsLayerName: BIG_WMS_LAYERS.kecamatan, label: 'Kecamatan' },
-      desa:      { layer: desaLayer,      wmsLayerName: BIG_WMS_LAYERS.desa,      label: 'Desa/Kel' }
+    const adminBoundaryLayers = {
+      kabkota:   { layer: kabkotaLayer,   layerIndex: BIG_LAYER_INDEX.kabkota,   label: 'Kab/Kota' },
+      kecamatan: { layer: kecamatanLayer, layerIndex: BIG_LAYER_INDEX.kecamatan, label: 'Kecamatan' },
+      desa:      { layer: desaLayer,      layerIndex: BIG_LAYER_INDEX.desa,      label: 'Desa/Kel' }
     };
     const adminLayerToKey = new Map([
       [kabkotaLayer,   'kabkota'],
@@ -4131,39 +4147,38 @@ button.project-btn:disabled{
       return null; // tidak ada layer batas admin yang aktif
     }
 
-    // Susun URL GetFeatureInfo (BBOX dalam EPSG:3857, sesuai CRS default Leaflet)
-    function buildGetFeatureInfoUrl(wmsLayerName, latlng) {
-      const point = leafletMap.latLngToContainerPoint(latlng);
-      const size = leafletMap.getSize();
+    // Susun URL operasi "identify" ArcGIS REST (setara GetFeatureInfo WMS)
+    function buildIdentifyUrl(layerIndex, latlng) {
       const crs = leafletMap.options.crs || L.CRS.EPSG3857;
-      const sw = crs.project(leafletMap.getBounds().getSouthWest());
-      const ne = crs.project(leafletMap.getBounds().getNorthEast());
-      const bbox = [sw.x, sw.y, ne.x, ne.y].join(',');
-      return BIG_WMS_BASE
-        + '?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureInfo'
-        + '&LAYERS=' + encodeURIComponent(wmsLayerName)
-        + '&QUERY_LAYERS=' + encodeURIComponent(wmsLayerName)
-        + '&INFO_FORMAT=application/json'
-        + '&FEATURE_COUNT=1'
-        + '&X=' + Math.round(point.x)
-        + '&Y=' + Math.round(point.y)
-        + '&SRS=EPSG:3857'
-        + '&WIDTH=' + Math.round(size.x)
-        + '&HEIGHT=' + Math.round(size.y)
-        + '&BBOX=' + bbox;
+      const pt = crs.project(latlng);
+      const b = leafletMap.getBounds();
+      const sw = crs.project(b.getSouthWest());
+      const ne = crs.project(b.getNorthEast());
+      const mapExtent = [sw.x, sw.y, ne.x, ne.y].join(',');
+      const size = leafletMap.getSize();
+      const geometry = JSON.stringify({ x: pt.x, y: pt.y, spatialReference: { wkid: 3857 } });
+      return BIG_MAPSERVER_URL + '/identify?f=json'
+        + '&geometry=' + encodeURIComponent(geometry)
+        + '&geometryType=esriGeometryPoint'
+        + '&sr=3857'
+        + '&layers=visible:' + layerIndex
+        + '&tolerance=3'
+        + '&mapExtent=' + mapExtent
+        + '&imageDisplay=' + Math.round(size.x) + ',' + Math.round(size.y) + ',96'
+        + '&returnGeometry=false';
     }
 
-    // Klik peta → GetFeatureInfo ke WMS BIG pada level batas admin paling
+    // Klik peta → identify ke ArcGIS REST BIG pada level batas admin paling
     // detail yang sedang aktif. CORS / fetch gagal ditangani tanpa crash.
     leafletMap.on('click', async function(e) {
       const key = getActiveAdminKey();
       if (!key) return; // tidak ada layer batas admin aktif — tidak perlu query
-      const cfg = adminWmsLayers[key];
-      const url = buildGetFeatureInfoUrl(cfg.wmsLayerName, e.latlng);
+      const cfg = adminBoundaryLayers[key];
+      const url = buildIdentifyUrl(cfg.layerIndex, e.latlng);
 
       showAdminMsg('Mengambil nama wilayah (' + cfg.label + ')…', 'loading');
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), GETFEATUREINFO_TIMEOUT_MS);
+      const timeoutId = setTimeout(() => controller.abort(), ADMIN_IDENTIFY_TIMEOUT_MS);
       try {
         const resp = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
@@ -4171,10 +4186,10 @@ button.project-btn:disabled{
         const data = await resp.json();
         hideAdminMsg();
 
-        const feature = data && data.features && data.features[0];
-        if (!feature) return; // tidak ada fitur tepat di titik klik — tidak perlu popup
+        const result = data && data.results && data.results[0];
+        if (!result) return; // tidak ada fitur tepat di titik klik — tidak perlu popup
 
-        const props = feature.properties || {};
+        const props = result.attributes || {};
         let name = '';
         for (const f of ADMIN_NAME_FIELDS) { if (props[f]) { name = props[f]; break; } }
         if (!name) name = '(nama wilayah tidak ditemukan pada data)';
@@ -4189,7 +4204,7 @@ button.project-btn:disabled{
       } catch (err) {
         clearTimeout(timeoutId);
         hideAdminMsg();
-        console.warn('GetFeatureInfo gagal (CORS/jaringan/timeout):', err);
+        console.warn('Identify gagal (CORS/jaringan/timeout):', err);
         L.popup({ maxWidth: 240 })
           .setLatLng(e.latlng)
           .setContent('<span style="font-size:12px; color:#888;">Nama wilayah tidak tersedia.</span>')
