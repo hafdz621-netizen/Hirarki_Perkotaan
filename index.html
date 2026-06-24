@@ -4101,9 +4101,18 @@ button.project-btn:disabled{
   const ADMIN_QUERY_TIMEOUT_MS = 20000; // lebih panjang dari identify karena response lebih besar
 
   // Warna batas administrasi (kab/kota & kecamatan; desa transparan)
-  const ADMIN_STYLE_KAB  = { fillColor: '#00FFC5', fillOpacity: 0.2, color: '#A80000', weight: 2.0 };
+  const ADMIN_STYLE_KAB  = { fillColor: '#FFD700', fillOpacity: 0, color: '#FFD700', weight: 2.0 };
   const ADMIN_STYLE_KEC  = { fillColor: '#00FFC5', fillOpacity: 0.2, color: '#A80000', weight: 1.5 };
-  const ADMIN_STYLE_DESA = { fillColor: '#00FFC5', fillOpacity: 0.2, color: '#A80000', weight: 1.0 };
+  const ADMIN_STYLE_DESA = { fillColor: '#00FFC5', fillOpacity: 0.2, color: '#FF8C00', weight: 1.0 };
+
+  // Helper: hex (#RRGGBB) + opacity (0-1) → string rgba(), untuk swatch legend
+  function hexToRgba(hex, alpha) {
+    const h = hex.replace('#', '');
+    const r = parseInt(h.substring(0,2), 16);
+    const g = parseInt(h.substring(2,4), 16);
+    const b = parseInt(h.substring(4,6), 16);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+  }
 
   // ── Helper: query BIG via POST (menghindari batas panjang URL GET) ──────
   async function queryBIGLayer(layerIdx, params) {
@@ -4463,23 +4472,38 @@ button.project-btn:disabled{
     if (loadedCount > 0) {
       const legendEl = document.getElementById('mapLegend');
       if (legendEl) {
-        // Chip untuk Kab/Kota & Kecamatan (gaya sama: fill #00FFC5/20%, garis #A80000)
-        if (uniqueKab.length > 0 || uniqueKec.length > 0) {
-          const chipAdmin = document.createElement('span');
-          chipAdmin.className = 'map-legend-chip';
-          chipAdmin.style.cursor = 'default';
-          chipAdmin.innerHTML =
-            '<span class="dot" style="background:rgba(0,255,197,0.2);border:2px solid #A80000;box-sizing:border-box;"></span>' +
-            ' Batas Admin (Kab/Kec)';
-          legendEl.appendChild(chipAdmin);
+        // Helper: bangun swatch dot dari objek ADMIN_STYLE_* (mengikuti warna asli, termasuk fill transparan)
+        const adminDotStyle = (st) =>
+          'background:' + (st.fillOpacity > 0 ? hexToRgba(st.fillColor, st.fillOpacity) : 'transparent') +
+          ';border:2px solid ' + st.color + ';box-sizing:border-box;';
+
+        // Chip untuk Kab/Kota (garis kuning, fill transparan)
+        if (uniqueKab.length > 0) {
+          const chipKab = document.createElement('span');
+          chipKab.className = 'map-legend-chip';
+          chipKab.style.cursor = 'default';
+          chipKab.innerHTML =
+            '<span class="dot" style="' + adminDotStyle(ADMIN_STYLE_KAB) + '"></span>' +
+            ' Batas Kab/Kota';
+          legendEl.appendChild(chipKab);
         }
-        // Chip untuk Desa (gaya: transparan, garis abu)
+        // Chip untuk Kecamatan
+        if (uniqueKec.length > 0) {
+          const chipKec = document.createElement('span');
+          chipKec.className = 'map-legend-chip';
+          chipKec.style.cursor = 'default';
+          chipKec.innerHTML =
+            '<span class="dot" style="' + adminDotStyle(ADMIN_STYLE_KEC) + '"></span>' +
+            ' Batas Kecamatan';
+          legendEl.appendChild(chipKec);
+        }
+        // Chip untuk Desa (garis oranye tua)
         if ((adminLevel === 'desa' && uniqueDesa.length > 0) || adminLevel === 'kecamatan') {
           const chipDesa = document.createElement('span');
           chipDesa.className = 'map-legend-chip';
           chipDesa.style.cursor = 'default';
           chipDesa.innerHTML =
-            '<span class="dot" style="background:rgba(0,255,197,0.2);border:2px solid #A80000;box-sizing:border-box;"></span>' +
+            '<span class="dot" style="' + adminDotStyle(ADMIN_STYLE_DESA) + '"></span>' +
             ' Batas Desa/Kel';
           legendEl.appendChild(chipDesa);
         }
