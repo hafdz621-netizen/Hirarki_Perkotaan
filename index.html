@@ -1026,6 +1026,66 @@ button.project-btn:disabled{
     border:none; border-top:1px dashed rgba(0,0,0,.15);
     margin:14px 0 11px;
   }
+
+  /* LULC Legend Control */
+  .lulc-legend-ctrl {
+    background: rgba(255,255,255,0.95);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 9px 13px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    max-width: 195px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  }
+  .lulc-legend-ctrl .lulc-leg-title {
+    font-weight: 700;
+    font-size: 11px;
+    margin-bottom: 7px;
+    color: var(--navy);
+    border-bottom: 1px dashed rgba(0,0,0,0.18);
+    padding-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .lulc-leg-source {
+    font-size: 9px;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-top: 6px;
+    border-top: 1px dashed rgba(0,0,0,0.12);
+    padding-top: 5px;
+    line-height: 1.4;
+  }
+  .lulc-leg-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 3.5px;
+    line-height: 1.3;
+    color: #222;
+  }
+  .lulc-leg-swatch {
+    width: 13px; height: 13px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.18);
+  }
+
+  /* Disclaimer batas desa */
+  .boundary-disclaimer {
+    margin-top: 12px;
+    font-size: 11.5px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 8px 12px;
+    border-radius: 3px;
+    background: rgba(255,174,0,0.10);
+    border-left: 3px solid var(--gold);
+    color: #7a5500;
+    display: block;
+    line-height: 1.55;
+  }
 </style>
 </head>
 <body>
@@ -1196,9 +1256,30 @@ button.project-btn:disabled{
           <div class="feat-tab-list" style="margin-top:8px;">
             <div class="feat-tab-row">
               <span class="feat-tab-label">🌿 LULC Indonesia 10m</span>
-              <span>Overlay <strong>Land Use / Land Cover</strong> resolusi 10 m khusus wilayah Indonesia (Hybrid Landcover, CSIRO). Menampilkan tutupan lahan: terbangun, vegetasi, perairan, lahan terbuka, dll. Berguna untuk membandingkan hirarki wilayah dengan kondisi penutup lahan aktual. Diakses via tile cache publik ArcGIS — butuh koneksi internet, tidak butuh akun.</span>
+              <span>Overlay <strong>Land Use / Land Cover</strong> resolusi 10 m khusus wilayah Indonesia — <strong>Indonesia Hybrid Landcover 2020 (CSIRO)</strong>. Dataset ini merupakan produk pemetaan tutupan lahan hybrid yang menggabungkan data Sentinel-1 SAR, Sentinel-2 optik, dan ALOS-2 PALSAR-2 untuk menghasilkan peta tutupan lahan Indonesia dengan akurasi tinggi (<a href="https://data.csiro.au/collection/csiro:55614" target="_blank" rel="noopener">sumber data</a>). Diakses via tile cache publik ArcGIS — butuh koneksi internet, tidak butuh akun. Saat layer diaktifkan, <strong>legenda kelas tutupan lahan</strong> otomatis muncul di pojok kiri bawah peta.</span>
             </div>
           </div>
+
+          <hr class="feat-divider">
+          <div class="feat-sub-title">📋 Legenda LULC — Kelas Tutupan Lahan (CSIRO Hybrid Landcover 2020)</div>
+          <p style="font-size:12.5px; line-height:1.6; color:var(--ink-soft); margin:0 0 8px;">Saat overlay LULC diaktifkan, legenda interaktif muncul otomatis di pojok kiri bawah peta, menampilkan 14 kelas tutupan lahan hasil analisis hybrid CSIRO:</p>
+          <div class="feat-tab-list" style="font-size:11.5px;">
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#005700;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Hutan Primer</strong> — Tutupan hutan lebat/primer</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#228B22;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Hutan Sekunder</strong> — Hutan terdegradasi/bekas tebangan</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#4B6F27;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Mangrove</strong> — Ekosistem pesisir</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#7A5C00;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Hutan Gambut</strong> — Lahan gambut bervegetasi</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#00A000;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Perkebunan</strong> — Tanaman perkebunan (kelapa sawit, karet, dll)</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#C8E020;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Semak/Belukar</strong> — Lahan dengan vegetasi rendah</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#E8F040;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Padang Rumput</strong> — Savana dan rumput alami</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#70D0A0;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Sawah</strong> — Lahan persawahan (paddy rice)</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#90C020;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Pertanian Campuran</strong> — Agroforestri dan kebun campuran</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#E08020;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Pertanian Lahan Kering</strong> — Ladang/tegalan non-irigasi</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#D00000;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Permukiman/Terbangun</strong> — Area urban dan infrastruktur</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#D0B090;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Lahan Terbuka</strong> — Tanah gundul, tambang, pantai</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#0060C0;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Badan Air</strong> — Danau, sungai, lautan</span></div>
+            <div class="feat-tab-row"><span style="display:inline-block;width:12px;height:12px;background:#40B0D0;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,.2);"></span><span><strong>Lahan Basah</strong> — Rawa, payau, genangan periodik</span></div>
+          </div>
+          <div class="feat-note" style="margin-top:8px;">Legenda muncul/hilang otomatis mengikuti visibilitas layer LULC. Kelas warna bersumber dari analisis hybrid CSIRO yang menggabungkan beberapa sumber data penginderaan jauh. Warna di legenda bersifat representatif — warna aktual di layer tile bergantung pada renderer yang di-cache ArcGIS.</div>
 
           <hr class="feat-divider">
           <div class="feat-sub-title">🗺 Batas administrasi — layanan resmi BIG (Kebijakan Satu Peta)</div>
@@ -1209,6 +1290,7 @@ button.project-btn:disabled{
             <div class="feat-tab-row"><span class="feat-tab-label">🟢 Batas Desa/Kel</span><span>Jika level analisis adalah <em>Desa</em>: hanya desa yang teranalisis yang dimuat. Jika level <em>Kecamatan</em>: semua desa dalam kecamatan teranalisis dimuat via query spasial. Gaya transparan (hanya garis tipis abu-abu).</span></div>
           </div>
           <div class="feat-note" style="margin-top:8px;">Klik pada area batas administrasi untuk menampilkan nama wilayah sebagai popup (langsung dari data GeoJSON — tidak butuh request tambahan ke server). Jika kolom Kabupaten/Kota dan Kecamatan tidak diisi saat upload, filter tidak dapat diterapkan dan pesan peringatan akan ditampilkan. Pemuatan bergantung pada koneksi ke server BIG — jika server tidak tersedia, titik peta tetap ditampilkan.</div>
+          <div class="boundary-disclaimer"><strong>⚠ Perhatian — Batas Desa Hasil Simplifikasi:</strong> Peta batas desa/kelurahan yang ditampilkan merupakan <strong>hasil simplifikasi poligon (simplified polygon)</strong> yang geometrinya telah disederhanakan untuk keperluan visualisasi web. Data ini <em>tidak mewakili batas administrasi resmi</em> dan tidak dapat digunakan untuk keperluan hukum atau pemetaan teknis. Untuk data batas resmi, gunakan sumber dari BIG melalui Kebijakan Satu Peta (kspservices.big.go.id) atau Badan Pusat Statistik.</div>
 
           <hr class="feat-divider">
           <div class="feat-sub-title">Unggah SHP Titik Desa (opsional, untuk level Desa)</div>
@@ -1222,9 +1304,10 @@ button.project-btn:disabled{
           <hr class="feat-divider">
           <div class="feat-sub-title">Interaksi peta &amp; ekspor</div>
           <div class="feat-tab-list">
-            <div class="feat-tab-row"><span class="feat-tab-label">Klik titik</span><span>Muncul popup berisi: <strong>nama wilayah</strong>, keterangan <em>atribut</em> (jika fitur atribut diaktifkan), label hierarki, nilai skor/indeks, dan sumber koordinat (SHP atau Nominatim).</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Klik titik</span><span>Muncul popup berisi: <strong>nama wilayah</strong>, keterangan <em>atribut</em> (jika fitur atribut diaktifkan), label hierarki, nilai skor/indeks, dan sumber koordinat (SHP atau Nominatim). Titik hierarki selalu berada di atas semua layer lain (<em>always on top</em>) — tidak tertutup oleh layer batas administrasi.</span></div>
             <div class="feat-tab-row"><span class="feat-tab-label">Klik batas admin</span><span>Popup nama wilayah muncul saat peta diklik pada area dengan layer batas administrasi yang sedang aktif (via WMS GetFeatureInfo BIG). Jika koneksi ke server bermasalah, popup menampilkan keterangan bahwa nama wilayah tidak tersedia.</span></div>
             <div class="feat-tab-row"><span class="feat-tab-label">Chip legenda</span><span>Klik chip warna di bawah peta untuk menyembunyikan/menampilkan titik-titik tier tertentu. Berguna untuk fokus pada hierarki tertentu.</span></div>
+            <div class="feat-tab-row"><span class="feat-tab-label">Legenda LULC</span><span>Panel legenda kelas tutupan lahan (CSIRO Hybrid Landcover 2020) otomatis tampil di pojok kiri bawah peta saat overlay LULC diaktifkan, dan hilang saat dinonaktifkan. Menampilkan 14 kelas tutupan lahan beserta warna representatifnya.</span></div>
             <div class="feat-tab-row"><span class="feat-tab-label">⬇ Download Titik Peta (.zip SHP)</span><span>Ekspor semua titik yang berhasil ditampilkan sebagai Shapefile WGS84 (Point). DBF berisi field: <code>NAME</code> (nama wilayah), <code>ATTR</code> (keterangan atribut, jika ada), <code>TIER</code> (nomor tier), <code>TIERLABEL</code> (label hierarki), <code>SCORE</code> (nilai skor/indeks). Bisa langsung dibuka di QGIS, ArcGIS, dll.</span></div>
           </div>
         </div>
@@ -1751,6 +1834,9 @@ button.project-btn:disabled{
     <div id="mapContainer"><div class="map-empty-note">Klik "Cari Lokasi &amp; Tampilkan Peta" untuk memulai pencarian koordinat wilayah.</div></div>
     <div class="map-legend" id="mapLegend"></div>
     <div id="adminBoundaryMsg" class="admin-boundary-msg"></div>
+    <div class="boundary-disclaimer" id="boundaryDisclaimer" style="margin-top:12px; display:none;">
+      ⚠ <strong>Batas desa/kelurahan yang ditampilkan merupakan hasil simplifikasi poligon</strong> (simplified polygon) untuk keperluan visualisasi web — tidak mewakili batas administrasi resmi. Untuk keperluan resmi, gunakan data dari BIG (kspservices.big.go.id).
+    </div>
     <div style="margin-top:16px;">
       <button class="ghost" id="downloadShpBtn" style="display:none;">Download Titik Peta (.zip — Shapefile)</button>
     </div>
@@ -3954,8 +4040,8 @@ button.project-btn:disabled{
 
         geo = await geocodeOne(nominatimQuery, contactEmail);
         if (geo) nominatimFallbackCount++;
-        // Nominatim Usage Policy: absolute max 1 request/second. We use 1.2s as a safety margin.
-        await sleep(1200);
+        // Nominatim Usage Policy: max 1 request/second.
+        await sleep(1000);
       }
 
       if (geo){
@@ -3976,6 +4062,8 @@ button.project-btn:disabled{
       document.getElementById('mapContainer').innerHTML = '<div class="map-empty-note">' + escapeHtml(msg) + '</div>';
       document.getElementById('mapLegend').innerHTML = '';
       document.getElementById('downloadShpBtn').style.display = 'none';
+      const discEl2 = document.getElementById('boundaryDisclaimer');
+      if (discEl2) discEl2.style.display = 'none';
       lastMapPoints = [];
       return;
     }
@@ -4530,6 +4618,8 @@ button.project-btn:disabled{
     lastMapPoints = points;
     lastMapTotalTiers = totalTiers;
     document.getElementById('downloadShpBtn').style.display = 'inline-block';
+    const discEl = document.getElementById('boundaryDisclaimer');
+    if (discEl) discEl.style.display = 'block';
 
     const container = document.getElementById('mapContainer');
     container.innerHTML = ''; // clear empty-note or previous map div content
@@ -4542,6 +4632,12 @@ button.project-btn:disabled{
     }
 
     leafletMap = L.map('mapContainer');
+
+    // Buat pane khusus untuk titik hierarki agar selalu di atas layer batas administrasi
+    leafletMap.createPane('hierarchyMarkers');
+    leafletMap.getPane('hierarchyMarkers').style.zIndex = 620;
+    // Aktifkan pointer events agar klik pada marker tetap berfungsi
+    leafletMap.getPane('hierarchyMarkers').style.pointerEvents = 'auto';
 
     // ── BASEMAPS ────────────────────────────────────────────────────────
     const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -4576,6 +4672,47 @@ button.project-btn:disabled{
       opacity: 0.82
     });
 
+    // ── LEGENDA LULC — Leaflet custom control ────────────────────────────
+    // Muncul otomatis saat layer LULC diaktifkan, hilang saat dinonaktifkan.
+    const LULC_CLASSES = [
+      { color: '#005700', label: 'Hutan Primer' },
+      { color: '#228B22', label: 'Hutan Sekunder' },
+      { color: '#4B6F27', label: 'Mangrove' },
+      { color: '#7A5C00', label: 'Hutan Gambut' },
+      { color: '#00A000', label: 'Perkebunan' },
+      { color: '#C8E020', label: 'Semak / Belukar' },
+      { color: '#E8F040', label: 'Padang Rumput' },
+      { color: '#70D0A0', label: 'Sawah (Paddy)' },
+      { color: '#90C020', label: 'Pertanian Campuran' },
+      { color: '#E08020', label: 'Pertanian Lahan Kering' },
+      { color: '#D00000', label: 'Permukiman / Terbangun' },
+      { color: '#D0B090', label: 'Lahan Terbuka' },
+      { color: '#0060C0', label: 'Badan Air' },
+      { color: '#40B0D0', label: 'Lahan Basah / Rawa' },
+    ];
+    const LulcLegendControl = L.Control.extend({
+      options: { position: 'bottomleft' },
+      onAdd: function() {
+        const div = L.DomUtil.create('div', 'lulc-legend-ctrl');
+        L.DomEvent.disableClickPropagation(div);
+        let html = '<div class="lulc-leg-title">🌿 LULC Tutupan Lahan</div>';
+        LULC_CLASSES.forEach(cls => {
+          html += `<div class="lulc-leg-row"><span class="lulc-leg-swatch" style="background:${cls.color};"></span>${escapeHtml(cls.label)}</div>`;
+        });
+        html += '<div class="lulc-leg-source">CSIRO Indonesia Hybrid<br>Landcover 2020 · 10 m</div>';
+        div.innerHTML = html;
+        return div;
+      }
+    });
+    let lulcLegendCtrl = null;
+    lulcLayer.on('add', function() {
+      if (!lulcLegendCtrl) { lulcLegendCtrl = new LulcLegendControl(); }
+      lulcLegendCtrl.addTo(leafletMap);
+    });
+    lulcLayer.on('remove', function() {
+      if (lulcLegendCtrl) { lulcLegendCtrl.remove(); }
+    });
+
     // Add default basemap
     osmLayer.addTo(leafletMap);
 
@@ -4605,7 +4742,9 @@ button.project-btn:disabled{
         fillColor: color,
         color: '#fff',
         weight: 2,
-        fillOpacity: 0.9
+        fillOpacity: 0.9,
+        pane: 'hierarchyMarkers',
+        interactive: true
       }).addTo(leafletMap);
 
       const sourceLabel = p.source === 'shp' ? 'SHP titik desa' : (p.source === 'nominatim' ? 'Nominatim (geocoding)' : '');
