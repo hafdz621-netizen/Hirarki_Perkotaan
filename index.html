@@ -501,10 +501,10 @@
   .side-nav-item{
     position:relative;
     display:flex;
-    flex-direction:row;
+    flex-direction:column;
     align-items:center;
-    height:28px;
-    max-width:28px;
+    width:28px;
+    max-height:25.5px;
     border-radius:0 9px 9px 0;
     background:#5c7282;
     border:1px solid var(--ink);
@@ -516,13 +516,13 @@
     overflow:hidden;
     white-space:nowrap;
     margin-top:-1px;
-    transition:max-width .45s cubic-bezier(.34,1.56,.64,1), background-color .2s ease, opacity .2s ease;
+    transition:max-height .45s cubic-bezier(.34,1.56,.64,1), background-color .2s ease, opacity .2s ease;
   }
   .side-nav-item:first-child{ margin-top:0; }
   .side-nav-item:hover,
   .side-nav-item:focus-visible,
   .side-nav-item.active{
-    max-width:230px;
+    max-height:230px;
     background:var(--navy-soft);
     outline:none;
     z-index:2;
@@ -531,8 +531,9 @@
   .side-nav-item:focus-visible .side-nav-label,
   .side-nav-item.active .side-nav-label{
     opacity:1;
-    max-width:190px;
-    padding-left:13px;
+    max-height:195px;
+    padding-top:2.5px;
+    padding-bottom:6px;
   }
   /* Status "aktif" mengikuti bagian yang sedang dilihat pengguna (terdeteksi otomatis
      lewat posisi scroll) — slide-out terus terbuka selama bagian itu yang sedang dilihat,
@@ -549,16 +550,18 @@
     font-weight:600;
     letter-spacing:.03em;
     opacity:0;
-    max-width:0;
+    max-height:0;
     overflow:hidden;
-    transition:opacity .2s ease .1s, max-width .45s cubic-bezier(.34,1.56,.64,1), padding .45s ease;
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
+    transition:opacity .2s ease .1s, max-height .45s cubic-bezier(.34,1.56,.64,1), padding .45s ease;
   }
   .side-nav-num{
     order:2;
     flex:0 0 18px;
     width:18px;
     height:18px;
-    margin:0 5px;
+    margin:0 0 5px;
     border-radius:50%;
     background:rgba(255,255,255,0.18);
     display:flex;
@@ -567,6 +570,8 @@
     font-family:'JetBrains Mono', monospace;
     font-weight:700;
     font-size:10px;
+    writing-mode:horizontal-tb;
+    transform:none;
   }
   .side-nav-item.active .side-nav-num{
     background:rgba(0,0,0,0.14);
