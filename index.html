@@ -488,6 +488,99 @@
 
   .hidden-section{display:none;}
 
+  /* ===== Side nav — lompat antar bagian (gaya tab folder bertumpuk) ===== */
+  .side-nav{
+    position:fixed;
+    left:0;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:900;
+    display:flex;
+    flex-direction:column;
+  }
+  .side-nav-item{
+    position:relative;
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    height:28px;
+    max-width:28px;
+    border-radius:0 9px 9px 0;
+    background:#5c7282;
+    border:1px solid var(--ink);
+    border-left:none;
+    box-shadow:2px 0 0 rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.14);
+    color:#fff;
+    cursor:pointer;
+    padding:0;
+    overflow:hidden;
+    white-space:nowrap;
+    margin-top:-1px;
+    transition:max-width .45s cubic-bezier(.34,1.56,.64,1), background-color .2s ease, opacity .2s ease;
+  }
+  .side-nav-item:first-child{ margin-top:0; }
+  .side-nav-item:hover,
+  .side-nav-item:focus-visible,
+  .side-nav-item.active{
+    max-width:230px;
+    background:var(--navy-soft);
+    outline:none;
+    z-index:2;
+  }
+  .side-nav-item:hover .side-nav-label,
+  .side-nav-item:focus-visible .side-nav-label,
+  .side-nav-item.active .side-nav-label{
+    opacity:1;
+    max-width:190px;
+    padding-left:13px;
+  }
+  /* Status "aktif" mengikuti bagian yang sedang dilihat pengguna (terdeteksi otomatis
+     lewat posisi scroll) — slide-out terus terbuka selama bagian itu yang sedang dilihat,
+     dan otomatis pindah ke tombol lain begitu pengguna scroll/pindah ke poin lain. */
+  .side-nav-item.active{
+    background:var(--gold);
+    color:var(--ink);
+  }
+  .side-nav-item.active:hover{ background:var(--gold); }
+  .side-nav-label{
+    order:1;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:.03em;
+    opacity:0;
+    max-width:0;
+    overflow:hidden;
+    transition:opacity .2s ease .1s, max-width .45s cubic-bezier(.34,1.56,.64,1), padding .45s ease;
+  }
+  .side-nav-num{
+    order:2;
+    flex:0 0 18px;
+    width:18px;
+    height:18px;
+    margin:0 5px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.18);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    font-size:10px;
+  }
+  .side-nav-item.active .side-nav-num{
+    background:rgba(0,0,0,0.14);
+    color:var(--ink);
+  }
+  .side-nav-item.is-disabled{
+    opacity:.35;
+    cursor:not-allowed;
+    pointer-events:none;
+  }
+  @media (max-width:880px){
+    .side-nav{display:none;}
+  }
+
   .toolbar{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;}
 
 /* Project dock (save/open) */
@@ -1089,6 +1182,32 @@ button.project-btn:disabled{
 </style>
 </head>
 <body>
+<nav class="side-nav" id="sideNav" aria-label="Navigasi cepat antar bagian">
+  <button type="button" class="side-nav-item" data-target="sec-upload" title="Impor Data">
+    <span class="side-nav-num">1</span>
+    <span class="side-nav-label">Impor Data</span>
+  </button>
+  <button type="button" class="side-nav-item" data-target="sec-summary" title="Ringkasan Koefisien">
+    <span class="side-nav-num">2</span>
+    <span class="side-nav-label">Ringkasan Koefisien</span>
+  </button>
+  <button type="button" class="side-nav-item" data-target="sec-hier" title="Skalogram Guttman">
+    <span class="side-nav-num">3</span>
+    <span class="side-nav-label">Skalogram Guttman</span>
+  </button>
+  <button type="button" class="side-nav-item" data-target="sec-ordo" title="Ordo Hirarki Perkotaan">
+    <span class="side-nav-num">4</span>
+    <span class="side-nav-label">Ordo Hirarki Perkotaan</span>
+  </button>
+  <button type="button" class="side-nav-item" data-target="sec-marshall" title="Indeks Sentralitas Marshall">
+    <span class="side-nav-num">5</span>
+    <span class="side-nav-label">Indeks Sentralitas Marshall</span>
+  </button>
+  <button type="button" class="side-nav-item" data-target="sec-map" title="Peta Hirarki Perkotaan">
+    <span class="side-nav-num">6</span>
+    <span class="side-nav-label">Peta Hirarki Perkotaan</span>
+  </button>
+</nav>
 <div class="wrap">
 
   <header class="masthead">
@@ -5037,6 +5156,72 @@ button.project-btn:disabled{
     }
   });
 
+})();
+</script>
+
+<script>
+(function(){
+  var SECTIONS = [
+    {id:'sec-upload',    label:'Impor Data'},
+    {id:'sec-summary',   label:'Koefisien'},
+    {id:'sec-hier',      label:'Guttman'},
+    {id:'sec-ordo',      label:'Ordo Langsung'},
+    {id:'sec-marshall',  label:'Sentralitas Marshall'},
+    {id:'sec-map',       label:'Peta Hirarki'}
+  ];
+
+  var nav = document.getElementById('sideNav');
+  if(!nav) return;
+
+  var items = Array.prototype.slice.call(nav.querySelectorAll('.side-nav-item'));
+
+  function syncAvailability(){
+    items.forEach(function(btn){
+      var target = document.getElementById(btn.dataset.target);
+      if(!target) return;
+      var hidden = target.classList.contains('hidden-section');
+      btn.classList.toggle('is-disabled', hidden);
+    });
+  }
+
+  // Klik = scroll ke bagian terkait. Status "aktif" (slide-out terbuka) TIDAK ditentukan
+  // oleh klik, tapi otomatis mengikuti bagian mana yang sedang berada di layar pengguna —
+  // lihat IntersectionObserver di bawah.
+  items.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var target = document.getElementById(btn.dataset.target);
+      if(!target || target.classList.contains('hidden-section')) return;
+      target.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  // Pantau setiap section: class "hidden-section" ditambah/dilepas oleh logika analisis,
+  // jadi tombol navigasinya ikut menyesuaikan (nonaktif kalau bagian belum tersedia).
+  var observedSections = [];
+  SECTIONS.forEach(function(s){
+    var el = document.getElementById(s.id);
+    if(!el) return;
+    observedSections.push(el);
+    var mo = new MutationObserver(syncAvailability);
+    mo.observe(el, {attributes:true, attributeFilter:['class']});
+  });
+  syncAvailability();
+
+  // Tombol "aktif" (slide-out terbuka) mengikuti bagian yang sedang dilihat pengguna.
+  // Begitu pengguna scroll dan poin 2 yang dominan kelihatan di layar, tombol 2 langsung
+  // aktif — begitu pindah ke poin lain, status aktifnya ikut pindah otomatis.
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(!entry.isIntersecting) return;
+        var btn = items.find(function(b){ return b.dataset.target === entry.target.id; });
+        if(!btn) return;
+        items.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+      });
+    }, {rootMargin:'-40% 0px -50% 0px', threshold:0});
+    observedSections.forEach(function(el){ io.observe(el); });
+  }
 })();
 </script>
 </body>
