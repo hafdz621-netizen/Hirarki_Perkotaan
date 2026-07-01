@@ -13,21 +13,23 @@
   @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
   :root{
-    --paper: #817d7d;
-    --paper-deep: #E3D6B2;
-    --ink: #16232B;
-    --ink-soft: #48585F;
-    --navy: #206d8e;
-    --navy-soft: #03363f;
-    --brick: #AE4A2A;
-    --brick-soft: #DE7F49;
-    --gold: #C6912E;
-    --line: #16232B;
-    --ok-bg: #DDE8D8;
-    --ok-ink: #3E7A3B;
-    --bad-bg: #E8CABB;
-    --bad-ink: #8E3018;
-    --skyline: #920000;
+    /* Palet baru — Maroon / Dark Walnut / Alabaster Grey / Silver / Pitch Black
+       (tabel matrix & hierref-tbl sengaja dikunci ke warna lama, tidak memakai token ini) */
+    --paper: #E5E7E6;        /* Alabaster Grey — dasar halaman */
+    --paper-deep: #D6D2CB;   /* tint Silver, untuk pill/highlight lembut */
+    --ink: #141301;          /* Pitch Black — teks utama */
+    --ink-soft: #3A2E22;     /* coklat gelap hangat — teks sekunder */
+    --navy: #7A1224;         /* Maroon — aksen utama/tombol/aktif */
+    --navy-soft: #6B2B06;    /* Dark Walnut — hover/aksen sekunder */
+    --brick: #7A1607;        /* merah bata tua — aksen negatif/pembeda */
+    --brick-soft: #D9532A;   /* jingga bata — pasangan gradient dg gold */
+    --gold: #C9953D;         /* emas tua — highlight/aktif */
+    --line: #B7B5B3;         /* Silver — border */
+    --ok-bg: #E4ECDD;
+    --ok-ink: #3F6B3A;
+    --bad-bg: #F3D9D6;
+    --bad-ink: #7A1224;
+    --skyline: #7A1224;      /* Maroon — siluet skyline */
   }
 
   *{box-sizing:border-box;}
@@ -35,10 +37,10 @@
   body{
     background:var(--paper);
     background-image:
-      repeating-linear-gradient(0deg, rgba(23,35,43,0.05) 0px, rgba(23,35,43,0.05) 1px, transparent 1px, transparent 34px),
-      repeating-linear-gradient(90deg, rgba(23,35,43,0.05) 0px, rgba(23,35,43,0.05) 1px, transparent 1px, transparent 34px),
-      radial-gradient(circle at 0% 0%, rgba(46,131,145,0.10), transparent 42%),
-      radial-gradient(circle at 100% 0%, rgba(192,136,41,0.08), transparent 48%);
+      repeating-linear-gradient(0deg, rgba(20,19,1,0.045) 0px, rgba(20,19,1,0.045) 1px, transparent 1px, transparent 34px),
+      repeating-linear-gradient(90deg, rgba(20,19,1,0.045) 0px, rgba(20,19,1,0.045) 1px, transparent 1px, transparent 34px),
+      radial-gradient(circle at 0% 0%, rgba(201,149,61,0.07), transparent 40%),
+      radial-gradient(circle at 100% 0%, rgba(122,18,36,0.045), transparent 45%);
     color:var(--ink);
     font-family:'Inter', sans-serif;
     line-height:1.5;
@@ -61,13 +63,12 @@
   header.masthead{
     border-bottom:3px solid var(--ink);
     padding-bottom:22px;
-    margin-bottom:0;
+    margin-bottom:36px;
     display:flex;
     justify-content:space-between;
     align-items:flex-end;
     gap:24px;
     flex-wrap:wrap;
-    position:relative;
   }
   .masthead-left{display:flex; flex-direction:column; gap:6px;}
   .eyebrow{
@@ -83,13 +84,13 @@
     font-size:12.75px;
     font-weight:600;
     letter-spacing:.04em;
-    color:var(--brick);
+    color:#7A1224;
     cursor:pointer;
     text-decoration:underline;
     text-underline-offset:3px;
     width:fit-content;
   }
-  .feature-info-link:hover{color:var(--bad-ink);}
+  .feature-info-link:hover{color:#5A0D19;}
   h1{
     font-family:'Source Serif 4', serif;
     font-weight:700;
@@ -111,14 +112,14 @@
     line-height:1;
   }
   .brand-title .brand-Urba{
-    color:#EDEBDD;
+    color:#6B2B06;
   }
   .brand-title .brand-Strata{
-    color:var(--gold);
+    color:#C9953D;
   }
   .subtitle{
     font-size:14.5px;
-    color:#D9CFAF;
+    color:var(--ink-soft);
     max-width:560px;
     font-family:'Source Serif 4', serif;
     font-style:italic;
@@ -126,7 +127,7 @@
   .masthead-right{
     font-family:'JetBrains Mono', monospace;
     font-size:11.5px;
-    color:#BBCBCF;
+    color:var(--ink-soft);
     text-align:right;
     line-height:1.7;
   }
@@ -139,7 +140,7 @@
   .section-num{
     font-family:'JetBrains Mono', monospace;
     font-size:12px;
-    color:#DCE6E8;
+    color:var(--paper);
     background:var(--ink);
     width:26px;height:26px;
     display:flex;align-items:center;justify-content:center;
@@ -152,7 +153,7 @@
     font-size:21px;
     color:var(--ink);
   }
-  .section-line{flex:1; height:1px; background:rgba(255,255,255,0.22);}
+  .section-line{flex:1; height:1px; background:var(--line);}
 
   /* Upload card */
   .card{
@@ -178,7 +179,7 @@
   }
   .dropzone:hover, .dropzone.drag{
     border-color:var(--navy-soft);
-    background:rgba(29,59,83,0.04);
+    background:rgba(107,43,6,0.05);
   }
   .dropzone svg{width:30px;height:30px;color:var(--navy-soft);}
   .dropzone .dz-title{font-weight:600; font-size:14.5px;}
@@ -219,7 +220,7 @@
     align-self:flex-start;
     transition:background .15s, color .15s, border-color .15s;
   }
-  .attr-toggle-btn:hover{background:rgba(6,145,193,0.08);}
+  .attr-toggle-btn:hover{background:rgba(107,43,6,0.08);}
   .attr-toggle-btn.active{
     background:var(--navy-soft);
     border-style:solid;
@@ -257,13 +258,13 @@
     font-family:'JetBrains Mono', monospace;
     font-size:12.5px;
     font-weight:600;
-    color:var(--navy-soft);
+    color:var(--navy);
     cursor:pointer;
     text-decoration:underline;
     text-underline-offset:2px;
     width:fit-content;
   }
-  .attr-pick-trigger:hover{color:var(--navy);}
+  .attr-pick-trigger:hover{color:var(--navy-soft);}
   .attr-pick-trigger.disabled-text{
     color:var(--ink-soft);
     opacity:.45;
@@ -322,7 +323,7 @@
     margin-top:14px;
     background:var(--bad-bg);
     color:var(--bad-ink);
-    border:1px solid #d9a995;
+    border:1px solid #E3AFA8;
     border-radius:3px;
     padding:10px 14px;
     font-size:13px;
@@ -372,8 +373,8 @@
     .stat-grid{grid-template-columns:repeat(2,1fr);}
   }
 
-  /* Matrix tables */
-  .matrix-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:3px; background:#fff;}
+  /* Matrix tables — warna dikunci literal (tidak ikut berubah saat palet root diganti) */
+  .matrix-wrap{overflow-x:auto; border:1px solid #000000; border-radius:3px; background:#fff;}
   table.matrix{
     border-collapse:collapse;
     font-family:'JetBrains Mono', monospace;
@@ -381,13 +382,13 @@
     width:100%;
   }
   table.matrix th, table.matrix td{
-    border:1px solid var(--line);
+    border:1px solid #000000;
     text-align:center;
     padding:6px 8px;
     min-width:34px;
   }
   table.matrix thead th{
-    background:var(--navy);
+    background:#880d0d;
     color:#fff;
     font-weight:600;
     position:sticky; top:0;
@@ -395,14 +396,14 @@
     white-space:nowrap;
     min-width:70px;
   }
-  table.matrix thead th.corner{background:var(--ink);}
+  table.matrix thead th.corner{background:#000000;}
   table.matrix tbody th{
     font-weight:600;
     text-align:left;
     position:sticky; left:0;
   }
-  table.matrix tbody tr:nth-child(odd) th { background:#8fb4be; color:var(--navy); }
-  table.matrix tbody tr:nth-child(even) th { background:#ffffff; color:var(--navy); }
+  table.matrix tbody tr:nth-child(odd) th { background:#8fb4be; color:#880d0d; }
+  table.matrix tbody tr:nth-child(even) th { background:#ffffff; color:#880d0d; }
   table.matrix td.one{background:#B2DFDB; color:#000000; font-weight:700;}
   table.matrix td.zero{background:#DEC66C; color:#000000;}
   table.matrix td.mismatch{
@@ -411,20 +412,20 @@
     font-weight:700;
     position:relative;
   }
-  table.matrix td.score{background:var(--paper-deep); font-weight:700; color:var(--ink);}
-  table.matrix td.err-col{background:var(--paper-deep); font-weight:700;}
-  table.matrix td.err-col.has-err{background:var(--bad-bg); color:var(--bad-ink);}
+  table.matrix td.score{background:#e4ba74; font-weight:700; color:#000000;}
+  table.matrix td.err-col{background:#e4ba74; font-weight:700;}
+  table.matrix td.err-col.has-err{background:#e1ad97; color:#951600;}
 
   /* Attribute column (kabupaten/kecamatan/lainnya dijadikan atribut) — font lebih kecil, lebar cell mengikuti panjang teks,
      setiap atribut ditampilkan bertingkat (atribut 1| / atribut 2) */
-  table.matrix th.attr-col-head{background:var(--brick); white-space:nowrap;}
+  table.matrix th.attr-col-head{background:#a25731; white-space:nowrap;}
   table.matrix td.attr-cell{
     font-family:'JetBrains Mono', monospace;
     font-size:10.75px;
     line-height:1.5;
     text-align:left;
     white-space:nowrap;
-    color:var(--ink-soft);
+    color:#060505;
     background:#fff;
     vertical-align:middle;
   }
@@ -494,9 +495,9 @@
   footer{
     margin-top:60px;
     padding-top:18px;
-    border-top:1px solid rgba(255,255,255,0.22);
+    border-top:1px solid var(--line);
     font-size:11.5px;
-    color:#AEC0C6;
+    color:var(--ink-soft);
     font-family:'JetBrains Mono', monospace;
     display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
   }
@@ -521,7 +522,7 @@
     width:28px;
     max-height:25.5px;
     border-radius:0 9px 9px 0;
-    background:#3E5A64;
+    background:#5C4A3A;
     border:1px solid var(--ink);
     border-left:none;
     box-shadow:2px 0 0 rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.14);
@@ -761,7 +762,7 @@ button.project-btn:disabled{
     cursor:pointer;
     flex-wrap:wrap;
   }
-  .class-card-head:hover{background:rgba(29,59,83,0.03);}
+  .class-card-head:hover{background:rgba(122,18,36,0.035);}
   .class-head-left{display:flex; align-items:center; gap:14px;}
   .class-tier-badge{
     font-family:'Source Serif 4', serif;
@@ -829,7 +830,7 @@ button.project-btn:disabled{
     width:100%; height:520px;
     border:1px solid var(--line);
     border-radius:3px;
-    background:#C7D3CE;
+    background:#E9E6E0;
   }
   .map-legend{
     margin-top:14px;
@@ -878,12 +879,12 @@ button.project-btn:disabled{
     font-family: 'JetBrains Mono', monospace;
     padding: 7px 12px;
     border-radius: 3px;
-    background: rgba(6,145,193,0.08);
+    background: rgba(107,43,6,0.08);
     border-left: 3px solid var(--navy-soft);
     color: var(--navy);
     display: none;
   }
-  .admin-boundary-msg.warn  { background: rgba(255,174,0,0.12); border-left-color: var(--gold); color: #7a5500; }
+  .admin-boundary-msg.warn  { background: rgba(201,149,61,0.14); border-left-color: var(--gold); color: #6E4A15; }
   .admin-boundary-msg.err   { background: var(--bad-bg); border-left-color: var(--brick); color: var(--bad-ink); }
   .admin-boundary-msg.ok    { background: rgba(69,141,64,0.1); border-left-color: var(--ok-ink); color: #2e6b2a; }
   .admin-boundary-msg.loading::before { content: '⟳  '; }
@@ -942,7 +943,7 @@ button.project-btn:disabled{
     font-size:12px; color:var(--ink-soft); margin-top:4px; max-width:560px; line-height:1.55;
   }
   .hierref-actions{display:flex; gap:10px; align-items:center; flex-shrink:0; flex-wrap:wrap;}
-  .hierref-scroll{overflow-x:auto; overflow-y:auto; max-height:280px; border:1px solid var(--line); border-radius:3px;}
+  .hierref-scroll{overflow-x:auto; overflow-y:auto; max-height:280px; border:1px solid #000000; border-radius:3px;}
   table.hierref-tbl{
     border-collapse:collapse;
     font-family:'JetBrains Mono',monospace;
@@ -951,11 +952,11 @@ button.project-btn:disabled{
     min-width:440px;
   }
   table.hierref-tbl th, table.hierref-tbl td{
-    border:1px solid var(--line);
+    border:1px solid #000000;
     padding:6px 10px;
   }
   table.hierref-tbl thead th{
-    background:var(--navy); color:#fff; font-weight:600; font-size:11px; white-space:nowrap; text-align:left; position:sticky; top:0;
+    background:#880d0d; color:#fff; font-weight:600; font-size:11px; white-space:nowrap; text-align:left; position:sticky; top:0;
   }
   table.hierref-tbl tbody tr:nth-child(even){background:#ece9e6;}
   table.hierref-tbl tbody tr:nth-child(odd){background:#f8f5f2;}
@@ -969,7 +970,7 @@ button.project-btn:disabled{
   .hierref-preview{font-size:11px; color:var(--navy-soft); font-style:italic;}
   .hierref-note{
     margin-top:12px; font-size:11.5px; color:var(--ink-soft);
-    background:rgba(6,145,193,0.07);
+    background:rgba(107,43,6,0.07);
     border-left:3px solid var(--navy-soft);
     padding:8px 12px; border-radius:0 3px 3px 0;
   }
@@ -1077,7 +1078,7 @@ button.project-btn:disabled{
     white-space:nowrap;
   }
   .feat-btn-tag.ghost{background:transparent; color:var(--navy); border:1px solid var(--navy);}
-  .feat-btn-tag.red{background:#ED2939;}
+  .feat-btn-tag.red{background:var(--navy);}
   .feat-steps{
     margin:8px 0 0 0;
     padding-left:0;
@@ -1104,13 +1105,13 @@ button.project-btn:disabled{
   }
   .feat-note{
     font-size:11.5px; color:var(--ink-soft); line-height:1.55;
-    background:rgba(6,145,193,0.07);
+    background:rgba(107,43,6,0.07);
     border-left:3px solid var(--navy-soft);
     padding:7px 11px; border-radius:0 3px 3px 0;
     margin-top:9px;
   }
   .feat-note.warn{
-    background:rgba(255,174,0,0.1);
+    background:rgba(201,149,61,0.12);
     border-left-color:var(--gold);
   }
   .feat-sub{margin-top:11px;}
@@ -1193,9 +1194,9 @@ button.project-btn:disabled{
     font-family: 'JetBrains Mono', monospace;
     padding: 8px 12px;
     border-radius: 3px;
-    background: rgba(255,174,0,0.10);
+    background: rgba(201,149,61,0.12);
     border-left: 3px solid var(--gold);
-    color: #7a5500;
+    color: #6E4A15;
     display: block;
     line-height: 1.55;
   }
@@ -1321,7 +1322,6 @@ button.project-btn:disabled{
       </g>
     </svg>
   </div>
-
 
   <!-- BLOK MELAYANG: Penjelasan Fitur / Referensi Ilmiah -->
   <div class="modal-overlay" id="featureInfoOverlay">
@@ -3245,13 +3245,13 @@ button.project-btn:disabled{
 
     // ── footer / total row ───────────────────────────────────────
     html += '<tfoot><tr>';
-    html += `<th style="background:var(--ink);color:#fff;text-align:left;padding:7px 8px;font-family:\'JetBrains Mono\',monospace;font-size:11px;">TOTAL</th>`;
-    if (hasAttr) html += `<td style="background:var(--ink);"></td>`;
+    html += `<th style="background:#000000;color:#fff;text-align:left;padding:7px 8px;font-family:\'JetBrains Mono\',monospace;font-size:11px;">TOTAL</th>`;
+    if (hasAttr) html += `<td style="background:#000000;"></td>`;
     colTotals.forEach(ct => {
-      html += `<td style="background:var(--paper-deep);font-family:\'JetBrains Mono\',monospace;font-weight:700;text-align:center;border:1px solid #000;">${ct}</td>`;
+      html += `<td style="background:#e4ba74;font-family:\'JetBrains Mono\',monospace;font-weight:700;text-align:center;border:1px solid #000;">${ct}</td>`;
     });
-    html += `<td style="background:var(--navy);color:#fff;font-family:\'JetBrains Mono\',monospace;font-weight:700;text-align:center;border:1px solid #000;">${grandTotal}</td>`;
-    html += `<td style="background:var(--navy);color:#fff;font-family:\'JetBrains Mono\',monospace;font-weight:700;text-align:center;border:1px solid #000;">${grandJenis}</td>`;
+    html += `<td style="background:#880d0d;color:#fff;font-family:\'JetBrains Mono\',monospace;font-weight:700;text-align:center;border:1px solid #000;">${grandTotal}</td>`;
+    html += `<td style="background:#880d0d;color:#fff;font-family:\'JetBrains Mono\',monospace;font-weight:700;text-align:center;border:1px solid #000;">${grandJenis}</td>`;
     html += '</tr></tfoot>';
 
     html += '</table>';
