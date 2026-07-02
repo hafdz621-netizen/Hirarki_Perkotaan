@@ -14,7 +14,7 @@
 
   :root{
     --paper: #E5E7E6;
-    --paper-deep: #D6D2CB;
+    --paper-deep: #b1bdc1;
     --ink: #141301;
     --ink-soft: #3A2E22;
     --navy: #7A1224;
@@ -298,16 +298,16 @@
     font-family:'JetBrains Mono', monospace;
     font-size:11px;
     font-weight:600;
-    background:transparent;
-    border:1px dashed var(--navy-soft);
-    color:var(--navy-soft);
+    background:var(--skyline);
+    border:1px solid var(--skyline);
+    color:#fff;
     padding:5px 10px;
     border-radius:3px;
     cursor:pointer;
     align-self:flex-start;
     transition:background .15s, color .15s, border-color .15s;
   }
-  .attr-toggle-btn:hover{background:rgba(107,43,6,0.08);}
+  .attr-toggle-btn:hover{background:#2c8482; border-color:#2c8482;}
   .attr-toggle-btn.active{
     background:var(--navy-soft);
     border-style:solid;
@@ -397,14 +397,14 @@
     font-family:'Inter', sans-serif;
     font-weight:600;
     font-size:13px;
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--ink-soft);
+    background:var(--skyline);
+    border:1px solid var(--skyline);
+    color:#fff;
     padding:9px 16px;
     border-radius:3px;
     cursor:pointer;
   }
-  button.ghost:hover{border-color:var(--navy-soft); color:var(--navy-soft);}
+  button.ghost:hover{background:#2c8482; border-color:#2c8482; color:#fff;}
   button.ghost.btn-skyline{
     background:var(--skyline);
     border:1px solid var(--skyline);
