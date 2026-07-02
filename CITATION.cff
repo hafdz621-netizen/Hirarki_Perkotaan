@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "Jika Anda menggunakan perangkat lunak ini, silakan sitasi menggunakan metadata berikut."
+title: "UrbaStrata: Analisis Hirarki Perkotaan"
+abstract: >-
+  Aplikasi web client-side untuk analisis hirarki perkotaan berdasarkan
+  ketersediaan sarana/fasilitas wilayah, menggabungkan metode Skalogram
+  Guttman, Ordo Langsung, dan Indeks Sentralitas Marshall, lengkap dengan
+  visualisasi peta interaktif dan ekspor Shapefile — berjalan sepenuhnya di
+  peramban tanpa server.
+type: software
+authors:
+  - family-names: Anshori
+    given-names: Ahmad Hafidz
+repository-code: "https://github.com/hafdz621-netizen/Hirarki_Perkotaan"
+url: "https://github.com/hafdz621-netizen/Hirarki_Perkotaan"
+license: MIT
+version: 1.0.0
+date-released: "2026-07-02"
+keywords:
+  - urban-planning
+  - urban-hierarchy
+  - guttman-scale
+  - regional-planning
+  - gis
+  - shapefile
+  - spatial-analysis
+  - indonesia
