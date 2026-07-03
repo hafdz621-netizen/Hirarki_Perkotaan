@@ -1927,22 +1927,22 @@ button.project-btn:disabled{
     </div>
 
     <div class="tabs">
-      <div class="tab active" data-hiertab="item">Peringkat Persebaran Item</div>
-      <div class="tab" data-hiertab="resp">Peringkat Kelengkapan Item Wilayah</div>
+      <div class="tab active" data-hiertab="resp">Peringkat Kelengkapan Item Wilayah</div>
+      <div class="tab" data-hiertab="item">Peringkat Persebaran Item</div>
       <div class="tab" data-hiertab="class">Hierarki Wilayah</div>
       <div class="tab" data-hiertab="obs">Matriks Observasi</div>
       <div class="tab" data-hiertab="ideal">Matriks Ideal</div>
     </div>
 
-    <div class="tabpanel active" id="hierPanelItem">
+    <div class="tabpanel active" id="hierPanelResp">
       <div class="hier-wrap">
-        <div class="item-hier" id="hierItem"></div>
+        <div id="hierResp"></div>
       </div>
     </div>
 
-    <div class="tabpanel" id="hierPanelResp">
+    <div class="tabpanel" id="hierPanelItem">
       <div class="hier-wrap">
-        <div id="hierResp"></div>
+        <div class="item-hier" id="hierItem"></div>
       </div>
     </div>
 
@@ -2021,18 +2021,18 @@ button.project-btn:disabled{
     </div>
 
     <div class="tabs">
-      <div class="tab active" data-ordotab="itemrank">Peringkat Unit</div>
-      <div class="tab" data-ordotab="rank">Peringkat Wilayah</div>
+      <div class="tab active" data-ordotab="rank">Peringkat Wilayah</div>
+      <div class="tab" data-ordotab="itemrank">Peringkat Unit</div>
       <div class="tab" data-ordotab="class">Hierarki Wilayah</div>
       <div class="tab" data-ordotab="rawskalo">Tabel Skalogram</div>
     </div>
 
-    <div class="tabpanel active" id="ordoPanelItemRank">
-      <div class="hier-wrap"><div id="ordoItemRankList"></div></div>
+    <div class="tabpanel active" id="ordoPanelRank">
+      <div class="hier-wrap"><div id="ordoRankList"></div></div>
     </div>
 
-    <div class="tabpanel" id="ordoPanelRank">
-      <div class="hier-wrap"><div id="ordoRankList"></div></div>
+    <div class="tabpanel" id="ordoPanelItemRank">
+      <div class="hier-wrap"><div id="ordoItemRankList"></div></div>
     </div>
 
     <div class="tabpanel" id="ordoPanelClass">
