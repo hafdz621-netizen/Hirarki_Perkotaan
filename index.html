@@ -153,14 +153,33 @@
   }
   .section-line{flex:1; height:1px; background:var(--line);}
 
-  /* Upload card */
+  /* Upload card — dibentuk cut-edge (octagon) dengan border tipis, gaya sama
+     dengan facet-card di bagian Impor Data: ::before = ring border tipis
+     (var(--line)), ::after = isi warna kartu, konten dinaikkan z-index-nya. */
   .card{
-    background:#f4f1ef;
-    border:1px solid var(--line);
-    border-radius:3px;
+    --cut: 16px;
+    position:relative;
+    background:transparent;
+    border:none;
+    border-radius:0;
     padding:26px 28px;
-    box-shadow:0 1px 0 rgba(0,0,0,0.02);
+    box-shadow:none;
   }
+  .card::before{
+    content:"";
+    position:absolute; inset:0;
+    background:var(--line);
+    clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut));
+    z-index:0;
+  }
+  .card::after{
+    content:"";
+    position:absolute; inset:1.5px;
+    background:#f4f1ef;
+    clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut));
+    z-index:1;
+  }
+  .card > *{ position:relative; z-index:2; }
 
   /* Plain section body — no outer "backcard" frame, the faceted boxes sit
      directly on the page, same as a facet card group would. */
@@ -480,20 +499,38 @@
     display:none;
   }
 
-  /* Stat cards */
+  /* Stat cards — tiap sel dibentuk cut-edge (octagon) dengan border tipis
+     sendiri-sendiri, dipisah gap tipis (gaya sama dengan facet-card). */
   .stat-grid{
     display:grid;
     grid-template-columns:repeat(4, 1fr);
-    gap:1px;
-    background:var(--ink);
-    border-radius:3px;
-    overflow:hidden;
+    gap:1.86px;
+    background:transparent;
+    border-radius:0;
+    overflow:visible;
   }
   .stat{
-    background:#f4f1ef;
+    --cut: 12px;
+    position:relative;
+    background:transparent;
     padding:22px 20px;
     display:flex; flex-direction:column; gap:6px;
   }
+  .stat::before{
+    content:"";
+    position:absolute; inset:0;
+    background:var(--line);
+    clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut));
+    z-index:0;
+  }
+  .stat::after{
+    content:"";
+    position:absolute; inset:1.5px;
+    background:#f4f1ef;
+    clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut));
+    z-index:1;
+  }
+  .stat > *{ position:relative; z-index:2; }
   .stat .label{
     font-family:'JetBrains Mono', monospace;
     font-size:10.5px;
@@ -663,21 +700,6 @@
 
   .item-hier .hier-bar-fill{background:linear-gradient(90deg, var(--gold), var(--brick-soft));}
   .item-hier-bar{background:linear-gradient(90deg, var(--gold), var(--brick-soft))!important;}
-
-  /* HP: baris hirarki ditumpuk 2 baris biar kartu identitas gak kepanjangan
-     dan bar gradasi dapet lebar penuh (gak keremes jadi setipis rambut) */
-  @media (max-width:600px){
-    .hier-row{
-      flex-wrap:wrap;
-      row-gap:8px;
-      padding:11px 0;
-    }
-    .hier-rank{order:1; width:28px; height:28px; font-size:11.5px;}
-    .hier-name-wrap{order:2; width:auto; min-width:0; flex:1 1 auto;}
-    .hier-name{width:auto;}
-    .hier-score{order:3; width:auto; margin-left:auto;}
-    .hier-bar-track{order:4; flex-basis:100%; height:16px;}
-  }
 
   footer{
     margin-top:60px;
@@ -861,19 +883,44 @@ button.project-btn:disabled{
 }
 
   .formula-note{
-    font-size:12.5px; color:var(--ink-soft); background:var(--paper-deep);
-    border-left:3px solid var(--gold); padding:10px 14px; border-radius:0 3px 3px 0; margin-top:14px;
+    --cut: 8px;
+    --ring: 2px;
+    position:relative;
+    font-size:12.5px; color:var(--ink-soft);
+    background:#919a9e;
+    border-left:3px solid var(--gold); padding:10px 14px; border-radius:0; margin-top:14px;
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+  }
+  .formula-note::after{
+    content:"";
+    position:absolute;
+    top:var(--ring); right:var(--ring); bottom:var(--ring); left:calc(3px + var(--ring));
+    background:var(--paper-deep);
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
+    z-index:-1;
   }
   .formula-note code{font-family:'JetBrains Mono', monospace; background:rgba(0,0,0,0.05); padding:1px 5px; border-radius:2px;}
 
   .excel-formula{
+    --cut: 8px;
+    --ring: 2px;
+    position:relative;
     margin-top:10px;
     font-size:12px;
     color:var(--ok-ink);
-    background:#eef5ea;
+    background:#c3c8bf;
     border-left:3px solid #3d6b3a;
-    border-radius:0 3px 3px 0;
+    border-radius:0;
     overflow:hidden;
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+  }
+  .excel-formula::after{
+    content:"";
+    position:absolute;
+    top:var(--ring); right:var(--ring); bottom:var(--ring); left:calc(3px + var(--ring));
+    background:#eef5ea;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
+    z-index:-1;
   }
   .excel-formula summary{
     cursor:pointer;
@@ -902,21 +949,39 @@ button.project-btn:disabled{
   .excel-formula .ef-desc{font-size:11.5px; color:var(--ink-soft); font-family:'Inter', sans-serif;}
 
 
-  /* Sturges / class calculation strip */
+  /* Sturges / class calculation strip — tiap sel dibentuk cut-edge (octagon)
+     dengan border tipis sendiri-sendiri, dipisah gap tipis. */
   .sturges-strip{
     display:grid;
     grid-template-columns:repeat(5, 1fr);
-    gap:1px;
-    background:var(--ink);
-    border-radius:3px;
-    overflow:hidden;
+    gap:1.86px;
+    background:transparent;
+    border-radius:0;
+    overflow:visible;
     margin-bottom:22px;
   }
   .sturges-cell{
-    background:#f4f1ef;
+    --cut: 10px;
+    position:relative;
+    background:transparent;
     padding:16px 16px;
     display:flex; flex-direction:column; gap:4px;
   }
+  .sturges-cell::before{
+    content:"";
+    position:absolute; inset:0;
+    background:var(--line);
+    clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut));
+    z-index:0;
+  }
+  .sturges-cell::after{
+    content:"";
+    position:absolute; inset:1.5px;
+    background:#f4f1ef;
+    clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut));
+    z-index:1;
+  }
+  .sturges-cell > *{ position:relative; z-index:2; }
   .sturges-cell .sc-label{
     font-family:'JetBrains Mono', monospace;
     font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft);
@@ -934,14 +999,31 @@ button.project-btn:disabled{
     background:#fff; border:1px solid var(--line); border-radius:3px; padding:10px 14px;
   }
 
-  /* Hierarchy class cards */
+  /* Hierarchy class cards — punya highlight (aksen warna tier) di sisi kiri,
+     jadi cut-edge (chamfer) hanya diterapkan di sisi kanan kotak; sisi kiri
+     tetap lurus supaya aksen warnanya utuh. Border tipis dibuat dari warna
+     latar kartu itu sendiri (var(--line)) yang munculnya lewat lapisan
+     ::after yang di-inset, sehingga border ikut tampak di sepanjang tepi
+     cut-edge (bukan cuma di sisi lurus). */
   .class-card{
-    background:#f4f1ef;
-    border:1px solid var(--line);
+    --cut: 14px;
+    --ring: 2px;
+    position:relative;
+    background:var(--line);
+    border:none;
     border-left:5px solid var(--navy);
-    border-radius:3px;
+    border-radius:0;
     margin-bottom:14px;
     overflow:hidden;
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+  }
+  .class-card::after{
+    content:"";
+    position:absolute;
+    top:var(--ring); right:var(--ring); bottom:var(--ring); left:calc(5px + var(--ring));
+    background:#f4f1ef;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+    z-index:-1;
   }
   .class-card-head{
     display:flex; align-items:center; justify-content:space-between;
@@ -1015,9 +1097,10 @@ button.project-btn:disabled{
   .map-toolbar select{width:100%;}
   #mapContainer{
     width:100%; height:520px;
-    border:1px solid var(--line);
+    border:1px solid #bfbcb7;
     border-radius:3px;
     background:#E9E6E0;
+    overflow:hidden;
   }
   .map-legend{
     margin-top:14px;
@@ -1111,14 +1194,29 @@ button.project-btn:disabled{
     box-shadow: 0 2px 6px rgba(0,0,0,0.12);
   }
 
-  /* Hierarchy reference panel */
+  /* Hierarchy reference panel — punya highlight (aksen navy) di sisi kiri,
+     jadi cut-edge hanya di sisi kanan kotak. Border tipis dibuat dari lapisan
+     ::after yang di-inset dari warna dasar (var(--line)) supaya border ikut
+     tampak menyusuri tepi cut-edge, bukan cuma di sisi lurus. */
   .hierref-card{
-    background:#f4f1ef;
-    border:1px solid var(--line);
+    --cut: 16px;
+    --ring: 2px;
+    position:relative;
+    background:var(--line);
+    border:none;
     border-left:5px solid var(--navy-soft);
-    border-radius:3px;
+    border-radius:0;
     padding:20px 22px;
     margin-bottom:18px;
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+  }
+  .hierref-card::after{
+    content:"";
+    position:absolute;
+    top:var(--ring); right:var(--ring); bottom:var(--ring); left:calc(5px + var(--ring));
+    background:#f4f1ef;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%);
+    z-index:-1;
   }
   .hierref-head{
     display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:14px;
@@ -1204,7 +1302,7 @@ button.project-btn:disabled{
     transition:transform .12s ease, box-shadow .12s ease;
   }
   /* Kapsul yang TIDAK bisa dipindah (single/singles-merged group, tidak ber-tie): */
-  .hierref-pill[data-movable="false"]{ background:#1d5f8a; }
+  .hierref-pill[data-movable="false"]{ background:#086e6e; }
   .hierref-pill[data-movable="true"]{ cursor:grab; touch-action:none; }
   .hierref-pill[data-movable="true"]:active{ cursor:grabbing; }
   .hierref-pill-wrap.dragging{ opacity:.4; z-index:5; }
@@ -1221,10 +1319,22 @@ button.project-btn:disabled{
     font-style:italic; color:#8a8a8a; font-size:9.5px; font-family:'JetBrains Mono',monospace;
   }
   .hierref-note{
+    --cut: 8px;
+    --ring: 2px;
+    position:relative;
     margin-top:12px; font-size:11.5px; color:var(--ink-soft);
-    background:rgba(107,43,6,0.07);
+    background:#c9bfae;
     border-left:3px solid var(--navy-soft);
-    padding:8px 12px; border-radius:0 3px 3px 0;
+    padding:8px 12px; border-radius:0;
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+  }
+  .hierref-note::after{
+    content:"";
+    position:absolute;
+    top:var(--ring); right:var(--ring); bottom:var(--ring); left:calc(3px + var(--ring));
+    background:#f2ede6;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
+    z-index:-1;
   }
 
   /* Blok melayang: Penjelasan Fitur / Referensi Ilmiah */
