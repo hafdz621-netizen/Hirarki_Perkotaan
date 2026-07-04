@@ -1188,10 +1188,20 @@ button.project-btn:disabled{
     white-space:nowrap; user-select:none;
     transition:transform .12s ease, box-shadow .12s ease;
   }
-  .hierref-pill[draggable="true"]{ cursor:grab; }
-  .hierref-pill[draggable="true"]:active{ cursor:grabbing; }
+  /* Kapsul yang TIDAK bisa dipindah (single/singles-merged group, tidak ber-tie): */
+  .hierref-pill[data-movable="false"]{ background:#1d5f8a; }
+  .hierref-pill[data-movable="true"]{ cursor:grab; touch-action:none; }
+  .hierref-pill[data-movable="true"]:active{ cursor:grabbing; }
   .hierref-pill-wrap.dragging{ opacity:.4; z-index:5; }
   .hierref-pill-wrap.dragging .hierref-pill{ box-shadow:3px 3px 0 rgba(0,0,0,.3); transform:scale(1.04); }
+  /* Ghost/preview kapsul yang mengikuti pointer (mouse & touch) selama drag,
+     menggantikan drag-image bawaan HTML5 DnD yang tidak tersedia di layar sentuh. */
+  .hierref-pill-ghost{
+    pointer-events:none; z-index:9999;
+    box-shadow:4px 4px 0 rgba(0,0,0,.35);
+    transform:scale(1.05) rotate(-1deg);
+    opacity:.96;
+  }
   .hierref-tier-label{
     font-style:italic; color:#8a8a8a; font-size:9.5px; font-family:'JetBrains Mono',monospace;
   }
@@ -2852,7 +2862,7 @@ button.project-btn:disabled{
     hierLevels = null; // reset on new analysis (new item set)
     buildHierRefPanel(itemNames, rawMatrix);
 
-    const result = computeGuttman(matrix, itemNames, respNames, hierLevels, regionAttrTexts);
+    const result = computeGuttman(matrix, itemNames, respNames, hierLevels, regionAttrTexts, null);
     const ordoResult = computeOrdoHirarki(rawMatrix, itemNames, respNames, hierLevels, regionAttrTexts);
     const marshallResult = computeMarshall(rawMatrix, itemNames, respNames, regionAttrTexts);
 
@@ -2876,9 +2886,12 @@ button.project-btn:disabled{
 
   // Core Guttman scalogram computation
   // hl = hierLevels array (optional). hl[j] = tier (1=highest/most specialized, bigger=more basic).
-  // Tiebreaker items: same total → more basic (higher hl) comes LEFT.
+  // hr = hierRank array (optional). Rank kontinu persis urutan kapsul di Referensi Hierarki
+  //      (termasuk urutan hasil drag dalam satu grup tie) — dipakai sebagai tiebreaker
+  //      kolom item supaya item se-level TIDAK jatuh balik ke urutan kolom data asli.
+  // Tiebreaker items: same total → ikuti urutan kapsul (hr); more basic (higher hr/hl) comes LEFT.
   // Tiebreaker resp: same score → more specialized holdings (lower hierSum) comes TOP.
-  function computeGuttman(matrix, itemNames, respNames, hl, attrTexts){
+  function computeGuttman(matrix, itemNames, respNames, hl, attrTexts, hr){
     const N = matrix.length;       // respondents
     const n = itemNames.length;    // items
 
@@ -2886,10 +2899,13 @@ button.project-btn:disabled{
     const itemTotals = new Array(n).fill(0);
     for (let i=0;i<N;i++) for (let j=0;j<n;j++) itemTotals[j] += matrix[i][j];
 
-    // item order: descending by total; tiebreaker: descending by hl (higher tier# = more basic = left)
+    // item order: descending by total; tiebreaker: mengikuti urutan kapsul persis (hr) jika
+    // tersedia — supaya 2 item ber-tie yang sudah diatur ulang posisinya di panel Referensi
+    // Hierarki tetap ber-urutan sama di matriks. Fallback ke hl (quantized) lalu index asli.
     const itemOrder = itemTotals.map((t,j)=>j).sort((a,b)=> {
       const d = itemTotals[b]-itemTotals[a];
       if (d !== 0) return d;
+      if (hr) return hr[b]-hr[a]; // higher rank (more basic, lebih ke kanan di kapsul) comes first/left, tanpa sisa tie
       const ha = hl ? (hl[a]||1) : 1;
       const hb = hl ? (hl[b]||1) : 1;
       return hb - ha; // higher level# (more basic) comes first/left
@@ -3666,6 +3682,20 @@ button.project-btn:disabled{
     return levels;
   }
 
+  // Rank KONTINU (belum dikuantisasi ke 10 bucket seperti tiersFromGroups) tiap
+  // item, mengikuti urutan PERSIS kapsul di panel Referensi Hierarki — termasuk
+  // hasil drag manual di dalam satu grup tie. Dipakai sebagai tiebreaker matriks
+  // supaya 2 item yang levelnya sama (satu tie) tidak jatuh balik ke urutan asli
+  // kolom data, melainkan ikut posisi kapsulnya persis seperti di Referensi Hierarki.
+  function hierRankFromGroups(groups, n){
+    const rank = new Array(n).fill(0);
+    let r = 0;
+    groups.forEach(g => {
+      g.items.forEach(j => { rank[j] = r++; });
+    });
+    return rank;
+  }
+
   function cloneHierGroups(groups){
     return groups.map(g => ({ presenceCount: g.presenceCount, items: g.items.slice() }));
   }
@@ -3742,7 +3772,6 @@ button.project-btn:disabled{
     // via animatePillShift), bukan hanya saat drop.
     function renderPills(box, itemsArr, draggable, onReorder){
       const display = itemsArr.slice().reverse();
-      let draggedWrap = null;
 
       display.forEach(j => {
         const pillWrap = document.createElement('div');
@@ -3750,7 +3779,7 @@ button.project-btn:disabled{
         pillWrap.dataset.itemIndex = j;
         const pill = document.createElement('div');
         pill.className = 'hierref-pill';
-        pill.draggable = draggable;
+        pill.dataset.movable = draggable ? 'true' : 'false';
         pill.title = itemNames[j] + ' — ' + (HIER_LEVEL_LABELS[levels[j]] || ('Tingkat ' + levels[j]));
         pill.textContent = truncate(itemNames[j], 16);
         const tierLbl = document.createElement('div');
@@ -3760,40 +3789,72 @@ button.project-btn:disabled{
         pillWrap.appendChild(tierLbl);
         box.appendChild(pillWrap);
 
+        // Reorder pakai Pointer Events (bukan HTML5 drag-and-drop) supaya jalan
+        // konsisten di mouse, pen, MAUPUN layar sentuh (mobile) — HTML5 native
+        // drag/dragstart/dragover tidak punya dukungan sentuh di banyak browser.
+        // Selama drag, kapsul asli didim (.dragging) dan sebuah "ghost" fixed-
+        // position mengikuti pointer sebagai representasi visualnya; kapsul lain
+        // digeser live via animatePillShift begitu pointer melintasi setengah
+        // lebarnya, persis logika dragover sebelumnya.
         if (draggable){
-          pill.addEventListener('dragstart', e => {
-            draggedWrap = pillWrap;
-            pillWrap.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', String(j));
-          });
-          pill.addEventListener('dragend', () => {
+          let pointerId = null, ghost = null, offsetX = 0, offsetY = 0;
+
+          function onMove(e){
+            if (e.pointerId !== pointerId) return;
+            e.preventDefault();
+            if (ghost){
+              ghost.style.left = (e.clientX - offsetX) + 'px';
+              ghost.style.top = (e.clientY - offsetY) + 'px';
+            }
+            const under = document.elementFromPoint(e.clientX, e.clientY);
+            const target = under && under.closest('.hierref-pill-wrap');
+            if (!target || target === pillWrap || target.parentElement !== box) return;
+            const rect = target.getBoundingClientRect();
+            const insertBeforeTarget = (e.clientX - rect.left) < rect.width / 2;
+            const refNode = insertBeforeTarget ? target : target.nextSibling;
+            if (refNode === pillWrap) return;
+            animatePillShift(box, () => box.insertBefore(pillWrap, refNode));
+          }
+
+          function onUp(e){
+            if (e.pointerId !== pointerId) return;
+            document.removeEventListener('pointermove', onMove);
+            document.removeEventListener('pointerup', onUp);
+            document.removeEventListener('pointercancel', onUp);
+            if (ghost){ ghost.remove(); ghost = null; }
             pillWrap.classList.remove('dragging');
-            draggedWrap = null;
+            pointerId = null;
             const newOrder = Array.from(box.children).map(el => parseInt(el.dataset.itemIndex, 10)).reverse();
             const changed = newOrder.length !== itemsArr.length || newOrder.some((v, idx) => v !== itemsArr[idx]);
             if (changed) onReorder(newOrder);
+          }
+
+          pill.addEventListener('pointerdown', e => {
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            pointerId = e.pointerId;
+            pillWrap.classList.add('dragging');
+
+            const rect = pillWrap.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+
+            ghost = pillWrap.cloneNode(true);
+            ghost.classList.remove('dragging');
+            ghost.classList.add('hierref-pill-ghost');
+            ghost.style.position = 'fixed';
+            ghost.style.left = rect.left + 'px';
+            ghost.style.top = rect.top + 'px';
+            ghost.style.width = rect.width + 'px';
+            ghost.style.margin = '0';
+            document.body.appendChild(ghost);
+
+            document.addEventListener('pointermove', onMove);
+            document.addEventListener('pointerup', onUp);
+            document.addEventListener('pointercancel', onUp);
+            e.preventDefault();
           });
         }
       });
-
-      if (draggable){
-        // dragover di level kotak (event delegation): begitu kapsul yang didrag
-        // hover di atas kapsul lain, kapsul target ikut bergeser (live) dan
-        // dianimasikan lewat FLIP — bukan menunggu sampai drop.
-        box.addEventListener('dragover', e => {
-          e.preventDefault();
-          if (!draggedWrap) return;
-          const target = e.target.closest('.hierref-pill-wrap');
-          if (!target || target === draggedWrap || target.parentElement !== box) return;
-          const rect = target.getBoundingClientRect();
-          const insertBeforeTarget = (e.clientX - rect.left) < rect.width / 2;
-          const refNode = insertBeforeTarget ? target : target.nextSibling;
-          if (refNode === draggedWrap) return;
-          animatePillShift(box, () => box.insertBefore(draggedWrap, refNode));
-        });
-        box.addEventListener('drop', e => e.preventDefault());
-      }
     }
 
     // baris ditampilkan dari n (persebaran) TERTINGGI di atas ke TERENDAH di bawah.
@@ -3846,7 +3907,8 @@ button.project-btn:disabled{
     const { itemNames, respNames, rawMatrix, matrix, invalidCellCount, regionAttrTexts, hasAttr } = lastAnalysis;
     hierLevels = readHierLevels(itemNames.length);
     lastAnalysis.hierLevels = hierLevels;
-    const result = computeGuttman(matrix, itemNames, respNames, hierLevels, regionAttrTexts);
+    const hierRank = hierGroups ? hierRankFromGroups(hierGroups, itemNames.length) : null;
+    const result = computeGuttman(matrix, itemNames, respNames, hierLevels, regionAttrTexts, hierRank);
     const ordoResult = computeOrdoHirarki(rawMatrix, itemNames, respNames, hierLevels, regionAttrTexts);
     const marshallResult = computeMarshall(rawMatrix, itemNames, respNames, regionAttrTexts);
     Object.assign(lastAnalysis, { result, ordoResult, marshallResult });
