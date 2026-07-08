@@ -1341,6 +1341,45 @@ button.project-btn:disabled{
     z-index:-1;
   }
 
+  /* Floater sitasi: kartu per gaya penulisan + tombol salin */
+  .cite-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px 14px;
+    margin-bottom:10px;
+  }
+  .cite-card:last-of-type{margin-bottom:0;}
+  .cite-card-head{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; margin-bottom:6px;
+  }
+  .cite-card-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; font-weight:700;
+    letter-spacing:0.04em; text-transform:uppercase;
+    color:var(--brick);
+  }
+  .cite-copy-btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; font-weight:600;
+    color:var(--ink);
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:4px 10px;
+    cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .cite-copy-btn:hover{border-color:var(--brick); color:var(--brick);}
+  .cite-copy-btn.copied{background:var(--brick); border-color:var(--brick); color:#fff;}
+  .cite-card-body{font-size:12.5px; line-height:1.7; color:var(--ink);}
+  .cite-card-pre{
+    white-space:pre-wrap; font-size:11.5px; line-height:1.6;
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+    padding:10px; margin:0; color:var(--ink);
+  }
+
   /* Blok melayang: Penjelasan Fitur / Referensi Ilmiah */
   .modal-overlay{
     display:none;
@@ -1603,7 +1642,7 @@ button.project-btn:disabled{
         <img src="data:image/png;base64,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" alt="UrbaStrata Logo" style="height:120px; width:auto; flex-shrink:0; display:block;">
         <div style="display:flex; flex-direction:column; gap:4px;">
           <span class="eyebrow">Skalogram Perkotaan &middot; Hierarki Perkotaan &middot; Urban Analyst</span>
-          <h1 class="brand-title"><span class="brand-Urba">Urba</span><span class="brand-Strata">Strata</span></h1>
+          <h1 class="brand-title" id="brandTitleLink"><span class="brand-Urba">Urba</span><span class="brand-Strata">Strata</span></h1>
           <span class="feature-info-link" id="featureInfoBtn">&#9432; Penjelasan Fitur</span>
           <div class="subtitle">Aplikasi analisis hierarki perkotaan berbasis metode skalogram Guttman dan indeks sentralitas Marshall, untuk mengukur kelengkapan sarana wilayah dan menyusun ordo perkotaan dari data spasial administratif.</div>
         </div>
@@ -1696,6 +1735,7 @@ button.project-btn:disabled{
         <div class="modal-tabs">
           <div class="modal-tab active" id="modalTabFeatures">Penjelasan Fitur</div>
           <div class="modal-tab" id="modalTabRefs">Referensi Ilmiah</div>
+          <div class="modal-tab" id="modalTabCite">Sitasi</div>
         </div>
         <span class="modal-close" id="modalCloseBtn" title="Tutup">&times;</span>
       </div>
@@ -1957,6 +1997,93 @@ button.project-btn:disabled{
             Jufri, A., &amp; Nonce, M. (2016). Identifikasi Pusat Pertumbuhan di Kabupaten Halmahera Barat Menggunakan Analisis Skalogram. <em>Indonesian Journal of Spatial Analysis</em>, 12(2), 156–172.
           </div>
         </div>
+      </div>
+
+      <div class="modal-body" id="modalBodyCite">
+        <p class="ref-intro">Sitasi resmi UrbaStrata dalam berbagai gaya penulisan. Salin sesuai kebutuhan (skripsi, jurnal, laporan teknis, dsb).</p>
+        <ul style="font-size:12.5px; line-height:1.9; color:var(--ink); padding-left:20px; margin:0 0 16px;">
+          <li><strong>APA 7</strong> — Anshori, A. H. (2026). <em>UrbaStrata: Analisis hirarki perkotaan</em> (Version 2.3.3) [Computer software]. https://doi.org/10.5281/zenodo.21252193</li>
+          <li><strong>MLA 9</strong> — Anshori, Ahmad Hafidz. <em>UrbaStrata: Analisis Hirarki Perkotaan</em>. Version 2.3.3, 2026, doi:10.5281/zenodo.21252193.</li>
+          <li><strong>Chicago</strong> — Anshori, Ahmad Hafidz. 2026. <em>UrbaStrata: Analisis Hirarki Perkotaan</em>. Version 2.3.3. https://doi.org/10.5281/zenodo.21252193.</li>
+          <li><strong>IEEE</strong> — A. H. Anshori, "UrbaStrata: Analisis Hirarki Perkotaan," version 2.3.3, 2026. doi: 10.5281/zenodo.21252193.</li>
+          <li><strong>BibTeX</strong> —
+            <pre style="white-space:pre-wrap; font-size:11.5px; background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:10px; margin:6px 0 0;">@software{urbastrata2026,
+  author    = {Anshori, Ahmad Hafidz},
+  title     = {UrbaStrata: Analisis Hirarki Perkotaan},
+  year      = {2026},
+  publisher = {Zenodo},
+  version   = {2.3.3},
+  doi       = {10.5281/zenodo.21252193},
+  url       = {https://github.com/hafdz621-netizen/Hirarki_Perkotaan}
+}</pre>
+          </li>
+        </ul>
+        <p style="font-size:11.5px; color:var(--ink-soft); margin:0;">DOI: <a href="https://doi.org/10.5281/zenodo.21252193" target="_blank">10.5281/zenodo.21252193</a> &middot; Repo: <a href="https://github.com/hafdz621-netizen/Hirarki_Perkotaan" target="_blank">GitHub</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floater khusus: hanya berisi kumpulan sitasi, terpisah dari modal fitur/referensi -->
+  <div class="modal-overlay" id="citeOnlyOverlay">
+    <div class="modal-box" style="max-width:620px;">
+      <div class="modal-head">
+        <div class="modal-tabs">
+          <div class="modal-tab active">Sitasi Software/Perangkat Lunak</div>
+        </div>
+        <span class="modal-close" id="citeOnlyCloseBtn" title="Tutup">&times;</span>
+      </div>
+      <div class="modal-body active">
+        <p class="ref-intro">Sitasi resmi UrbaStrata dalam berbagai gaya penulisan. Klik <strong>Salin</strong> untuk menyalin ke clipboard sesuai kebutuhan (skripsi, jurnal, laporan teknis, dsb).</p>
+
+        <div class="cite-card">
+          <div class="cite-card-head">
+            <span class="cite-card-label">APA 7</span>
+            <button type="button" class="cite-copy-btn" data-cite="Anshori, A. H. (2026). UrbaStrata: Analisis hirarki perkotaan (Version 2.3.3) [Computer software]. https://doi.org/10.5281/zenodo.21252193">Salin</button>
+          </div>
+          <div class="cite-card-body">Anshori, A. H. (2026). <em>UrbaStrata: Analisis hirarki perkotaan</em> (Version 2.3.3) [Computer software]. https://doi.org/10.5281/zenodo.21252193</div>
+        </div>
+
+        <div class="cite-card">
+          <div class="cite-card-head">
+            <span class="cite-card-label">MLA 9</span>
+            <button type="button" class="cite-copy-btn" data-cite="Anshori, Ahmad Hafidz. UrbaStrata: Analisis Hirarki Perkotaan. Version 2.3.3, 2026, doi:10.5281/zenodo.21252193.">Salin</button>
+          </div>
+          <div class="cite-card-body">Anshori, Ahmad Hafidz. <em>UrbaStrata: Analisis Hirarki Perkotaan</em>. Version 2.3.3, 2026, doi:10.5281/zenodo.21252193.</div>
+        </div>
+
+        <div class="cite-card">
+          <div class="cite-card-head">
+            <span class="cite-card-label">Chicago</span>
+            <button type="button" class="cite-copy-btn" data-cite="Anshori, Ahmad Hafidz. 2026. UrbaStrata: Analisis Hirarki Perkotaan. Version 2.3.3. https://doi.org/10.5281/zenodo.21252193.">Salin</button>
+          </div>
+          <div class="cite-card-body">Anshori, Ahmad Hafidz. 2026. <em>UrbaStrata: Analisis Hirarki Perkotaan</em>. Version 2.3.3. https://doi.org/10.5281/zenodo.21252193.</div>
+        </div>
+
+        <div class="cite-card">
+          <div class="cite-card-head">
+            <span class="cite-card-label">IEEE</span>
+            <button type="button" class="cite-copy-btn" data-cite='A. H. Anshori, "UrbaStrata: Analisis Hirarki Perkotaan," version 2.3.3, 2026. doi: 10.5281/zenodo.21252193.'>Salin</button>
+          </div>
+          <div class="cite-card-body">A. H. Anshori, "UrbaStrata: Analisis Hirarki Perkotaan," version 2.3.3, 2026. doi: 10.5281/zenodo.21252193.</div>
+        </div>
+
+        <div class="cite-card">
+          <div class="cite-card-head">
+            <span class="cite-card-label">BibTeX</span>
+            <button type="button" class="cite-copy-btn" data-cite="@software{urbastrata2026,&#10;  author    = {Anshori, Ahmad Hafidz},&#10;  title     = {UrbaStrata: Analisis Hirarki Perkotaan},&#10;  year      = {2026},&#10;  publisher = {Zenodo},&#10;  version   = {2.3.3},&#10;  doi       = {10.5281/zenodo.21252193},&#10;  url       = {https://github.com/hafdz621-netizen/Hirarki_Perkotaan}&#10;}">Salin</button>
+          </div>
+          <pre class="cite-card-pre">@software{urbastrata2026,
+  author    = {Anshori, Ahmad Hafidz},
+  title     = {UrbaStrata: Analisis Hirarki Perkotaan},
+  year      = {2026},
+  publisher = {Zenodo},
+  version   = {2.3.3},
+  doi       = {10.5281/zenodo.21252193},
+  url       = {https://github.com/hafdz621-netizen/Hirarki_Perkotaan}
+}</pre>
+        </div>
+
+        <p style="font-size:11.5px; color:var(--ink-soft); margin:14px 0 0;">DOI: <a href="https://doi.org/10.5281/zenodo.21252193" target="_blank">10.5281/zenodo.21252193</a> &middot; Repo: <a href="https://github.com/hafdz621-netizen/Hirarki_Perkotaan" target="_blank">GitHub</a></p>
       </div>
     </div>
   </div>
@@ -2469,9 +2596,12 @@ button.project-btn:disabled{
   </section>
 
   <footer>
-    <span>Urban Hierarchy Analyzer &middot; © UrbaStrata — Built by <a href="https://www.instagram.com/ans91.hafdz/" target="_blank">Ahmad Hafidz Anshori</a> with Claude</span>
+    <span>Urban Hierarchy Analyzer &middot; © UrbaStrata — Built by Ahmad Hafidz Anshori (<a href="https://www.instagram.com/ans91.hafdz/" target="_blank">Instagram</a> / <a href="https://github.com/hafdz621-netizen/Hirarki_Perkotaan" target="_blank">GitHub</a>) with Claude</span>
     <span id="footTimestamp"></span>
   </footer>
+  <div style="text-align:left; padding:1.2px 0 18px;">
+    <a href="#" id="citeFooterLink" style="color:var(--brick); font-family:'JetBrains Mono', monospace; font-size:11.75px; font-weight:800; text-transform:uppercase; letter-spacing:0.03em; text-decoration:none;">Sitasi Software/Perangkat Lunak</a>
+  </div>
 
 </div>
 
@@ -2632,17 +2762,52 @@ button.project-btn:disabled{
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && featureInfoOverlay.classList.contains('open')) closeFeatureInfoModal();
   });
-  modalTabFeatures.addEventListener('click', () => {
-    modalTabFeatures.classList.add('active');
-    modalTabRefs.classList.remove('active');
-    modalBodyFeatures.classList.add('active');
-    modalBodyRefs.classList.remove('active');
+  const modalTabCite = document.getElementById('modalTabCite');
+  const modalBodyCite = document.getElementById('modalBodyCite');
+  const modalTabs = [
+    [modalTabFeatures, modalBodyFeatures],
+    [modalTabRefs, modalBodyRefs],
+    [modalTabCite, modalBodyCite],
+  ];
+  function activateModalTab(tabEl){
+    modalTabs.forEach(([tab, body]) => {
+      const on = tab === tabEl;
+      tab.classList.toggle('active', on);
+      body.classList.toggle('active', on);
+    });
+  }
+  modalTabs.forEach(([tab]) => tab.addEventListener('click', () => activateModalTab(tab)));
+
+  // Link footer "Sitasi Software/Perangkat Lunak" membuka floater sitasi khusus
+  const citeOverlay = document.getElementById('citeOnlyOverlay');
+  const citeCloseBtn = document.getElementById('citeOnlyCloseBtn');
+  document.getElementById('citeFooterLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    citeOverlay.classList.add('open');
+    document.body.classList.add('modal-open');
   });
-  modalTabRefs.addEventListener('click', () => {
-    modalTabRefs.classList.add('active');
-    modalTabFeatures.classList.remove('active');
-    modalBodyRefs.classList.add('active');
-    modalBodyFeatures.classList.remove('active');
+  citeCloseBtn.addEventListener('click', () => citeOverlay.classList.remove('open'));
+  citeOverlay.addEventListener('click', (e) => {
+    if (e.target === citeOverlay) citeOverlay.classList.remove('open');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && citeOverlay.classList.contains('open')) citeOverlay.classList.remove('open');
+  });
+  citeOverlay.querySelectorAll('.cite-copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const text = btn.dataset.cite;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+      }
+      const original = btn.textContent;
+      btn.textContent = 'Tersalin ✓';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+    });
   });
 
   // ---------- File handling ----------
@@ -4529,6 +4694,20 @@ button.project-btn:disabled{
     const ws8 = XLSX.utils.aoa_to_sheet(s8);
     styleSheetColumns(ws8, [8, 18, 26, 30, 16, 36]);
     XLSX.utils.book_append_sheet(wb, ws8, '8. Referensi Hierarki Sarana');
+
+    // ============ SHEET 9: Cara Mengutip (APA) ============
+    const s9 = [
+      ['CARA MENGUTIP (CITATION)'],
+      [],
+      ['Gaya APA 7:'],
+      ['Anshori, A. H. (2026). UrbaStrata: Analisis hirarki perkotaan (Version 2.3.3) [Computer software]. https://doi.org/10.5281/zenodo.21252193'],
+      [],
+      ['Repositori: https://github.com/hafdz621-netizen/Hirarki_Perkotaan'],
+      ['DOI: 10.5281/zenodo.21252193'],
+    ];
+    const ws9 = XLSX.utils.aoa_to_sheet(s9);
+    styleSheetColumns(ws9, [100]);
+    XLSX.utils.book_append_sheet(wb, ws9, '9. Cara Mengutip');
 
     // ============ Trigger download ============
     const ts = new Date();
