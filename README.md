@@ -5,6 +5,10 @@
 
 *Aplikasi web satu-berkas (single-file), 100% client-side, tanpa server dan tanpa proses build.*
 
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21252193-blue)](https://doi.org/10.5281/zenodo.21252193)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Live](https://img.shields.io/badge/demo-urbastrata.dpdns.org-brightgreen)](https://urbastrata.dpdns.org)
+
 </div>
 
 ---
@@ -33,6 +37,7 @@
 - [Rencana Pengembangan](#rencana-pengembangan)
 - [Kontribusi](#kontribusi)
 - [Lisensi](#lisensi)
+- [Cara Mengutip](#cara-mengutip)
 - [Kontributor](#kontributor)
 
 ---
@@ -56,13 +61,16 @@ Cocok digunakan oleh mahasiswa, peneliti, konsultan, maupun instansi perencanaan
 | 3 | **Skalogram Guttman** | Peringkat item, peringkat kelengkapan wilayah, klasifikasi kelas hirarki, matriks observasi, dan matriks ideal — masing-masing dalam tab terpisah. |
 | 4 | **Hirarki Langsung** | Peringkat wilayah berdasarkan jumlah total fasilitas. |
 | 5 | **Sentralitas Marshall** | Pembobotan tiap sarana berdasarkan kelangkaannya dan skor sentralitas tiap wilayah. |
-| 6 | **Peta Hirarki Perkotaan** | Visualisasi titik wilayah pada peta Leaflet/OpenStreetMap, diwarnai menurut kelas hirarki hasil analisis. |
-| 7 | **Referensi Hierarki Sarana** | Pengaturan tingkat hierarki tiap jenis sarana (otomatis atau manual) sebagai *tiebreaker* skor identik. |
-| 8 | **Fitur Atribut** | Kolom administrasi (Kabupaten/Kota, Kecamatan) atau kolom lain apa pun bisa "dijadikan atribut" — ikut tampil sebagai keterangan tambahan di tabel/peringkat tanpa dihitung sebagai data sarana. |
-| 9 | **Ekspor Excel** | Unduh seluruh hasil analisis (8 sheet) sebagai satu berkas `.xlsx`. |
-| 10 | **Ekspor Shapefile** | Unduh titik-titik peta sebagai Shapefile (`.shp`/`.shx`/`.dbf`/`.prj`) dalam `.zip`, dibangun langsung di browser tanpa pustaka GIS eksternal. |
-| 11 | **Simpan/Muat Proyek** | Seluruh kondisi kerja disimpan sebagai berkas `.urbhir` (JSON) dan bisa dimuat kembali kapan saja. |
-| 12 | **Data Contoh** | Tersedia dataset contoh (data kecamatan di Kabupaten Kendal) untuk mencoba aplikasi tanpa perlu menyiapkan data sendiri. |
+| 6 | **Peta Hirarki Perkotaan** | Visualisasi titik wilayah pada peta Leaflet, diwarnai menurut kelas hirarki hasil analisis. Titik hirarki selalu di lapisan paling atas (*always on top*), tidak tertutup layer lain. |
+| 7 | **Multi-Basemap** | Empat pilihan basemap: OpenStreetMap, Esri Satellite, Esri Topo Map, CartoDB Light — dipilih dari panel kontrol layer di peta. |
+| 8 | **Overlay Tutupan Lahan (LULC)** | Layer *Indonesia Hybrid Landcover 2020* (CSIRO, resolusi 10 m, gabungan Sentinel-1 SAR + Sentinel-2 optik + ALOS-2 PALSAR-2), 14 kelas tutupan lahan, lengkap legenda otomatis. |
+| 9 | **Batas Administrasi Resmi** | Layer batas Kabupaten/Kota, Kecamatan, dan Desa/Kelurahan dimuat otomatis dari server BIG (Kebijakan Satu Peta) via query GeoJSON — hanya wilayah yang teranalisis, bisa diklik untuk info nama wilayah. |
+| 10 | **Referensi Hierarki Sarana** | Pengaturan tingkat hierarki tiap jenis sarana (otomatis atau manual) sebagai *tiebreaker* skor identik. |
+| 11 | **Fitur Atribut** | Kolom administrasi (Kabupaten/Kota, Kecamatan) atau kolom lain apa pun bisa "dijadikan atribut" — ikut tampil sebagai keterangan tambahan di tabel/peringkat tanpa dihitung sebagai data sarana. |
+| 12 | **Ekspor Excel** | Unduh seluruh hasil analisis (8 sheet) sebagai satu berkas `.xlsx`. |
+| 13 | **Ekspor Shapefile** | Unduh titik-titik peta sebagai Shapefile (`.shp`/`.shx`/`.dbf`/`.prj`) dalam `.zip`, dibangun langsung di browser tanpa pustaka GIS eksternal. |
+| 14 | **Simpan/Muat Proyek** | Seluruh kondisi kerja disimpan sebagai berkas `.urbhir` (JSON) dan bisa dimuat kembali kapan saja. |
+| 15 | **Data Contoh** | Tersedia dataset contoh (data kecamatan di Kabupaten Kendal) untuk mencoba aplikasi tanpa perlu menyiapkan data sendiri. |
 
 ---
 
@@ -185,6 +193,27 @@ UrbaStrata mendukung dua skala visualisasi peta, masing-masing dengan sumber koo
 Batas wilayah (poligon desa/kecamatan) yang ditampilkan di peta merupakan **hasil simplifikasi** untuk keperluan visualisasi web — lihat [Batasan & Catatan Penting](#batasan--catatan-penting).
 
 Titik-titik pada peta diberi warna sesuai kelas hirarki hasil analisis, lengkap dengan legenda.
+
+### Basemap & Overlay
+
+Panel kontrol layer (ikon tumpukan di pojok kanan atas peta) menyediakan satu basemap aktif dan overlay yang bisa dinyalakan bersamaan:
+
+| Jenis | Nama | Sumber |
+|---|---|---|
+| Basemap | OpenStreetMap | Tile jalan/kawasan komunitas OSM (default) |
+| Basemap | Esri Satellite | Citra satelit Esri World Imagery |
+| Basemap | Esri Topo Map | Peta topografi Esri (relief, kontur) |
+| Basemap | CartoDB Light | Basemap minimalis latar terang |
+| Overlay | LULC Indonesia 10m | *Indonesia Hybrid Landcover 2020* (CSIRO) — hasil gabungan Sentinel-1 SAR, Sentinel-2 optik, dan ALOS-2 PALSAR-2; 14 kelas tutupan lahan, legenda otomatis muncul di pojok kiri bawah peta saat diaktifkan. Diakses via tile cache publik ArcGIS. Sumber dataset: [data.csiro.au/collection/csiro:55614](https://data.csiro.au/collection/csiro:55614). |
+
+### Batas Administrasi Resmi (BIG)
+
+Selain poligon desa hasil simplifikasi (lihat [Batasan & Catatan Penting](#batasan--catatan-penting)), peta juga memuat batas administrasi **Kabupaten/Kota**, **Kecamatan**, dan **Desa/Kelurahan** langsung dari server **Badan Informasi Geospasial (BIG)** melalui **Kebijakan Satu Peta** — bukan tile gambar, melainkan hasil query GeoJSON yang dirender Leaflet, sehingga bisa diklik untuk menampilkan nama wilayah.
+
+- Hanya wilayah yang teranalisis yang dimuat (difilter berdasarkan Kabupaten/Kota dan Kecamatan pada data), bukan seluruh Indonesia.
+- Batas Kab/Kota dan Kecamatan: fill hijau toska transparan, garis merah tua. Batas Desa/Kel: garis tipis abu-abu tanpa fill.
+- Filter membutuhkan kolom Kabupaten/Kota dan Kecamatan terisi saat impor data; jika tidak, muncul peringatan bahwa filter tidak dapat diterapkan.
+- Jika server BIG tidak dapat diakses, titik hirarki tetap ditampilkan tanpa layer batas administrasi.
 
 ---
 
@@ -352,6 +381,25 @@ Karena seluruh kode berada dalam satu berkas, mohon jaga agar perubahan tetap te
 ## Lisensi
 
 Proyek ini dilisensikan di bawah **[MIT License](./LICENSE)** — bebas digunakan, disalin, dimodifikasi, dan didistribusikan ulang (termasuk untuk keperluan komersial), selama pemberitahuan hak cipta dan lisensi asli disertakan. Lihat berkas [`LICENSE`](./LICENSE) untuk teks lengkap.
+
+---
+
+## Cara Mengutip
+
+Proyek ini memiliki DOI arsip di Zenodo: **[10.5281/zenodo.21252193](https://doi.org/10.5281/zenodo.21252193)**. Metadata sitasi lengkap tersedia di berkas [`CITATION.cff`](./CITATION.cff) (dapat digunakan langsung lewat tombol "Cite this repository" di GitHub).
+
+**BibTeX:**
+
+```bibtex
+@software{urbastrata2026,
+  author       = {Anshori, Ahmad Hafidz},
+  title        = {UrbaStrata: Analisis Hirarki Perkotaan},
+  year         = {2026},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.21252193},
+  url          = {https://github.com/hafdz621-netizen/Hirarki_Perkotaan}
+}
+```
 
 ---
 

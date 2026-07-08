@@ -13,6 +13,11 @@ authors:
     given-names: Ahmad Hafidz
 repository-code: "https://github.com/hafdz621-netizen/Hirarki_Perkotaan"
 url: "https://github.com/hafdz621-netizen/Hirarki_Perkotaan"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.21252193
+    description: "Arsip rilis pada Zenodo"
+doi: 10.5281/zenodo.21252193
 license: MIT
 version: 2.3.3
 date-released: "2026-07-08"
@@ -20,8 +25,11 @@ keywords:
   - urban-planning
   - urban-hierarchy
   - guttman-scale
+  - marshall-centrality
   - regional-planning
   - gis
   - shapefile
+  - land-cover
+  - leaflet
   - spatial-analysis
   - indonesia
