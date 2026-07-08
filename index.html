@@ -2837,14 +2837,24 @@ button.project-btn:disabled{
   // Link footer "Sitasi Software/Perangkat Lunak" membuka floater sitasi khusus
   const citeOverlay = document.getElementById('citeOnlyOverlay');
   const citeCloseBtn = document.getElementById('citeOnlyCloseBtn');
-  document.getElementById('citeFooterLink').addEventListener('click', (e) => {
-    e.preventDefault();
+  function openCiteOnlyOverlay(){
     citeOverlay.classList.add('open');
     document.body.classList.add('modal-open');
+  }
+  function closeCiteOnlyOverlay(){
+    citeOverlay.classList.remove('open');
+    document.body.classList.remove('modal-open');
+  }
+  document.getElementById('citeFooterLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    openCiteOnlyOverlay();
   });
-  citeCloseBtn.addEventListener('click', () => citeOverlay.classList.remove('open'));
+  citeCloseBtn.addEventListener('click', closeCiteOnlyOverlay);
   citeOverlay.addEventListener('click', (e) => {
-    if (e.target === citeOverlay) citeOverlay.classList.remove('open');
+    if (e.target === citeOverlay) closeCiteOnlyOverlay();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && citeOverlay.classList.contains('open')) closeCiteOnlyOverlay();
   });
 
   // Nama penulis di footer: klik untuk membuka pilihan Instagram / GitHub
